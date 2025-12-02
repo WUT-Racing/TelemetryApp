@@ -1,0 +1,45 @@
+## General ##
+[Bb]in/
+[Oo]bj/
+*.log
+*.sqlite
+*.db
+
+## Visual Studio Code ##
+.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/extensions.json
+!/.vscode/csharp.json
+
+## NuGet ##
+*.nupkg
+# Wyklucz folder cache'u globalnego
+.nuget/
+
+## Entity Framework Core (EF Core) / SQLite ##
+# Lokalny plik bazy danych SQLite, który jest tworzony przez aplikację
+# Plik ten powinien być ignorowany, aby uniknąć konfliktów w repozytorium
+**/Telemetry.db
+**/telemetry.db
+
+## Rider/Visual Studio for Mac ##
+*.userprefs
+*.DS_Store
+*.idea/
+.vs/
+.history/
+
+## Android (kompilacja) ##
+*.apk
+*.aab
+*.aar
+*.dex
+
+## iOS / macOS (kompilacja) ##
+*.ipa
+*.pkg
+*.app
+*.dSYM/
+*.xcarchive/
