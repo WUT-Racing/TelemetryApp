@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ArDtKMSUYYY=",
+  "dgSpecHash": "tUO27ujYu7k=",
   "success": true,
   "projectFilePath": "/Users/bartek/Moje pliki/WUT/Telemetry/TelemetryApp/TelemetryApp.csproj",
   "expectedPackageFiles": [
@@ -26,6 +26,12 @@
     "/Users/bartek/.nuget/packages/microsoft.maui.graphics/10.0.0/microsoft.maui.graphics.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.maui.resizetizer/10.0.0/microsoft.maui.resizetizer.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.net.illink.tasks/10.0.0/microsoft.net.illink.tasks.10.0.0.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlite-net-pcl/1.9.172/sqlite-net-pcl.1.9.172.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlitepclraw.bundle_green/2.1.2/sqlitepclraw.bundle_green.2.1.2.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlitepclraw.core/2.1.2/sqlitepclraw.core.2.1.2.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.2/sqlitepclraw.lib.e_sqlite3.2.1.2.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlitepclraw.lib.e_sqlite3.android/2.1.2/sqlitepclraw.lib.e_sqlite3.android.2.1.2.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.2/sqlitepclraw.provider.e_sqlite3.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/xamarin.android.glide/4.16.0.14/xamarin.android.glide.4.16.0.14.nupkg.sha512",
     "/Users/bartek/.nuget/packages/xamarin.android.glide.annotations/4.16.0.14/xamarin.android.glide.annotations.4.16.0.14.nupkg.sha512",
     "/Users/bartek/.nuget/packages/xamarin.android.glide.disklrucache/4.16.0.14/xamarin.android.glide.disklrucache.4.16.0.14.nupkg.sha512",
