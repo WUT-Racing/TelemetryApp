@@ -12,17 +12,25 @@ public class TelemetryService
         _connectionFactory = connectionFactory;
     }
 
-    public void SaveTelemetryPoint(TelemetryPoint point, string databasePath)
+    public void SaveTelemetryPoint(TelemetryPoint point)
     {
-        using (var connection = _connectionFactory.GetConnection(databasePath))
+        using (var connection = _connectionFactory.GetConnection())
         {
             connection.Insert(point);
         }
     }
 
-    public List<TelemetryPoint> GetSessionPoints(string databasePath)
+    public void SaveTelemetryPointBatch(List<TelemetryPoint> telemetryPoints)
     {
-        using (var connection = _connectionFactory.GetConnection(databasePath))
+        using (var connection = _connectionFactory.GetConnection())
+        {
+            connection.RunInTransaction(() => connection.InsertAll(telemetryPoints));
+        }
+    }
+
+    public List<TelemetryPoint> GetSessionPoints()
+    {
+        using (var connection = _connectionFactory.GetConnection())
         {
             return connection.Table<TelemetryPoint>().ToList();
         }
