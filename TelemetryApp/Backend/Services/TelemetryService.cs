@@ -12,6 +12,12 @@ public class TelemetryService
         _connectionFactory = connectionFactory;
     }
 
+    public TelemetryService()
+    {
+        SQLiteConnectionFactory connectionFactory = new SQLiteConnectionFactory(Constants.DatabasePath);
+        _connectionFactory = connectionFactory;
+    }
+
     public void SaveTelemetryPoint(TelemetryPoint point)
     {
         using (var connection = _connectionFactory.GetConnection())
@@ -35,6 +41,5 @@ public class TelemetryService
             return connection.Table<TelemetryPoint>().ToList();
         }
     }
-
     
 }

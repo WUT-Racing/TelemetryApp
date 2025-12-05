@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "tUO27ujYu7k=",
+  "dgSpecHash": "7Q63C7Zq4HE=",
   "success": true,
   "projectFilePath": "/Users/bartek/Moje pliki/WUT/Telemetry/TelemetryApp/TelemetryApp.csproj",
   "expectedPackageFiles": [
+    "/Users/bartek/.nuget/packages/communitytoolkit.mvvm/8.4.0/communitytoolkit.mvvm.8.4.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/googlegson/2.13.1.1/googlegson.2.13.1.1.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.extensions.configuration/10.0.0/microsoft.extensions.configuration.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.extensions.configuration.abstractions/10.0.0/microsoft.extensions.configuration.abstractions.10.0.0.nupkg.sha512",
