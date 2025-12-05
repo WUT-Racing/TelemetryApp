@@ -3,7 +3,6 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-
 public partial class SessionViewModel : ObservableObject
 {
     private readonly TelemetryService _telemetryService;
@@ -15,12 +14,15 @@ public partial class SessionViewModel : ObservableObject
         _telemetryService = telemetryService ?? throw new System.ArgumentNullException(nameof(telemetryService));
     }
 
-    [RelayCommand]
-    private void LoadSession()
+    public SessionViewModel()
     {
+        _telemetryService = new TelemetryService();
     }
 
-    [RelayCommand]
+    public void LoadSession(string fileToChange)
+    {
+        _telemetryService.ChangeDatabase(fileToChange);
+    }
     private void OpenSession(TestSession session)
     {
         // TODO: nawigacja / otwarcie pliku DB powiązanego z sesją

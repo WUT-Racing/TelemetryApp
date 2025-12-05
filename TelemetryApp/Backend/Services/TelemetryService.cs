@@ -41,5 +41,10 @@ public class TelemetryService
             return connection.Table<TelemetryPoint>().ToList();
         }
     }
+
+    public void ChangeDatabase(string newDatabasePath)
+    {
+        _connectionFactory.ChangeDatabase(newDatabasePath);
+    }
     
 }
