@@ -6,7 +6,7 @@
     x:Name="PageRoot"
     Title="Sesje">
     <VerticalStackLayout Padding="12" Spacing="10">
-        <Button Text="Wczytaj sesje" Clicked="OpenSessionDialog" />
+        <Button Text="Wczytaj sesje" Command="{Binding LoadSessionFromPickerCommand}" />
         <CollectionView ItemsSource="{Binding Sessions}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>

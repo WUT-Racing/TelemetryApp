@@ -28,4 +28,23 @@ public partial class SessionViewModel : ObservableObject
         // TODO: nawigacja / otwarcie pliku DB powiązanego z sesją
         // przykładowo: Shell.Current.GoToAsync($"sessiondetails?sessionId={session.Id}");
     }
-}
+
+    [RelayCommand]
+    private async Task LoadSessionFromPicker()
+    {
+        try
+        {
+            var result = await FilePicker.Default.PickAsync();
+            
+            if (result == null) 
+                return;
+            var newDatabasePath = result.FullPath;
+            
+            LoadSession(newDatabasePath); 
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Błąd FilePicker: {ex.Message}");
+        }
+        }
+    }

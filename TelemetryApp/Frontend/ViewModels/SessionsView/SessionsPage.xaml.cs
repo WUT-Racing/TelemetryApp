@@ -20,18 +20,5 @@ public partial class SessionsPage : ContentPage
         BindingContext = viewModel;
     }
 
-    private async void OpenSessionDialog(object sender, EventArgs e)
-    {
-        try
-        {
-            var result = await FilePicker.Default.PickAsync();
-            if (result == null) return;
-
-            var newDatabasePath = result.FullPath;
-            viewModel.LoadSession(newDatabasePath);        }
-        catch (Exception ex)
-        {
-            await DisplayAlertAsync("Błąd", ex.Message, "OK");
-        }
-    }
+    
 }
