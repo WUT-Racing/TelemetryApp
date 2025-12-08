@@ -5,22 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
     Title="Sesje">
-    <VerticalStackLayout Padding="12" Spacing="10">
-        <Button Text="Wczytaj sesje" Command="{Binding LoadSessionFromPickerCommand}" />
-        <CollectionView ItemsSource="{Binding Sessions}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame Padding="8" Margin="4" HasShadow="True">
-                        <HorizontalStackLayout VerticalOptions="Center">
-                            <Label Text="{Binding Name}" VerticalOptions="Center" />
-                            <Button Text="Open"
-                                    Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.OpenSessionCommand}"
-                                    CommandParameter="{Binding .}"
-                                    HorizontalOptions="End" />
-                        </HorizontalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+    <VerticalStackLayout Padding="12" Spacing="10" VerticalOptions="Center">
+        <Button Text="Wczytaj sesje" Command="{Binding LoadSessionFromPickerCommand}"/>
+        <Button Text="Utwórz nową sesję" Clicked="CreateNewSession" />
     </VerticalStackLayout>
 </ContentPage>

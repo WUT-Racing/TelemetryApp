@@ -6,6 +6,19 @@
     xmlns:local="clr-namespace:TelemetryApp"
     Title="TelemetryApp">
 
+    <Shell.FlyoutContent>
+            <StackLayout Margin="10, 30, 0, 0">
+                <Label Text="Główne Menu" FontSize="Title" Padding="0, 0, 0, 20" />
+
+                <Label Text="⚙️ Ustawienia" FontSize="Medium">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToSettingsCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+                
+                <Label Text="📊 Raporty" FontSize="Medium" />
+                </StackLayout>
+    </Shell.FlyoutContent>
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
