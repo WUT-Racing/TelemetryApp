@@ -27,9 +27,23 @@ public partial class SessionViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadSessionFromPicker()
     {
+        var sessionFileType = new FilePickerFileType(
+            new Dictionary<DevicePlatform, IEnumerable<string>>
+            {
+                {DevicePlatform.macOS, new[] {"public.item", "*.db"}},
+                {DevicePlatform.WinUI, new[] {".db"}}
+            }
+        );
+
+        var options = new PickOptions
+        {
+            PickerTitle = "Wybierz plik DB",
+            FileTypes = sessionFileType,
+        };
+
         try
         {
-            var result = await FilePicker.Default.PickAsync();
+            var result = await FilePicker.Default.PickAsync(options);
 
             if (result == null)
                 return;
