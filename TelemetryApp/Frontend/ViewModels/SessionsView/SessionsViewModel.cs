@@ -27,10 +27,11 @@ public partial class SessionViewModel : ObservableObject
     [RelayCommand]
     private async Task LoadSessionFromPicker()
     {
+        FileResult result = null;
+
         var sessionFileType = new FilePickerFileType(
             new Dictionary<DevicePlatform, IEnumerable<string>>
             {
-                {DevicePlatform.macOS, new[] {"public.item", "*.db"}},
                 {DevicePlatform.WinUI, new[] {".db"}}
             }
         );
@@ -43,7 +44,15 @@ public partial class SessionViewModel : ObservableObject
 
         try
         {
-            var result = await FilePicker.Default.PickAsync(options);
+            
+            if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+            {
+                result = await FilePicker.Default.PickAsync(options);
+            }
+            else
+            {
+                result = await FilePicker.Default.PickAsync();
+            }
 
             if (result == null)
                 return;

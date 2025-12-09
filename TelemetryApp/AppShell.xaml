@@ -4,24 +4,36 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TelemetryApp"
-    Title="TelemetryApp">
+    xmlns:views="clr-namespace:TelemetryApp.Frontend.Views"
+    Title="TelemetryApp"
+    Shell.FlyoutBehavior="Flyout">
 
     <Shell.FlyoutContent>
             <StackLayout Margin="10, 30, 0, 0">
-                <Label Text="Główne Menu" FontSize="Title" Padding="0, 0, 0, 20" />
+                <Label Text="Główne Menu" FontSize="Title" Padding="0, 0, 0, 20" HorizontalTextAlignment="Start"/>
 
+                <Label Text="Connection" FontSize="Medium">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToConnectionCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+                <Label Text="Command Center" FontSize="medium">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateToCommandCenterCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
                 <Label Text="⚙️ Ustawienia" FontSize="Medium">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToSettingsCommand}" />
                     </Label.GestureRecognizers>
-                </Label>
-                
-                <Label Text="📊 Raporty" FontSize="Medium" />
+                </Label>                
                 </StackLayout>
     </Shell.FlyoutContent>
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <FlyoutItem Title="Sesje" Icon="sessions_icon.png">
+        <ShellContent
+            Title="Sesje"
+            ContentTemplate="{DataTemplate views:SessionsPage}"
+            Route="SessionsPage" />
+    </FlyoutItem>
 
 </Shell>

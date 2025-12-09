@@ -36,5 +36,22 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>CFBundleDocumentTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleTypeName</key>
+            <string>SQLite Database File</string>
+            <key>CFBundleTypeRole</key>
+            <string>Viewer</string>
+            <key>LSItemContentTypes</key>
+            <array>
+                <string>public.database</string>
+            </array>
+            <key>CFBundleTypeExtensions</key>
+            <array>
+                <string>db</string>
+            </array>
+        </dict>
+    </array>
 </dict>
 </plist>

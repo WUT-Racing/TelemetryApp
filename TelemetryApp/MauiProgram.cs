@@ -26,6 +26,7 @@ public static class MauiProgram
         builder.Services.AddTransient<TelemetryService>();
         builder.Services.AddTransient<SessionsPage>();
         builder.Services.AddTransient<SessionViewModel>();
+        builder.Services.AddSingleton<AppShell>();
 
 
         var mauiApp = builder.Build();

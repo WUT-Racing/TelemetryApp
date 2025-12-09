@@ -7,12 +7,12 @@ public partial class App : Application
 {
 	public App()
 	{
-		InitializeComponent();
+		InitializeComponent();	
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		var sessionsPage = MauiProgram.Services.GetRequiredService<SessionsPage>();
+		var sessionsPage = MauiProgram.Services.GetRequiredService<AppShell>();
 		return new Window(sessionsPage);
 	}
 }
