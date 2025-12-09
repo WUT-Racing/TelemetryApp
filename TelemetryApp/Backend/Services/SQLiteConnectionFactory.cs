@@ -13,6 +13,11 @@ public class SQLiteConnectionFactory
         EnsureDirectoryAndTables();
     }
 
+    public SQLiteConnectionFactory()
+    {
+        _databasePath = null;
+    }
+
     private void EnsureDirectoryAndTables()
     {
         var dir = Path.GetDirectoryName(_databasePath);

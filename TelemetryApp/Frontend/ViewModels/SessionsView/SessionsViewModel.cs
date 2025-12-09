@@ -14,11 +14,6 @@ public partial class SessionViewModel : ObservableObject
         _telemetryService = telemetryService ?? throw new System.ArgumentNullException(nameof(telemetryService));
     }
 
-    public SessionViewModel()
-    {
-        _telemetryService = new TelemetryService();
-    }
-
     public void LoadSession(string fileToChange)
     {
         _telemetryService.ChangeDatabase(fileToChange);
@@ -35,16 +30,16 @@ public partial class SessionViewModel : ObservableObject
         try
         {
             var result = await FilePicker.Default.PickAsync();
-            
-            if (result == null) 
+
+            if (result == null)
                 return;
             var newDatabasePath = result.FullPath;
-            
-            LoadSession(newDatabasePath); 
+
+            LoadSession(newDatabasePath);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Błąd FilePicker: {ex.Message}");
         }
-        }
     }
+}

@@ -7,12 +7,6 @@ public partial class SessionsPage : ContentPage
 {
     private SessionViewModel viewModel;
 
-    public SessionsPage()
-    {
-        InitializeComponent();
-        viewModel = new SessionViewModel();
-        BindingContext = viewModel;
-    }
     public SessionsPage(SessionViewModel newViewModel)
     {
         InitializeComponent();

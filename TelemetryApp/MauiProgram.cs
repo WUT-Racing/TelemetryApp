@@ -1,12 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using TelemetryApp.Frontend.Views;
 
 namespace TelemetryApp;
 
 public static class MauiProgram
 {
+    public static IServiceProvider Services { get; private set; }
     public static MauiApp CreateMauiApp()
     {
-        
+
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
@@ -16,13 +18,19 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
-        builder.Services.AddSingleton<SQLiteConnectionFactory>();
-        builder.Services.AddTransient<TelemetryService>();
-
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
 
-        return builder.Build();
+        builder.Services.AddSingleton<SQLiteConnectionFactory>();
+        builder.Services.AddTransient<TelemetryService>();
+        builder.Services.AddTransient<SessionsPage>();
+        builder.Services.AddTransient<SessionViewModel>();
+
+
+        var mauiApp = builder.Build();
+        Services = mauiApp.Services;
+
+        return mauiApp;
     }
 }

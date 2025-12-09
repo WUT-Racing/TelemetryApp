@@ -6,15 +6,9 @@ using System.Linq;
 public class TelemetryService
 {
     private readonly SQLiteConnectionFactory _connectionFactory;
-    
+
     public TelemetryService(SQLiteConnectionFactory connectionFactory)
     {
-        _connectionFactory = connectionFactory;
-    }
-
-    public TelemetryService()
-    {
-        SQLiteConnectionFactory connectionFactory = new SQLiteConnectionFactory(Constants.DatabasePath);
         _connectionFactory = connectionFactory;
     }
 
@@ -46,5 +40,5 @@ public class TelemetryService
     {
         _connectionFactory.ChangeDatabase(newDatabasePath);
     }
-    
+
 }
