@@ -9,6 +9,6 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 		Routing.RegisterRoute("settingsRoute", typeof(SettingsPage));
-			BindingContext = appShellViewModel;
+		BindingContext = appShellViewModel;
 	}
 }

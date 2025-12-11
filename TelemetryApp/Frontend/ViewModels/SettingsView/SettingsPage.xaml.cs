@@ -5,9 +5,9 @@ namespace TelemetryApp.Frontend.Views;
 
 public partial class SettingsPage : ContentPage
 {
-    private SessionViewModel viewModel;
+    private SettingsViewModel viewModel;
 
-    public SettingsPage(SessionViewModel newViewModel)
+    public SettingsPage(SettingsViewModel newViewModel)
     {
         InitializeComponent();
         viewModel = newViewModel ?? throw new ArgumentNullException(nameof(newViewModel));

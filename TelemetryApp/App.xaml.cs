@@ -12,7 +12,7 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		var sessionsPage = MauiProgram.Services.GetRequiredService<AppShell>();
-		return new Window(sessionsPage);
+		var shellPage = MauiProgram.Services.GetRequiredService<AppShell>();
+		return new Window(shellPage);
 	}
 }
