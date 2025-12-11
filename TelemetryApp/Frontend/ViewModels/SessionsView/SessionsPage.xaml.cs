@@ -14,8 +14,5 @@ public partial class SessionsPage : ContentPage
         BindingContext = viewModel;
     }
 
-    private void CreateNewSession(object sender, EventArgs e)
-    {
-    }   
     
 }

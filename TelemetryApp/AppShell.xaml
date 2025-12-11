@@ -17,7 +17,7 @@
                         <TapGestureRecognizer Command="{Binding NavigateToConnectionCommand}"/>
                     </Label.GestureRecognizers>
                 </Label>
-                <Label Text="Command Center" FontSize="medium">
+                <Label Text="Command Center" FontSize="Medium">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateToCommandCenterCommand}"/>
                     </Label.GestureRecognizers>

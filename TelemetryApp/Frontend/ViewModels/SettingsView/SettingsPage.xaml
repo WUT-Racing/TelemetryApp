@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TelemetryApp.Frontend.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="PageRoot"
+    Title="Ustawienia"
+    BackgroundColor="{StaticResource mainGray}">
+
+    
+    <Grid RowDefinitions="Auto, *">
+        
+        <HorizontalStackLayout 
+            Grid.Row="0" 
+            Padding="10, 5" 
+            Spacing="10" 
+            BackgroundColor="LightGray">
+            
+            <Button Text="Ogólne" Command="{Binding ShowGeneralSettingsCommand}" />
+            <Button Text="Dane" Command="{Binding ShowDataSettingsCommand}" />
+            <Button Text="Eksport" Command="{Binding ShowExportSettingsCommand}" />
+            
+        </HorizontalStackLayout>
+
+        <Grid Grid.Row="1">
+            
+            <VerticalStackLayout 
+                Spacing="15" 
+                Padding="20"
+                IsVisible="{Binding IsGeneralSettingsVisible}">
+                <Label Text="Ustawienia Ogólne" FontSize="Title" />
+                </VerticalStackLayout>
+
+            <VerticalStackLayout 
+                Spacing="15" 
+                Padding="20"
+                IsVisible="{Binding IsDataSettingsVisible}">
+                <Label Text="Ustawienia Danych" FontSize="Title" />
+                </VerticalStackLayout>
+            
+        </Grid>
+        
+    </Grid>
+</ContentPage>

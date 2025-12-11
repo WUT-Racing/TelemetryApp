@@ -13,7 +13,7 @@
                 Command="{Binding LoadSessionFromPickerCommand}"
                 BackgroundColor="{StaticResource mainRed}"/>
         <Button Text="Utwórz nową sesję"
-                Clicked="CreateNewSession"
+                Command="{Binding CreateNewSessionCommand}"
                 BackgroundColor="{StaticResource mainRed}"/>
     </VerticalStackLayout>
 </ContentPage>
