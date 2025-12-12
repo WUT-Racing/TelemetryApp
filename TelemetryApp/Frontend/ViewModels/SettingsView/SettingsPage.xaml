@@ -31,6 +31,10 @@
                 <Label Text="Ustawienia Ogólne" FontSize="Title" />
                 </VerticalStackLayout>
 
+        </Grid>
+        
+        <Grid Grid.Row="2">
+
             <VerticalStackLayout 
                 Spacing="15" 
                 Padding="20"

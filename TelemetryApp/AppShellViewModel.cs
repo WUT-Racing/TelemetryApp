@@ -7,10 +7,4 @@ public partial class AppShellViewModel : ObservableObject
     {
     }
 
-    [RelayCommand]
-    private async Task NavigateToSettings()
-    {
-        await Shell.Current.GoToAsync("settingsRoute");
-        Shell.Current.FlyoutIsPresented = false;
-    }
 }
