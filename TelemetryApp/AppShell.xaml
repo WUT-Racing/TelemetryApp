@@ -14,6 +14,11 @@
             ContentTemplate="{DataTemplate views:SessionsPage}"
             Route="SessionsPage" />
     </FlyoutItem>
+    <FlyoutItem Title="Dashboard" Icon="dashboard.icon.png">
+        <ShellContent Title="Dashboard"
+            ContentTemplate="{DataTemplate views:SessionDetailPage}"
+            Route="SessionDetailPage"/>
+    </FlyoutItem>
     <FlyoutItem Title="Ustawienia">
         <ShellContent
             Title="Ustawienia"

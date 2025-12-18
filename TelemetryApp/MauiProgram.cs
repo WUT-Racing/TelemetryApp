@@ -30,6 +30,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<SettingsViewModel>();
+        builder.Services.AddTransient<SessionDetailPage>();
+        builder.Services.AddTransient<SessionDetailViewModel>();
 
 
         var mauiApp = builder.Build();

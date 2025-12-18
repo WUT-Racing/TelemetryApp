@@ -9,40 +9,47 @@
 
     
     <Grid RowDefinitions="Auto, *">
-        
-        <HorizontalStackLayout 
-            Grid.Row="0" 
-            Padding="10, 5" 
-            Spacing="10" 
-            BackgroundColor="LightGray">
-            
-            <Button Text="Ogólne" Command="{Binding ShowGeneralSettingsCommand}" />
-            <Button Text="Dane" Command="{Binding ShowDataSettingsCommand}" />
-            <Button Text="Eksport" Command="{Binding ShowExportSettingsCommand}" />
-            
-        </HorizontalStackLayout>
+    
+    <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
+        <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
+        <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
+        <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
+    </HorizontalStackLayout>
 
-        <Grid Grid.Row="1">
-            
-            <VerticalStackLayout 
-                Spacing="15" 
-                Padding="20"
-                IsVisible="{Binding IsGeneralSettingsVisible}">
-                <Label Text="Ustawienia Ogólne" FontSize="Title" />
-                </VerticalStackLayout>
-
-        </Grid>
+    <Grid Grid.Row="1" Padding="20">
         
-        <Grid Grid.Row="2">
-
-            <VerticalStackLayout 
-                Spacing="15" 
-                Padding="20"
-                IsVisible="{Binding IsDataSettingsVisible}">
-                <Label Text="Ustawienia Danych" FontSize="Title" />
-                </VerticalStackLayout>
+        <VerticalStackLayout IsVisible="False">
+            <Label Text="Ustawienia Ogólne" FontSize="24" />
+            <Entry Placeholder="Imię użytkownika" />
             
-        </Grid>
-        
+            <VerticalStackLayout.Triggers>
+                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </VerticalStackLayout.Triggers>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout IsVisible="False">
+            <Label Text="Ustawienia Danych" FontSize="24" />
+            <CheckBox />
+            
+            <VerticalStackLayout.Triggers>
+                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </VerticalStackLayout.Triggers>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout IsVisible="False">
+            <Label Text="Ustawienia Eksportu" FontSize="24" />
+            
+            <VerticalStackLayout.Triggers>
+                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
+                    <Setter Property="IsVisible" Value="True" />
+                </DataTrigger>
+            </VerticalStackLayout.Triggers>
+        </VerticalStackLayout>
+
     </Grid>
+</Grid>
 </ContentPage>
