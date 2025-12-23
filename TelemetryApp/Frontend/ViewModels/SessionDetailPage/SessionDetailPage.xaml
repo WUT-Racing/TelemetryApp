@@ -7,10 +7,10 @@
 
     <Grid RowDefinitions="Auto, *">
 
-        <ScrollView Grid.Row="0" Orientation="Horizontal" BackgroundColor="{StaticResource mainGray}" Padding="10">
+        <ScrollView Grid.Row="0" Orientation="Horizontal"  Padding="10">
             <HorizontalStackLayout Spacing="15">
                 
-                <Frame BackgroundColor="White" Padding="10" CornerRadius="8" BorderColor="Gray">
+                <Frame  Padding="10" CornerRadius="8" BorderColor="Gray">
                     <StackLayout>
                         <Label Text="123 km/h" FontAttributes="Bold" HorizontalOptions="Center"/>
                         <Label Text="Pojedyncza" FontSize="10" HorizontalOptions="Center"/>
@@ -20,7 +20,7 @@
                     </Frame.GestureRecognizers>
                 </Frame>
 
-                <Frame BackgroundColor="White" Padding="10" CornerRadius="8" BorderColor="Gray">
+                <Frame  Padding="10" CornerRadius="8" >
                     <StackLayout>
                         <Label Text="📈" FontSize="20" HorizontalOptions="Center"/>
                         <Label Text="Wykres" FontSize="10" HorizontalOptions="Center"/>
@@ -30,7 +30,7 @@
                     </Frame.GestureRecognizers>
                 </Frame>
 
-                <Frame BackgroundColor="White" Padding="10" CornerRadius="8" BorderColor="Gray">
+                <Frame  Padding="10" CornerRadius="8" >
                     <StackLayout>
                         <Label Text="Min | Act | Max" FontSize="10" HorizontalOptions="Center"/>
                         <Label Text="Statystyki" FontSize="10" HorizontalOptions="Center"/>
@@ -43,9 +43,9 @@
             </HorizontalStackLayout>
         </ScrollView>
 
-        <Grid Grid.Row="1" RowDefinitions="*,*" ColumnDefinitions="*,*" Padding="10" RowSpacing="10" ColumnSpacing="10" BackgroundColor="#e0e0e0">
+        <Grid Grid.Row="1" RowDefinitions="*,*" ColumnDefinitions="*,*" Padding="10" RowSpacing="10" ColumnSpacing="10" >
 
-            <Border Grid.Row="0" Grid.Column="0" Stroke="Gray" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5">
+            <Border Grid.Row="0" Grid.Column="0"  StrokeShape="RoundRectangle 10"  Padding="5">
                 <ContentView Content="{Binding Slot00Content}">
                     <ContentView.GestureRecognizers>
                         <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="00"/>
@@ -53,7 +53,7 @@
                 </ContentView>
             </Border>
 
-            <Border Grid.Row="0" Grid.Column="1" Stroke="Gray" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5">
+            <Border Grid.Row="0" Grid.Column="1"  StrokeShape="RoundRectangle 10"  Padding="5">
                 <ContentView Content="{Binding Slot01Content}">
                     <ContentView.GestureRecognizers>
                         <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="01"/>
@@ -61,7 +61,7 @@
                 </ContentView>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="0" Stroke="Gray" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5">
+            <Border Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 10"  Padding="5">
                 <ContentView Content="{Binding Slot10Content}">
                     <ContentView.GestureRecognizers>
                         <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="10"/>
@@ -69,7 +69,7 @@
                 </ContentView>
             </Border>
 
-            <Border Grid.Row="1" Grid.Column="1" Stroke="Gray" StrokeShape="RoundRectangle 10" BackgroundColor="White" Padding="5">
+            <Border Grid.Row="1" Grid.Column="1"  StrokeShape="RoundRectangle 10"  Padding="5">
                 <ContentView Content="{Binding Slot11Content}">
                     <ContentView.GestureRecognizers>
                         <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="11"/>
