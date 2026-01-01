@@ -4,16 +4,19 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
-    Title="Sesje"
-    BackgroundColor="{StaticResource mainGray}">
+    Title="Sesje">
     <VerticalStackLayout Padding="12"
             Spacing="10"
             VerticalOptions="Center">
         <Button Text="Wczytaj sesje"
+                HeightRequest="50"
+                FontSize="18"
                 Command="{Binding LoadSessionFromPickerCommand}"
-                BackgroundColor="{StaticResource mainRed}"/>
+                />
         <Button Text="Utwórz nową sesję"
+                HeightRequest="50"
+                FontSize="18"
                 Command="{Binding CreateNewSessionCommand}"
-                BackgroundColor="{StaticResource mainRed}"/>
+                />
     </VerticalStackLayout>
 </ContentPage>

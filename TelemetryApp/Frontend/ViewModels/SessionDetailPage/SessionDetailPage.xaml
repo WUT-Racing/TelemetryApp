@@ -2,82 +2,67 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TelemetryApp.Frontend.Views.SessionDetailPage"
-             x:Name="ThisPage"
-             Title="Edytor Dashboardu">
+             Title="Edytor Dashboardu"
+             x:Name="ThisPage">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, Auto, *">
+    <ScrollView Grid.Row="0" Orientation="Horizontal" Padding="10">
+        <HorizontalStackLayout Spacing="15">
+            <Border Padding="10" StrokeShape="RoundRectangle 8">
+                <Label Text="Wartość" />
+                <Border.GestureRecognizers>
+                    <DragGestureRecognizer CanDrag="True" 
+                                           DragStartingCommand="{Binding DragStartCommand}" 
+                                           DragStartingCommandParameter="Single"/>
+                </Border.GestureRecognizers>
+            </Border>
 
-        <ScrollView Grid.Row="0" Orientation="Horizontal"  Padding="10">
-            <HorizontalStackLayout Spacing="15">
-                
-                <Frame  Padding="10" CornerRadius="8" BorderColor="Gray">
-                    <StackLayout>
-                        <Label Text="123 km/h" FontAttributes="Bold" HorizontalOptions="Center"/>
-                        <Label Text="Pojedyncza" FontSize="10" HorizontalOptions="Center"/>
-                    </StackLayout>
-                    <Frame.GestureRecognizers>
-                        <DragGestureRecognizer CanDrag="True" DragStartingCommand="{Binding DragStartCommand}" DragStartingCommandParameter="Single"/>
-                    </Frame.GestureRecognizers>
-                </Frame>
-
-                <Frame  Padding="10" CornerRadius="8" >
-                    <StackLayout>
-                        <Label Text="📈" FontSize="20" HorizontalOptions="Center"/>
-                        <Label Text="Wykres" FontSize="10" HorizontalOptions="Center"/>
-                    </StackLayout>
-                    <Frame.GestureRecognizers>
-                        <DragGestureRecognizer CanDrag="True" DragStartingCommand="{Binding DragStartCommand}" DragStartingCommandParameter="Chart"/>
-                    </Frame.GestureRecognizers>
-                </Frame>
-
-                <Frame  Padding="10" CornerRadius="8" >
-                    <StackLayout>
-                        <Label Text="Min | Act | Max" FontSize="10" HorizontalOptions="Center"/>
-                        <Label Text="Statystyki" FontSize="10" HorizontalOptions="Center"/>
-                    </StackLayout>
-                    <Frame.GestureRecognizers>
-                        <DragGestureRecognizer CanDrag="True" DragStartingCommand="{Binding DragStartCommand}" DragStartingCommandParameter="Stats"/>
-                    </Frame.GestureRecognizers>
-                </Frame>
-
+            <Border Padding="10" StrokeShape="RoundRectangle 8" BackgroundColor="{StaticResource Gray600}">
+                <Label Text="📈 Wykres" TextColor="White" />
+                <Border.GestureRecognizers>
+                    <DragGestureRecognizer CanDrag="True" 
+                                        DragStartingCommand="{Binding DragStartCommand}" 
+                                        DragStartingCommandParameter="Chart"/>
+                </Border.GestureRecognizers>
+            </Border>
             </HorizontalStackLayout>
-        </ScrollView>
+    </ScrollView>
 
-        <Grid Grid.Row="1" RowDefinitions="*,*" ColumnDefinitions="*,*" Padding="10" RowSpacing="10" ColumnSpacing="10" >
+    <HorizontalStackLayout Grid.Row="1" Spacing="10" Padding="10" HorizontalOptions="Center">
+        <Button Text="➕ Dodaj Slot" Command="{Binding AddSlotCommand}" />
+        <Label Text="Kolumny:" VerticalOptions="Center" />
+        <Border StrokeShape="RoundRectangle 3" Stroke="Gray">
+            <Stepper Minimum="1" Maximum="4" Value="{Binding GridSpan}"/>
+        </Border>
+        
+    </HorizontalStackLayout>
 
-            <Border Grid.Row="0" Grid.Column="0"  StrokeShape="RoundRectangle 10"  Padding="5">
-                <ContentView Content="{Binding Slot00Content}">
-                    <ContentView.GestureRecognizers>
-                        <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="00"/>
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-            </Border>
-
-            <Border Grid.Row="0" Grid.Column="1"  StrokeShape="RoundRectangle 10"  Padding="5">
-                <ContentView Content="{Binding Slot01Content}">
-                    <ContentView.GestureRecognizers>
-                        <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="01"/>
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-            </Border>
-
-            <Border Grid.Row="1" Grid.Column="0" StrokeShape="RoundRectangle 10"  Padding="5">
-                <ContentView Content="{Binding Slot10Content}">
-                    <ContentView.GestureRecognizers>
-                        <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="10"/>
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-            </Border>
-
-            <Border Grid.Row="1" Grid.Column="1"  StrokeShape="RoundRectangle 10"  Padding="5">
-                <ContentView Content="{Binding Slot11Content}">
-                    <ContentView.GestureRecognizers>
-                        <DropGestureRecognizer AllowDrop="True" DropCommand="{Binding ItemDroppedCommand}" DropCommandParameter="11"/>
-                    </ContentView.GestureRecognizers>
-                </ContentView>
-            </Border>
-
-        </Grid>
-
-    </Grid>
+    <CollectionView Grid.Row="2" ItemsSource="{Binding DashboardSlots}">
+        <CollectionView.ItemsLayout>
+            <GridItemsLayout Orientation="Vertical" 
+                             Span="{Binding GridSpan}" 
+                             HorizontalItemSpacing="10" 
+                             VerticalItemSpacing="10" />
+        </CollectionView.ItemsLayout>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Border StrokeShape="RoundRectangle 10" Stroke="Gray" HeightRequest="150">
+                    <Grid>
+                        <Button Text="X" HorizontalOptions="End" VerticalOptions="Start"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveSlotCommand}"
+                                CommandParameter="{Binding .}" />
+                        
+                        <ContentView Content="{Binding CurrentWidget}" HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="Transparent">
+                            <ContentView.GestureRecognizers>
+                                <DropGestureRecognizer AllowDrop="True" 
+                                                       DropCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ItemDroppedCommand}" 
+                                                       DropCommandParameter="{Binding .}"/>
+                            </ContentView.GestureRecognizers>
+                        </ContentView>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</Grid>
 </ContentPage>

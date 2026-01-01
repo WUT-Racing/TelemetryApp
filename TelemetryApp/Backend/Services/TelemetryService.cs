@@ -41,4 +41,10 @@ public class TelemetryService
         _connectionFactory.ChangeDatabase(newDatabasePath);
     }
 
+    public string[] GetDataTypes()
+    {
+        //TODO
+        return ["Prędkość", "Obroty", "Temperatura Oleju"];
+    }
+
 }
