@@ -5,64 +5,9 @@
              Title="Edytor Dashboardu"
              x:Name="ThisPage">
 
-    <Grid RowDefinitions="Auto, Auto, *">
-    <ScrollView Grid.Row="0" Orientation="Horizontal" Padding="10">
-        <HorizontalStackLayout Spacing="15">
-            <Border Padding="10" StrokeShape="RoundRectangle 8">
-                <Label Text="Wartość" />
-                <Border.GestureRecognizers>
-                    <DragGestureRecognizer CanDrag="True" 
-                                           DragStartingCommand="{Binding DragStartCommand}" 
-                                           DragStartingCommandParameter="Single"/>
-                </Border.GestureRecognizers>
-            </Border>
+    
+    <VerticalStackLayout>
+        <Button Text="Dodaj wykres" Command="{Binding AddPlotCommand}" />
+    </VerticalStackLayout>
 
-            <Border Padding="10" StrokeShape="RoundRectangle 8" BackgroundColor="{StaticResource Gray600}">
-                <Label Text="📈 Wykres" TextColor="White" />
-                <Border.GestureRecognizers>
-                    <DragGestureRecognizer CanDrag="True" 
-                                        DragStartingCommand="{Binding DragStartCommand}" 
-                                        DragStartingCommandParameter="Chart"/>
-                </Border.GestureRecognizers>
-            </Border>
-            </HorizontalStackLayout>
-    </ScrollView>
-
-    <HorizontalStackLayout Grid.Row="1" Spacing="10" Padding="10" HorizontalOptions="Center">
-        <Button Text="➕ Dodaj Slot" Command="{Binding AddSlotCommand}" />
-        <Label Text="Kolumny:" VerticalOptions="Center" />
-        <Border StrokeShape="RoundRectangle 3" Stroke="Gray">
-            <Stepper Minimum="1" Maximum="4" Value="{Binding GridSpan}"/>
-        </Border>
-        
-    </HorizontalStackLayout>
-
-    <CollectionView Grid.Row="2" ItemsSource="{Binding DashboardSlots}">
-        <CollectionView.ItemsLayout>
-            <GridItemsLayout Orientation="Vertical" 
-                             Span="{Binding GridSpan}" 
-                             HorizontalItemSpacing="10" 
-                             VerticalItemSpacing="10" />
-        </CollectionView.ItemsLayout>
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Border StrokeShape="RoundRectangle 10" Stroke="Gray" HeightRequest="150">
-                    <Grid>
-                        <Button Text="X" HorizontalOptions="End" VerticalOptions="Start"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.RemoveSlotCommand}"
-                                CommandParameter="{Binding .}" />
-                        
-                        <ContentView Content="{Binding CurrentWidget}" HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="Transparent">
-                            <ContentView.GestureRecognizers>
-                                <DropGestureRecognizer AllowDrop="True" 
-                                                       DropCommand="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.ItemDroppedCommand}" 
-                                                       DropCommandParameter="{Binding .}"/>
-                            </ContentView.GestureRecognizers>
-                        </ContentView>
-                    </Grid>
-                </Border>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
-</Grid>
 </ContentPage>

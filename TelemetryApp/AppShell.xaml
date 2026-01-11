@@ -5,25 +5,28 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TelemetryApp"
     xmlns:views="clr-namespace:TelemetryApp.Frontend.Views"
-    Title="TelemetryApp"
+    Title="Telemetry App"
     Shell.FlyoutBehavior="Flyout">
 
-    <FlyoutItem Title="Sesje" Icon="sessions_icon.png">
+
+    <FlyoutItem Title="Sesje"
+                Icon="sessions_icon.png">
         <ShellContent
             Title="Sesje"
             ContentTemplate="{DataTemplate views:SessionsPage}"
-            Route="SessionsPage" />
+            Route="SessionsPage"/>
     </FlyoutItem>
-    <FlyoutItem Title="Dashboard" Icon="dashboard.icon.png">
+    <FlyoutItem Title="Dashboard"
+                Icon="dashboard.icon.png">
         <ShellContent Title="Dashboard"
-            ContentTemplate="{DataTemplate views:SessionDetailPage}"
-            Route="SessionDetailPage"/>
+                      ContentTemplate="{DataTemplate views:SessionDetailPage}"
+                      Route="SessionDetailPage"/>
     </FlyoutItem>
     <FlyoutItem Title="Ustawienia">
         <ShellContent
             Title="Ustawienia"
             ContentTemplate="{DataTemplate views:SettingsPage}"
-            Route="SettingsPage" />
+            Route="SettingsPage"/>
     </FlyoutItem>
 
 </Shell>
