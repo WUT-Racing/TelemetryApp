@@ -5,6 +5,8 @@ using CommunityToolkit.Mvvm.Input;
 
 public partial class SessionDetailViewModel : ObservableObject
 {
+
+    public ObservableCollection<SinglePlotViewModel> VisibleCharts { get; set; }
     public SessionDetailViewModel()
     {
     }
