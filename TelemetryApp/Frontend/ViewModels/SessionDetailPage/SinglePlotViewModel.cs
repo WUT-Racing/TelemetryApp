@@ -6,6 +6,7 @@ using SkiaSharp;
 
 public class SinglePlotViewModel
 {
+    public string Title { get; set; }
     public ObservableCollection<ISeries> Series { get; set; }
     public ObservableCollection<RectangularSection> Sections { get; set; }
 

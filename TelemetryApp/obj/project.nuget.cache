@@ -1,10 +1,16 @@
 {
   "version": 2,
-  "dgSpecHash": "JrLPQS0ff0w=",
+  "dgSpecHash": "i6vMGRG4D0c=",
   "success": true,
   "projectFilePath": "/Users/bartek/Moje pliki/WUT/Telemetry/TelemetryApp/TelemetryApp.csproj",
   "expectedPackageFiles": [
     "/Users/bartek/.nuget/packages/communitytoolkit.mvvm/8.4.0/communitytoolkit.mvvm.8.4.0.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/harfbuzzsharp/8.3.0.1/harfbuzzsharp.8.3.0.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/harfbuzzsharp.nativeassets.maccatalyst/8.3.0.1/harfbuzzsharp.nativeassets.maccatalyst.8.3.0.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/livechartscore/2.0.0-rc5/livechartscore.2.0.0-rc5.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/livechartscore.behaviours/2.0.0-rc5/livechartscore.behaviours.2.0.0-rc5.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/livechartscore.skiasharpview/2.0.0-rc5/livechartscore.skiasharpview.2.0.0-rc5.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/livechartscore.skiasharpview.maui/2.0.0-rc5/livechartscore.skiasharpview.maui.2.0.0-rc5.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.extensions.configuration/10.0.0/microsoft.extensions.configuration.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.extensions.configuration.abstractions/10.0.0/microsoft.extensions.configuration.abstractions.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.extensions.dependencyinjection/10.0.0/microsoft.extensions.dependencyinjection.10.0.0.nupkg.sha512",
@@ -26,60 +32,17 @@
     "/Users/bartek/.nuget/packages/microsoft.maui.graphics/10.0.0/microsoft.maui.graphics.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.maui.resizetizer/10.0.0/microsoft.maui.resizetizer.10.0.0.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.net.illink.tasks/10.0.0/microsoft.net.illink.tasks.10.0.0.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp/3.119.1/skiasharp.3.119.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp.harfbuzz/3.116.1/skiasharp.harfbuzz.3.116.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp.nativeassets.maccatalyst/3.119.1/skiasharp.nativeassets.maccatalyst.3.119.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp.views/3.119.1/skiasharp.views.3.119.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp.views.maui.controls/3.119.1/skiasharp.views.maui.controls.3.119.1.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/skiasharp.views.maui.core/3.119.1/skiasharp.views.maui.core.3.119.1.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlite-net-pcl/1.9.172/sqlite-net-pcl.1.9.172.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.bundle_green/2.1.2/sqlitepclraw.bundle_green.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.core/2.1.2/sqlitepclraw.core.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.2/sqlitepclraw.lib.e_sqlite3.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.2/sqlitepclraw.provider.e_sqlite3.2.1.2.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'LiveChartsCore.SkiaSharpView.WPF 2.0.0-rc5' was restored using 'Xamarin.iOS,Version=v1.0, .NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0-maccatalyst26.1'. This package may not be fully compatible with your project.",
-      "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "warningLevel": 1,
-      "filePath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "libraryId": "LiveChartsCore.SkiaSharpView.WPF",
-      "targetGraphs": [
-        "net10.0-maccatalyst26.1"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'OpenTK 3.3.1' was restored using 'Xamarin.iOS,Version=v1.0, .NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0-maccatalyst26.1'. This package may not be fully compatible with your project.",
-      "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "warningLevel": 1,
-      "filePath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "libraryId": "OpenTK",
-      "targetGraphs": [
-        "net10.0-maccatalyst26.1"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'OpenTK.GLWpfControl 3.3.0' was restored using 'Xamarin.iOS,Version=v1.0, .NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0-maccatalyst26.1'. This package may not be fully compatible with your project.",
-      "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "warningLevel": 1,
-      "filePath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "libraryId": "OpenTK.GLWpfControl",
-      "targetGraphs": [
-        "net10.0-maccatalyst26.1"
-      ]
-    },
-    {
-      "code": "NU1701",
-      "level": "Warning",
-      "message": "Package 'SkiaSharp.Views.WPF 3.116.1' was restored using 'Xamarin.iOS,Version=v1.0, .NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net10.0-maccatalyst26.1'. This package may not be fully compatible with your project.",
-      "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "warningLevel": 1,
-      "filePath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
-      "libraryId": "SkiaSharp.Views.WPF",
-      "targetGraphs": [
-        "net10.0-maccatalyst26.1"
-      ]
-    }
-  ]
+  "logs": []
 }

@@ -1,14 +1,60 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
              x:Class="TelemetryApp.Frontend.Views.SessionDetailPage"
              Title="Edytor Dashboardu"
              x:Name="ThisPage">
 
-    <VerticalStackLayout>
-        <Button Text="Dodaj wykres" Command="{Binding AddPlotCommand}" />
-        <Button Text="Synchronizuj wykresy" Command="{Binding SynchronizePlotsCommand}" />
-        <Button Text="Zatrzymaj aktualizowanie" Command="{Binding StartStopCommand}"/>
-    </VerticalStackLayout>
+    <Grid RowDefinitions="Auto, *">
+        <HorizontalStackLayout>
+            <Button Text="Dodaj wykres"
+                    Command="{Binding AddPlotCommand}"/>
+            <Button Text="Synchronizuj wykresy"
+                    Command="{Binding SynchronizePlotsCommand}"/>
+            <Button Text="Zatrzymaj aktualizowanie"
+                    Command="{Binding StartStopCommand}"/>
+        </HorizontalStackLayout>
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding VisibleCharts}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BorderColor="Gray"
+                           Margin="10"
+                           HeightRequest="300"
+                           Padding="5">
+                        <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto">
+                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="Center"/>
+                            <Button Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="✕"
+                                    TextColor="Red"
+                                    BackgroundColor="Transparent"
+                                    FontAttributes="Bold"
+                                    FontSize="18"
+                                    Padding="0"
+                                    HeightRequest="30"
+                                    WidthRequest="30"
+                                    Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
+                                    CommandParameter="{Binding .}"/>
 
+                            <lvc:CartesianChart
+                                Grid.Row="1"
+                                Series="{Binding Series}"
+                                Sections="{Binding Sections}">
+                                <lvc:CartesianChart.GestureRecognizers>
+                                    <PointerGestureRecognizer
+                                        PointerPressed="OnPointerPressed"
+                                        PointerMoved="OnPointerMoved"
+                                        PointerReleased="OnPointerReleased"/>
+                                </lvc:CartesianChart.GestureRecognizers>
+                            </lvc:CartesianChart>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
