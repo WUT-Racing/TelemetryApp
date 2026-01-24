@@ -36,6 +36,8 @@ public static class MauiProgram
         builder.Services.AddTransient<SettingsViewModel>();
         builder.Services.AddTransient<SessionDetailPage>();
         builder.Services.AddTransient<SessionDetailViewModel>();
+        builder.Services.AddTransient<ConnectionPage>();
+        builder.Services.AddTransient<ConnectionPageViewModel>();
 
 
         var mauiApp = builder.Build();

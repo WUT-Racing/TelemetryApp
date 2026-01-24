@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="TelemetryApp.Frontend.Views.ConnectionPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Name="PageRoot"
+    Title="Połączenie">
+
+<Grid RowDefinitions="Auto, Auto, Auto, *"
+    RowSpacing="10"
+    Padding="20">
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="20">
+            <Label HeightRequest="20">Client</Label>
+            <Button Text="Connect"/>
+        </HorizontalStackLayout>
+        <Editor Grid.Row="1" Text="{Binding ClientConsoleText}"
+                IsReadOnly="True"
+                AutoSize="TextChanges"
+                MinimumHeightRequest="10"
+                MaximumHeightRequest="300"/>
+        <HorizontalStackLayout Grid.Row="2" Spacing="10" Padding="20">
+            <Label HeightRequest="20">Server</Label>
+            <Button Text="Connect"/>
+        </HorizontalStackLayout>
+        <Editor Grid.Row="4" Text="{Binding ServerConsoleText}"
+                IsReadOnly="True"
+                AutoSize="TextChanges"
+                MinimumHeightRequest="10"
+                MaximumHeightRequest="300"/>
+</Grid>
+
+</ContentPage>
