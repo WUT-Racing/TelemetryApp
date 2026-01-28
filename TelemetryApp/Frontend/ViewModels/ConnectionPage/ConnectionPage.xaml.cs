@@ -10,4 +10,6 @@ public partial class ConnectionPage : ContentPage
         viewModel = newViewModel ?? throw new ArgumentNullException(nameof(newViewModel));
         BindingContext = viewModel;
     }
+
+
 }

@@ -3,6 +3,7 @@
     x:Class="TelemetryApp.Frontend.Views.ConnectionPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Name="PageRoot"
     Title="Połączenie">
 
@@ -11,12 +12,17 @@
     Padding="20">
         <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="20">
             <Label HeightRequest="20">Client</Label>
-            <Button Text="Connect"/>
+            <Picker Title="Wybierz port" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}"><Picker.Behaviors>
+        <toolkit:EventToCommandBehavior
+            EventName="Focused"
+            Command="{Binding ScanPortsCommand}" />
+    </Picker.Behaviors></Picker>
+            <Button Text="Connect" Command="{Binding ConnectCommand}"/>
         </HorizontalStackLayout>
-        <Editor Grid.Row="1" Text="{Binding ClientConsoleText}"
+        <Editor Grid.Row="1" Text="{Binding ClientText}"
                 IsReadOnly="True"
                 AutoSize="TextChanges"
-                MinimumHeightRequest="10"
+                MinimumHeightRequest="300"
                 MaximumHeightRequest="300"/>
         <HorizontalStackLayout Grid.Row="2" Spacing="10" Padding="20">
             <Label HeightRequest="20">Server</Label>
