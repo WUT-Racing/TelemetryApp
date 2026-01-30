@@ -7,32 +7,93 @@
     x:Name="PageRoot"
     Title="Połączenie">
 
-<Grid RowDefinitions="Auto, Auto, Auto, *"
-    RowSpacing="10"
-    Padding="20">
-        <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="20">
-            <Label HeightRequest="20">Client</Label>
-            <Picker Title="Wybierz port" ItemsSource="{Binding AvailablePorts}" SelectedItem="{Binding SelectedPort}"><Picker.Behaviors>
-        <toolkit:EventToCommandBehavior
-            EventName="Focused"
-            Command="{Binding ScanPortsCommand}" />
-    </Picker.Behaviors></Picker>
-            <Button Text="Connect" Command="{Binding ConnectCommand}"/>
-        </HorizontalStackLayout>
-        <Editor Grid.Row="1" Text="{Binding ClientText}"
-                IsReadOnly="True"
-                AutoSize="TextChanges"
-                MinimumHeightRequest="300"
-                MaximumHeightRequest="300"/>
-        <HorizontalStackLayout Grid.Row="2" Spacing="10" Padding="20">
-            <Label HeightRequest="20">Server</Label>
-            <Button Text="Connect"/>
-        </HorizontalStackLayout>
-        <Editor Grid.Row="4" Text="{Binding ServerConsoleText}"
-                IsReadOnly="True"
-                AutoSize="TextChanges"
-                MinimumHeightRequest="10"
-                MaximumHeightRequest="300"/>
-</Grid>
+    <Grid Padding="20">
+
+        <Grid RowDefinitions="Auto, Auto, *"
+                RowSpacing="10"
+                Margin="0, 60, 0, 0">
+
+            <Editor Grid.Row="0"
+                    Text="{Binding ClientText}"
+                    IsReadOnly="True"
+                    AutoSize="TextChanges"
+                    MinimumHeightRequest="300"
+                    MaximumHeightRequest="300"/>
+
+            <HorizontalStackLayout Grid.Row="1"
+                    Spacing="10"
+                    Padding="0, 10">
+                <Label HeightRequest="20"
+                        Text="Server"
+                        VerticalOptions="Center"/>
+                <Button Text="Connect"/>
+            </HorizontalStackLayout>
+
+            <Editor Grid.Row="2"
+                    Text="{Binding ServerConsoleText}"
+                    IsReadOnly="True"
+                    AutoSize="TextChanges"
+                    MinimumHeightRequest="10"/>
+        </Grid>
+
+        <Grid ColumnDefinitions="Auto, Auto, Auto, Auto"
+              ColumnSpacing="10"
+              VerticalOptions="Start"
+              HeightRequest="50">
+            <Label Grid.Column="0"
+                    Text="Client"
+                    VerticalOptions="Center"/>
+
+            <toolkit:Expander Grid.Column="1"
+                              WidthRequest="300"
+                              VerticalOptions="Start">
+                <toolkit:Expander.Header>
+                    <Border Padding="10"
+                            HeightRequest="45">
+                        <Grid ColumnDefinitions="*, Auto">
+                            <Label Grid.Column="0"
+                                   Text="{Binding SelectedPort, TargetNullValue='Wybierz port...'}"
+                                   LineBreakMode="TailTruncation"
+                                   VerticalOptions="Center"/>
+                            <Label Grid.Column="1"
+                                    Text="▼"
+                                    TextColor="Gray"
+                                    VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+                </toolkit:Expander.Header>
+
+                <toolkit:Expander.Content>
+                    <Border StrokeThickness="1">
+                        <CollectionView ItemsSource="{Binding AvailablePorts}"
+                                        SelectionMode="Single"
+                                        SelectedItem="{Binding SelectedPort}"
+                                        HeightRequest="200">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Label Text="{Binding .}"
+                                           Padding="10"
+                                           LineBreakMode="WordWrap"/>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Border>
+                </toolkit:Expander.Content>
+            </toolkit:Expander>
+
+            <Button Grid.Column="2"
+                    Text="🔄"
+                    WidthRequest="50"
+                    Command="{Binding ScanPortsCommand}"
+                    VerticalOptions="Start"
+                    HeightRequest="45"/>
+            <Button Grid.Column="3"
+                    Text="Connect"
+                    Command="{Binding ConnectCommand}"
+                    VerticalOptions="Start"
+                    HeightRequest="45"/>
+        </Grid>
+
+    </Grid>
 
 </ContentPage>

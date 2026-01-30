@@ -11,6 +11,7 @@ public static class MauiProgram
     public static IServiceProvider Services { get; private set; }
     public static MauiApp CreateMauiApp()
     {
+        
 
         var builder = MauiApp.CreateBuilder();
         builder

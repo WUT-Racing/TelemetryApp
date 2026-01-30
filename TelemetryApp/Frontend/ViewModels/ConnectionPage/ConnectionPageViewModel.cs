@@ -23,6 +23,8 @@ public partial class ConnectionPageViewModel : ObservableObject
         clientBoard.OnDataReceived += HandleDataReceived;
 
         ClientText = "";
+
+        ScanPorts();
     }
 
     private void HandleDataReceived(string data)

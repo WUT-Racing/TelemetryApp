@@ -8,22 +8,19 @@
     Title="Telemetry App"
     Shell.FlyoutBehavior="Flyout">
 
-    <FlyoutItem Title="Połączenia"
-                Icon="sessions_icon.png">
+    <FlyoutItem Title="Połączenia">
         <ShellContent
             Title="Połączenia"
             ContentTemplate="{DataTemplate views:ConnectionPage}"
             Route="ConnectionPage"/>
     </FlyoutItem>
-    <FlyoutItem Title="Sesje"
-                Icon="sessions_icon.png">
+    <FlyoutItem Title="Sesje">
         <ShellContent
             Title="Sesje"
             ContentTemplate="{DataTemplate views:SessionsPage}"
             Route="SessionsPage"/>
     </FlyoutItem>
-    <FlyoutItem Title="Dashboard"
-                Icon="dashboard.icon.png">
+    <FlyoutItem Title="Dashboard">
         <ShellContent Title="Dashboard"
                       ContentTemplate="{DataTemplate views:SessionDetailPage}"
                       Route="SessionDetailPage"/>
