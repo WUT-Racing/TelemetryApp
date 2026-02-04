@@ -10,8 +10,8 @@
     <Grid Padding="20">
 
         <Grid RowDefinitions="Auto, Auto, *"
-                RowSpacing="10"
-                Margin="0, 60, 0, 0">
+              RowSpacing="10"
+              Margin="0, 60, 0, 0">
 
             <Editor Grid.Row="0"
                     Text="{Binding ClientText}"
@@ -21,11 +21,11 @@
                     MaximumHeightRequest="300"/>
 
             <HorizontalStackLayout Grid.Row="1"
-                    Spacing="10"
-                    Padding="0, 10">
+                                   Spacing="10"
+                                   Padding="0, 10">
                 <Label HeightRequest="20"
-                        Text="Server"
-                        VerticalOptions="Center"/>
+                       Text="Server"
+                       VerticalOptions="Center"/>
                 <Button Text="Connect"/>
             </HorizontalStackLayout>
 
@@ -38,15 +38,15 @@
 
         <Grid ColumnDefinitions="Auto, Auto, Auto, Auto"
               ColumnSpacing="10"
-              VerticalOptions="Start"
-              HeightRequest="50">
+              VerticalOptions="Start">
             <Label Grid.Column="0"
-                    Text="Client"
-                    VerticalOptions="Center"/>
+                   Text="Client"
+                   VerticalOptions="Center"/>
 
             <toolkit:Expander Grid.Column="1"
                               WidthRequest="300"
-                              VerticalOptions="Start">
+                              VerticalOptions="Start"
+                              IsExpanded="{Binding IsPortExpanderOpen, Mode=TwoWay}">
                 <toolkit:Expander.Header>
                     <Border Padding="10"
                             HeightRequest="45">
@@ -56,18 +56,20 @@
                                    LineBreakMode="TailTruncation"
                                    VerticalOptions="Center"/>
                             <Label Grid.Column="1"
-                                    Text="▼"
-                                    TextColor="Gray"
-                                    VerticalOptions="Center"/>
+                                   Text="▼"
+                                   TextColor="Gray"
+                                   VerticalOptions="Center"/>
                         </Grid>
                     </Border>
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Border StrokeThickness="1">
+                    <Border StrokeThickness="1"
+                            BackgroundColor="Black">
                         <CollectionView ItemsSource="{Binding AvailablePorts}"
                                         SelectionMode="Single"
                                         SelectedItem="{Binding SelectedPort}"
+                                        
                                         HeightRequest="200">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>

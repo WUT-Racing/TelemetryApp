@@ -5,13 +5,19 @@ public class ClientBoard
 {
     private SerialPort _serialPort;
 
+    public bool IsConnected => _serialPort?.IsOpen ?? false;
+
     public event Action<string>? OnDataReceived;
 
     public void Connect(string portName)
     {
-        _serialPort = new SerialPort(portName, 115200);
-        _serialPort.DataReceived += SerialPort_DataReceived;
-        _serialPort.Open();
+        if (!IsConnected)
+        {
+            _serialPort = new SerialPort(portName, 115200);
+            _serialPort.DataReceived += SerialPort_DataReceived;
+            _serialPort.Open();
+        }
+
     }
 
     private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
