@@ -1996,6 +1996,50 @@
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
         }
       },
+      "Syncfusion.Licensing/33.1.44": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/Syncfusion.Licensing.dll": {}
+        },
+        "runtime": {
+          "lib/net10.0/Syncfusion.Licensing.dll": {}
+        }
+      },
+      "Syncfusion.Maui.Core/33.1.44": {
+        "type": "package",
+        "dependencies": {
+          "Syncfusion.Licensing": "33.1.44"
+        },
+        "compile": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/Syncfusion.Maui.Core.props": {}
+        }
+      },
+      "Syncfusion.Maui.Sliders/33.1.44": {
+        "type": "package",
+        "dependencies": {
+          "Syncfusion.Maui.Core": "33.1.44"
+        },
+        "compile": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "System.IO.Ports/10.0.2": {
         "type": "package",
         "dependencies": {
@@ -2918,6 +2962,50 @@
         },
         "runtime": {
           "lib/net6.0/SQLitePCLRaw.provider.e_sqlite3.dll": {}
+        }
+      },
+      "Syncfusion.Licensing/33.1.44": {
+        "type": "package",
+        "compile": {
+          "lib/net10.0/Syncfusion.Licensing.dll": {}
+        },
+        "runtime": {
+          "lib/net10.0/Syncfusion.Licensing.dll": {}
+        }
+      },
+      "Syncfusion.Maui.Core/33.1.44": {
+        "type": "package",
+        "dependencies": {
+          "Syncfusion.Licensing": "33.1.44"
+        },
+        "compile": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.dll": {
+            "related": ".xml"
+          }
+        },
+        "build": {
+          "buildTransitive/Syncfusion.Maui.Core.props": {}
+        }
+      },
+      "Syncfusion.Maui.Sliders/33.1.44": {
+        "type": "package",
+        "dependencies": {
+          "Syncfusion.Maui.Core": "33.1.44"
+        },
+        "compile": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.dll": {
+            "related": ".xml"
+          }
         }
       },
       "System.IO.Ports/10.0.2": {
@@ -5140,6 +5228,118 @@
         "sqlitepclraw.provider.e_sqlite3.nuspec"
       ]
     },
+    "Syncfusion.Licensing/33.1.44": {
+      "sha512": "6KMmTr6rvaLUsB57s5l2xoXpLVvwovbLQFIlgJOLx0ewllV7j0vPTwOWYdQSCl6+KeGZ9rff20JewhmPChVa7w==",
+      "type": "package",
+      "path": "syncfusion.licensing/33.1.44",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "lib/net10.0/Syncfusion.Licensing.dll",
+        "lib/net462/Syncfusion.Licensing.dll",
+        "lib/net8.0/Syncfusion.Licensing.dll",
+        "lib/net9.0/Syncfusion.Licensing.dll",
+        "lib/netstandard2.0/Syncfusion.Licensing.dll",
+        "lib/uap10.0/Syncfusion.Licensing.dll",
+        "syncfusion.licensing.33.1.44.nupkg.sha512",
+        "syncfusion.licensing.nuspec",
+        "syncfusion_logo.png"
+      ]
+    },
+    "Syncfusion.Maui.Core/33.1.44": {
+      "sha512": "WBKlx9QWTjZ8Vrsg03cdyeuSgoc4w6jgMjE8ujt7+BD+XcrUQR0+cu1vFCJ2w9FFL64B/MX5iOIPlKwj4dI/Mw==",
+      "type": "package",
+      "path": "syncfusion.maui.core/33.1.44",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "buildTransitive/Resources/Fonts/MauiMaterialAssets.ttf",
+        "buildTransitive/Syncfusion.Maui.Core.props",
+        "lib/net10.0-android36.0/Syncfusion.Maui.Core.dll",
+        "lib/net10.0-android36.0/Syncfusion.Maui.Core.xml",
+        "lib/net10.0-ios26.0/Syncfusion.Maui.Core.dll",
+        "lib/net10.0-ios26.0/Syncfusion.Maui.Core.xml",
+        "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.dll",
+        "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Core.xml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core.deps.json",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core.dll",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core.pri",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core.xml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/CarouselStyles.xaml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/CarouselStyles.xbf",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/Resources.xaml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/Resources.xbf",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/RotatorStyles.xaml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/RotatorStyles.xbf",
+        "lib/net10.0/Syncfusion.Maui.Core.deps.json",
+        "lib/net10.0/Syncfusion.Maui.Core.dll",
+        "lib/net10.0/Syncfusion.Maui.Core.xml",
+        "lib/net9.0-android35.0/Syncfusion.Maui.Core.dll",
+        "lib/net9.0-android35.0/Syncfusion.Maui.Core.xml",
+        "lib/net9.0-ios18.0/Syncfusion.Maui.Core.dll",
+        "lib/net9.0-ios18.0/Syncfusion.Maui.Core.xml",
+        "lib/net9.0-maccatalyst18.0/Syncfusion.Maui.Core.dll",
+        "lib/net9.0-maccatalyst18.0/Syncfusion.Maui.Core.xml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core.deps.json",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core.dll",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core.pri",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core.xml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/CarouselStyles.xaml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/CarouselStyles.xbf",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/Resources.xaml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/Resources.xbf",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/RotatorStyles.xaml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Core/Platform/Windows/Styles/RotatorStyles.xbf",
+        "lib/net9.0/Syncfusion.Maui.Core.deps.json",
+        "lib/net9.0/Syncfusion.Maui.Core.dll",
+        "lib/net9.0/Syncfusion.Maui.Core.xml",
+        "syncfusion.maui.core.33.1.44.nupkg.sha512",
+        "syncfusion.maui.core.nuspec",
+        "syncfusion_logo.png"
+      ]
+    },
+    "Syncfusion.Maui.Sliders/33.1.44": {
+      "sha512": "6GrNP/pU1R4oaN6K2sQ0P9ytfIhjLKx3WSNi3IQtsMy2rg0c9X9T/N7oapEXtOyvnSk3gONWf0kpUluRAbvp2A==",
+      "type": "package",
+      "path": "syncfusion.maui.sliders/33.1.44",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE.txt",
+        "README.md",
+        "lib/net10.0-android36.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net10.0-android36.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net10.0-ios26.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net10.0-ios26.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net10.0-maccatalyst26.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.deps.json",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net10.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net10.0/Syncfusion.Maui.Sliders.deps.json",
+        "lib/net10.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net10.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net9.0-android35.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net9.0-android35.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net9.0-ios18.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net9.0-ios18.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net9.0-maccatalyst18.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net9.0-maccatalyst18.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.deps.json",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net9.0-windows10.0.19041.0/Syncfusion.Maui.Sliders.xml",
+        "lib/net9.0/Syncfusion.Maui.Sliders.deps.json",
+        "lib/net9.0/Syncfusion.Maui.Sliders.dll",
+        "lib/net9.0/Syncfusion.Maui.Sliders.xml",
+        "syncfusion.maui.sliders.33.1.44.nupkg.sha512",
+        "syncfusion.maui.sliders.nuspec",
+        "syncfusion_logo.png"
+      ]
+    },
     "System.IO.Ports/10.0.2": {
       "sha512": "M3KujcSLPji8JPkv97PwMHmKsT/UpsEuPsKdu3oAprROJz3oO71T2dmMKmOCZWiPbQvkwHEhx0rEHYwtbOpmXA==",
       "type": "package",
@@ -5193,6 +5393,7 @@
       "Microsoft.NET.ILLink.Tasks >= 10.0.0",
       "SkiaSharp >= 3.119.1",
       "SkiaSharp.Views.Maui.Controls >= 3.119.1",
+      "Syncfusion.Maui.Sliders >= 33.1.44",
       "System.IO.Ports >= 10.0.2",
       "sqlite-net-pcl >= 1.9.172"
     ]
@@ -5280,6 +5481,10 @@
           "SkiaSharp.Views.Maui.Controls": {
             "target": "Package",
             "version": "[3.119.1, )"
+          },
+          "Syncfusion.Maui.Sliders": {
+            "target": "Package",
+            "version": "[33.1.44, )"
           },
           "System.IO.Ports": {
             "target": "Package",

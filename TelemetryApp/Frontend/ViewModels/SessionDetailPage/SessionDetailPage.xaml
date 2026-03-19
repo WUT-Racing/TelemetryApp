@@ -2,11 +2,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:sliders="clr-namespace:Syncfusion.Maui.Sliders;assembly=Syncfusion.Maui.Sliders"
              x:Class="TelemetryApp.Frontend.Views.SessionDetailPage"
              Title="Edytor Dashboardu"
              x:Name="ThisPage">
 
-    <Grid RowDefinitions="Auto, *">
+    <Grid RowDefinitions="Auto, *, Auto">
         <HorizontalStackLayout>
             <Button Text="Dodaj wykres"
                     Command="{Binding AddPlotCommand}"/>
@@ -15,6 +16,7 @@
             <Button Text="Zatrzymaj aktualizowanie"
                     Command="{Binding StartStopCommand}"/>
         </HorizontalStackLayout>
+        
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding VisibleCharts}">
             <CollectionView.ItemTemplate>
@@ -40,21 +42,32 @@
                                     Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
                                     CommandParameter="{Binding .}"/>
 
-                            <lvc:CartesianChart
-                                Grid.Row="1"
-                                Series="{Binding Series}"
-                                Sections="{Binding Sections}">
-                                <lvc:CartesianChart.GestureRecognizers>
-                                    <PointerGestureRecognizer
-                                        PointerPressed="OnPointerPressed"
-                                        PointerMoved="OnPointerMoved"
-                                        PointerReleased="OnPointerReleased"/>
-                                </lvc:CartesianChart.GestureRecognizers>
-                            </lvc:CartesianChart>
+                                <lvc:CartesianChart
+                                    Grid.Row="1"
+                                    Series="{Binding Series}"
+                                    Sections="{Binding Sections}"
+                                    XAxes="{Binding BindingContext.SharedXAxis, Source={x:Reference ThisPage}}">
+                                    <lvc:CartesianChart.GestureRecognizers>
+                                        <PointerGestureRecognizer
+                                            PointerPressed="OnPointerPressed"
+                                            PointerMoved="OnPointerMoved"
+                                            PointerReleased="OnPointerReleased"/>
+                                    </lvc:CartesianChart.GestureRecognizers>
+                                </lvc:CartesianChart>
                         </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        <Frame Grid.Row ="2">
+            <sliders:SfRangeSlider Minimum="{Binding GlobalTimeMin}" 
+                Maximum="{Binding GlobalTimeMax}" 
+                RangeStart="{Binding RangeStart, Mode=TwoWay}" 
+                RangeEnd="{Binding RangeEnd, Mode=TwoWay}"
+                ShowLabels="True"
+                ShowTicks="True"
+                NumberFormat="0.0' s'">
+            </sliders:SfRangeSlider>
+        </Frame>
     </Grid>
 </ContentPage>

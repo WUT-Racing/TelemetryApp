@@ -85,6 +85,10 @@
               "target": "Package",
               "version": "[3.119.1, )"
             },
+            "Syncfusion.Maui.Sliders": {
+              "target": "Package",
+              "version": "[33.1.44, )"
+            },
             "System.IO.Ports": {
               "target": "Package",
               "version": "[10.0.2, )"

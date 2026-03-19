@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using TelemetryApp.Frontend.Views;
 using CommunityToolkit.Maui;
+using Syncfusion.Maui.Core.Hosting;
 
 namespace TelemetryApp;
 
@@ -18,6 +19,7 @@ public static class MauiProgram
             .UseMauiApp<App>()
             .UseSkiaSharp()
             .UseLiveCharts()
+            .ConfigureSyncfusionCore()
             .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {

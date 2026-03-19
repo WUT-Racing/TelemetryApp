@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "Ws/QpVY2oyY=",
+  "dgSpecHash": "NRpt8dCWsrM=",
   "success": true,
   "projectFilePath": "/Users/bartek/Moje pliki/WUT/Telemetry/TelemetryApp/TelemetryApp.csproj",
   "expectedPackageFiles": [
@@ -62,6 +62,9 @@
     "/Users/bartek/.nuget/packages/sqlitepclraw.core/2.1.2/sqlitepclraw.core.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.lib.e_sqlite3/2.1.2/sqlitepclraw.lib.e_sqlite3.2.1.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/sqlitepclraw.provider.e_sqlite3/2.1.2/sqlitepclraw.provider.e_sqlite3.2.1.2.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/syncfusion.licensing/33.1.44/syncfusion.licensing.33.1.44.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/syncfusion.maui.core/33.1.44/syncfusion.maui.core.33.1.44.nupkg.sha512",
+    "/Users/bartek/.nuget/packages/syncfusion.maui.sliders/33.1.44/syncfusion.maui.sliders.33.1.44.nupkg.sha512",
     "/Users/bartek/.nuget/packages/system.io.ports/10.0.2/system.io.ports.10.0.2.nupkg.sha512",
     "/Users/bartek/.nuget/packages/microsoft.netcore.app.ref/10.0.2/microsoft.netcore.app.ref.10.0.2.nupkg.sha512"
   ],
