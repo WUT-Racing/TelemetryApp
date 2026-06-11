@@ -3,6 +3,7 @@ using LiveChartsCore;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
+using TelemetryApp.Frontend.Views;
 
 public class SinglePlotViewModel
 {

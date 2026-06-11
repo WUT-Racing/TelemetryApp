@@ -14,6 +14,10 @@
                     Command="{Binding SynchronizePlotsCommand}"/>
             <Button Text="Zatrzymaj aktualizowanie"
                     Command="{Binding StartStopCommand}"/>
+            <Button Text="Pokaż tabele"
+                    Command="{Binding ShowTablesCommand}"/>
+            <Button Text="Zarządzaj sensorami"
+                    Command="{Binding ManageSensorsCommand}"/>
         </HorizontalStackLayout>
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding VisibleCharts}">

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using TelemetryApp.Frontend.Views;
+using TelemetryApp.Frontend.ViewModels;
 using CommunityToolkit.Maui;
 
 namespace TelemetryApp;

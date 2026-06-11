@@ -1,4 +1,5 @@
 namespace TelemetryApp.Frontend.Views;
+using TelemetryApp.Frontend.ViewModels;
 
 public partial class SessionDetailPage : ContentPage
 {

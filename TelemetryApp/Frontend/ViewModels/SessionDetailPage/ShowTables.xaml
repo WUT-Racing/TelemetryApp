@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:TelemetryApp.Frontend.Converters"
+             x:Class="TelemetryApp.Frontend.Views.ShowTables"
+             Title="Statystyki sensorów"
+             Padding="10">
+    <ContentPage.Resources>
+        <converters:AlternateRowColorConverter x:Key="AltRowColor"
+                                               EvenColor="{StaticResource Gray600}"
+                                               OddColor="{StaticResource Gray500}" />
+    </ContentPage.Resources>
+
+    <CollectionView ItemsSource="{Binding}">
+        <CollectionView.Header>
+            <Grid BackgroundColor="{StaticResource mainGray}" 
+                  Padding="10,5" 
+                  ColumnDefinitions="*,*,*,*,*">
+                <Label Text="Czujnik" 
+                       TextColor="{StaticResource White}" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                <Label Grid.Column="1" 
+                       Text="Min" 
+                       TextColor="{StaticResource White}" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                <Label Grid.Column="2" 
+                       Text="Max" 
+                       TextColor="{StaticResource White}" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                <Label Grid.Column="3" 
+                       Text="Aktualna" 
+                       TextColor="{StaticResource White}" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+                <Label Grid.Column="4" 
+                       Text="Średnia" 
+                       TextColor="{StaticResource White}" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center"/>
+            </Grid>
+        </CollectionView.Header>
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid Padding="10,5" 
+                      ColumnDefinitions="*,*,*,*,*"
+                      BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
+                    <Label Text="{Binding SensorName}" 
+                           TextColor="{StaticResource White}" 
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" 
+                           Text="{Binding Min}" 
+                           TextColor="{StaticResource White}" 
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" 
+                           Text="{Binding Max}" 
+                           TextColor="{StaticResource White}" 
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" 
+                           Text="{Binding Current}" 
+                           TextColor="{StaticResource White}" 
+                           HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" 
+                           Text="{Binding Average, StringFormat='{0:F1}'}" 
+                           TextColor="{StaticResource White}" 
+                           HorizontalOptions="Center"/>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</ContentPage>
