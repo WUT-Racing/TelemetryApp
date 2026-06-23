@@ -5,51 +5,67 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
     Title="Ustawienia"
-    BackgroundColor="{StaticResource mainGray}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource mainGray}}">
 
-    
     <Grid RowDefinitions="Auto, *">
-    
-    <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
-        <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
-        <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
-        <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
-    </HorizontalStackLayout>
+        <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
+            <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
+            <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
+            <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
+        </HorizontalStackLayout>
 
-    <Grid Grid.Row="1" Padding="20">
-        
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Ogólne" FontSize="24" />
-            <Entry Placeholder="Imię użytkownika" />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+        <Grid Grid.Row="1" Padding="20">
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Ustawienia ogólne" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Motyw aplikacji" FontSize="18" FontAttributes="Bold" />
+                <Label Text="Wybierz jeden z dwóch motywów. Ustawienie zostanie zapamiętane po restarcie aplikacji." />
 
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Danych" FontSize="24" />
-            <CheckBox />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="Jasny" Command="{Binding UseLightThemeCommand}" />
+                    <Button Text="Ciemny" Command="{Binding UseDarkThemeCommand}" />
+                </HorizontalStackLayout>
 
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Eksportu" FontSize="24" />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+                <Label Text="{Binding SelectedTheme, StringFormat='Aktualny motyw: {0}'}"
+                       FontAttributes="Bold" />
 
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Ustawienia danych" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Na razie dane live są trzymane w pamięci dashboardu i raw logu .rfdlog. Kolejne opcje zapisu dodamy później." />
+
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Eksport" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Eksportuje aktualną sesję do folderu z plikami CSV. CSV ma separator średnika, UTF-8 BOM i format zgodny z Excelem." />
+
+                <HorizontalStackLayout Spacing="10">
+                    <CheckBox IsChecked="{Binding IncludeEnumsInExport}" />
+                    <Label Text="Dołącz enumy/statusy do eksportu decoded_signals" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+
+                <Button Text="Eksportuj aktualną sesję do CSV"
+                        Command="{Binding ExportCurrentSessionCommand}" />
+
+                <Label Text="{Binding ExportStatus}" LineBreakMode="WordWrap" />
+
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+        </Grid>
     </Grid>
-</Grid>
 </ContentPage>

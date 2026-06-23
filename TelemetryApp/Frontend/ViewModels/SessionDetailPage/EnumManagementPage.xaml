@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TelemetryApp.Frontend.Views.EnumManagementPage"
+             Title="Zarządzanie enumami"
+             Padding="10"
+             x:Name="ThisPage">
+    <Grid RowDefinitions="Auto, Auto, *" RowSpacing="10">
+        <Label Grid.Row="0"
+               Text="Edytuj nazwy enumów/statusów, przypinaj najważniejsze do góry i ustawiaj kolor widoczny w oknie enumów."
+               FontSize="14"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="8">
+            <SearchBar Grid.Column="0"
+                       Placeholder="Szukaj enumu/statusu, CAN ID albo klucza..."
+                       Text="{Binding SearchText, Mode=TwoWay}"/>
+            <Button Grid.Column="1"
+                    Text="Wyczyść"
+                    Command="{Binding ClearSearchCommand}"/>
+            <Button Grid.Column="2"
+                    Text="Włącz wszystkie"
+                    Command="{Binding EnableAllCommand}"/>
+            <Button Grid.Column="3"
+                    Text="Wyłącz wszystkie"
+                    Command="{Binding DisableAllCommand}"/>
+        </Grid>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding VisibleStatuses}">
+            <CollectionView.Header>
+                <Grid BackgroundColor="{StaticResource mainGray}" Padding="10,5"
+                      ColumnDefinitions="40, 90, 110, 2*, 2*, 180">
+                    <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="Widoczny" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="Nazwa enumu/statusu" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="4" Text="Szczegóły" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="5" Text="Kolor" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10,5" ColumnDefinitions="40, 90, 110, 2*, 2*, 180"
+                          BackgroundColor="{StaticResource Gray600}">
+                        <BoxView WidthRequest="12"
+                                 HeightRequest="28"
+                                 Color="{Binding StatusColor}"
+                                 VerticalOptions="Center"/>
+
+                        <Button Grid.Column="1"
+                                Text="{Binding PinButtonText}"
+                                FontSize="12"
+                                Padding="6,2"
+                                Command="{Binding BindingContext.TogglePinCommand, Source={x:Reference ThisPage}}"
+                                CommandParameter="{Binding .}"/>
+
+                        <HorizontalStackLayout Grid.Column="2"
+                                               Spacing="4"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center">
+                            <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+                            <Label Text="{Binding EnabledText}"
+                                   TextColor="{StaticResource White}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
+                        <Entry Grid.Column="3"
+                               Text="{Binding StatusName, Mode=TwoWay}"
+                               TextColor="{StaticResource White}"
+                               BackgroundColor="{StaticResource Gray500}"
+                               Placeholder="Nazwa enumu/statusu"
+                               Margin="8,0"/>
+
+                        <Label Grid.Column="4"
+                               Text="{Binding DetailsText}"
+                               TextColor="{StaticResource White}"
+                               VerticalOptions="Center"
+                               LineBreakMode="TailTruncation"/>
+
+                        <Picker Grid.Column="5"
+                                Title="Kolor"
+                                ItemsSource="{Binding BindingContext.ColorOptions, Source={x:Reference ThisPage}}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedColorOption, Mode=TwoWay}"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

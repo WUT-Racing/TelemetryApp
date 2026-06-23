@@ -2,63 +2,130 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             xmlns:controls="clr-namespace:TelemetryApp.Frontend.Controls"
              x:Class="TelemetryApp.Frontend.Views.SessionDetailPage"
-             Title="Edytor Dashboardu"
+             Title="Dashboard"
              x:Name="ThisPage">
 
-    <Grid RowDefinitions="Auto, *">
-        <HorizontalStackLayout>
+    <Grid RowDefinitions="Auto, Auto, *" Padding="12" RowSpacing="10">
+        <HorizontalStackLayout Grid.Row="0" Spacing="8">
             <Button Text="Dodaj wykres"
                     Command="{Binding AddPlotCommand}"/>
-            <Button Text="Synchronizuj wykresy"
-                    Command="{Binding SynchronizePlotsCommand}"/>
-            <Button Text="Zatrzymaj aktualizowanie"
-                    Command="{Binding StartStopCommand}"/>
             <Button Text="Pokaż tabele"
                     Command="{Binding ShowTablesCommand}"/>
             <Button Text="Zarządzaj sensorami"
                     Command="{Binding ManageSensorsCommand}"/>
+            <Button Text="Enumy/statusy"
+                    Command="{Binding ShowEnumsCommand}"/>
+            <Button Text="Zarządzaj enumami"
+                    Command="{Binding ManageEnumsCommand}"/>
         </HorizontalStackLayout>
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding VisibleCharts}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="Gray"
-                           Margin="10"
-                           HeightRequest="300"
-                           Padding="5">
-                        <Grid RowDefinitions="Auto, *" ColumnDefinitions="*, Auto">
-                            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}"
-                                   FontAttributes="Bold"
-                                   HorizontalOptions="Center"/>
-                            <Button Grid.Row="0"
-                                    Grid.Column="1"
-                                    Text="✕"
-                                    TextColor="Red"
-                                    BackgroundColor="Transparent"
-                                    FontAttributes="Bold"
-                                    FontSize="18"
-                                    Padding="0"
-                                    HeightRequest="30"
-                                    WidthRequest="30"
-                                    Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
-                                    CommandParameter="{Binding .}"/>
 
-                            <lvc:CartesianChart
-                                Grid.Row="1"
-                                Series="{Binding Series}"
-                                Sections="{Binding Sections}">
-                                <lvc:CartesianChart.GestureRecognizers>
-                                    <PointerGestureRecognizer
-                                        PointerPressed="OnPointerPressed"
-                                        PointerMoved="OnPointerMoved"
-                                        PointerReleased="OnPointerReleased"/>
-                                </lvc:CartesianChart.GestureRecognizers>
-                            </lvc:CartesianChart>
-                        </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <Label Grid.Row="1"
+               Text="{Binding DashboardStatus}"
+               FontSize="13"
+               TextColor="Gray"/>
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="14">
+
+                <Label Text="Wykresy"
+                       FontAttributes="Bold"
+                       FontSize="18"/>
+
+                <VerticalStackLayout Spacing="10"
+                                     BindableLayout.ItemsSource="{Binding VisibleCharts}">
+                    <BindableLayout.EmptyView>
+                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
+                            <Label Text="Nie ma jeszcze żadnego wykresu." HorizontalTextAlignment="Center"/>
+                            <Label Text="Kliknij „Dodaj wykres”, a potem wybierz sygnał liczbowy z listy odczytanej z JSON-a." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                        </VerticalStackLayout>
+                    </BindableLayout.EmptyView>
+
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                                   BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}"
+                                   CornerRadius="14"
+                                   HasShadow="True"
+                                   HeightRequest="520"
+                                   Padding="14">
+                                <Grid RowDefinitions="Auto, Auto, *, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="8">
+                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding Title}"
+                                               FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation"/>
+                                        <Label Text="{Binding LastValueText}"
+                                               FontSize="13"
+                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"/>
+                                    </VerticalStackLayout>
+
+                                    <Button Grid.Row="0"
+                                            Grid.Column="1"
+                                            Text="✕"
+                                            TextColor="Red"
+                                            BackgroundColor="Transparent"
+                                            FontAttributes="Bold"
+                                            FontSize="18"
+                                            Padding="0"
+                                            HeightRequest="30"
+                                            WidthRequest="30"
+                                            Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}"/>
+
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto, *" ColumnSpacing="10">
+                                        <Label Grid.Column="0"
+                                               Text="Sygnał:"
+                                               VerticalOptions="Center"/>
+                                        <Picker Grid.Column="1"
+                                                Title="Wybierz co pokazać na wykresie"
+                                                ItemsSource="{Binding BindingContext.AvailableSignals, Source={x:Reference ThisPage}}"
+                                                ItemDisplayBinding="{Binding DisplayName}"
+                                                SelectedItem="{Binding SelectedSignal, Mode=TwoWay}"/>
+                                    </Grid>
+
+                                    <lvc:CartesianChart
+                                        Grid.Row="2"
+                                        Grid.ColumnSpan="2"
+                                        BackgroundColor="#111827"
+                                        Series="{Binding Series}"
+                                        XAxes="{Binding XAxes}"
+                                        YAxes="{Binding YAxes}"
+                                        Sections="{Binding Sections}">
+                                        <lvc:CartesianChart.GestureRecognizers>
+                                            <PointerGestureRecognizer
+                                                PointerPressed="OnPointerPressed"
+                                                PointerMoved="OnPointerMoved"
+                                                PointerReleased="OnPointerReleased"/>
+                                        </lvc:CartesianChart.GestureRecognizers>
+                                    </lvc:CartesianChart>
+
+                                    <Grid Grid.Row="3" Grid.ColumnSpan="2" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                        <Label Grid.Column="0"
+                                               Text="Zakres:"
+                                               VerticalOptions="Center"/>
+                                        <controls:RangeSliderView Grid.Column="1"
+                                                                  Minimum="0"
+                                                                  Maximum="{Binding TimelineMaximumSeconds}"
+                                                                  LowerValue="{Binding RangeStartSeconds, Mode=TwoWay}"
+                                                                  UpperValue="{Binding RangeEndSeconds, Mode=TwoWay}"
+                                                                  IsEnabled="{Binding HasTimeline}"/>
+                                        <Button Grid.Column="2"
+                                                Text="Na żywo"
+                                                Command="{Binding JumpToLiveCommand}"/>
+                                    </Grid>
+
+                                    <Label Grid.Row="4"
+                                           Grid.ColumnSpan="2"
+                                           Text="{Binding ScrollText}"
+                                           FontSize="12"
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"/>
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentPage>

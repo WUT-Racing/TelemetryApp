@@ -24,7 +24,7 @@ public partial class SessionDetailPage : ContentPage
         var chart = (LiveChartsCore.SkiaSharpView.Maui.CartesianChart)sender;
         var point = e.GetPosition(chart);
 
-        if (chart.BindingContext is SinglePlotViewModel plotVm && point.HasValue)
+        if (chart.BindingContext is SinglePlotViewModel plotVm && point.HasValue && plotVm.Sections.Count > 0)
         {
             var lvcPoint = new LiveChartsCore.Drawing.LvcPointD((float)point.Value.X, (float)point.Value.Y);
             var dataValue = chart.ScalePixelsToData(lvcPoint);

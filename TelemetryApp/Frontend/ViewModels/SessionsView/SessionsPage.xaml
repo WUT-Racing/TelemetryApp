@@ -5,18 +5,50 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
     Title="Sesje">
-    <VerticalStackLayout Padding="12"
-            Spacing="10"
-            VerticalOptions="Center">
-        <Button Text="Wczytaj sesje"
-                HeightRequest="50"
-                FontSize="18"
-                Command="{Binding LoadSessionFromPickerCommand}"
-                />
-        <Button Text="Utwórz nową sesję"
-                HeightRequest="50"
-                FontSize="18"
-                Command="{Binding CreateNewSessionCommand}"
-                />
-    </VerticalStackLayout>
+
+    <Grid Padding="16" RowDefinitions="Auto, Auto, *" RowSpacing="12">
+        <HorizontalStackLayout Grid.Row="0" Spacing="10">
+            <Button Text="Odśwież" Command="{Binding RefreshSessionsCommand}" />
+            <Button Text="Nowa sesja / połączenie" Command="{Binding GoToConnectionCommand}" />
+        </HorizontalStackLayout>
+
+        <Label Grid.Row="1" Text="{Binding StatusText}" TextColor="Gray" />
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Sessions}">
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="30" Spacing="10" HorizontalOptions="Center">
+                    <Label Text="Nie ma jeszcze żadnych sesji." FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                    <Label Text="Przejdź do Połączenia, kliknij Start session, a potem uruchom symulator albo serial." TextColor="Gray" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="0,0,0,10"
+                           Padding="12"
+                           CornerRadius="12"
+                           BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                           BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}">
+                        <Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto" RowSpacing="4">
+                            <Label Grid.Row="0" Grid.Column="0"
+                                   Text="{Binding DisplayName}"
+                                   FontAttributes="Bold"
+                                   FontSize="16"/>
+                            <Label Grid.Row="1" Grid.Column="0"
+                                   Text="{Binding TimeText}"
+                                   TextColor="Gray"/>
+                            <Label Grid.Row="2" Grid.Column="0"
+                                   Text="{Binding SourceText}"
+                                   TextColor="Gray"/>
+                            <VerticalStackLayout Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" Spacing="6">
+                                <Label Text="{Binding StatusText}" HorizontalTextAlignment="End"/>
+                                <Button Text="Folder"
+                                        Command="{Binding BindingContext.OpenSessionFolderCommand, Source={x:Reference PageRoot}}"
+                                        CommandParameter="{Binding .}"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

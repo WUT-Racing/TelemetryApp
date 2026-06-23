@@ -3,32 +3,85 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TelemetryApp.Frontend.Views.SensorManagementPage"
              Title="Zarządzanie sensorami"
-             Padding="10">
-    <Grid RowDefinitions="Auto, *">
-        <Label Text="Edytuj nazwy sensorów (zmiany będą widoczne w statystykach)"
-               FontSize="14"
-               Margin="0,0,0,10"/>
-        <CollectionView Grid.Row="1" ItemsSource="{Binding Sensors}">
+             Padding="10"
+             x:Name="ThisPage">
+    <Grid RowDefinitions="Auto, Auto, *" RowSpacing="10">
+        <Label Grid.Row="0"
+               Text="Edytuj nazwy sensorów, przypinaj najważniejsze do góry i ustawiaj kolor widoczny w tabeli."
+               FontSize="14"/>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto, Auto" ColumnSpacing="8">
+            <SearchBar Grid.Column="0"
+                       Placeholder="Szukaj po nazwie, CAN ID, kluczu albo ramce..."
+                       Text="{Binding SearchText, Mode=TwoWay}"/>
+            <Button Grid.Column="1"
+                    Text="Wyczyść"
+                    Command="{Binding ClearSearchCommand}"/>
+            <Button Grid.Column="2"
+                    Text="Włącz wszystkie"
+                    Command="{Binding EnableAllCommand}"/>
+            <Button Grid.Column="3"
+                    Text="Wyłącz wszystkie"
+                    Command="{Binding DisableAllCommand}"/>
+        </Grid>
+
+        <CollectionView Grid.Row="2" ItemsSource="{Binding VisibleSensors}">
             <CollectionView.Header>
                 <Grid BackgroundColor="{StaticResource mainGray}" Padding="10,5"
-                      ColumnDefinitions="Auto, *">
-                    <Label Text="ID" TextColor="{StaticResource White}" FontAttributes="Bold"/>
-                    <Label Grid.Column="1" Text="Nazwa sensora" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                      ColumnDefinitions="40, 90, 110, 2*, 2*, 180">
+                    <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="Widoczny" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="Nazwa sensora" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="4" Text="Szczegóły" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="5" Text="Kolor" TextColor="{StaticResource White}" FontAttributes="Bold"/>
                 </Grid>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10,5" ColumnDefinitions="Auto, *"
+                    <Grid Padding="10,5" ColumnDefinitions="40, 90, 110, 2*, 2*, 180"
                           BackgroundColor="{StaticResource Gray600}">
-                        <Label Text="{Binding SensorId}" 
-                               TextColor="{StaticResource White}"
-                               VerticalOptions="Center"/>
-                        <Entry Grid.Column="1" 
+                        <BoxView WidthRequest="12"
+                                 HeightRequest="28"
+                                 Color="{Binding SensorColor}"
+                                 VerticalOptions="Center"/>
+
+                        <Button Grid.Column="1"
+                                Text="{Binding PinButtonText}"
+                                FontSize="12"
+                                Padding="6,2"
+                                Command="{Binding BindingContext.TogglePinCommand, Source={x:Reference ThisPage}}"
+                                CommandParameter="{Binding .}"/>
+
+                        <HorizontalStackLayout Grid.Column="2"
+                                               Spacing="4"
+                                               HorizontalOptions="Center"
+                                               VerticalOptions="Center">
+                            <CheckBox IsChecked="{Binding IsEnabled, Mode=TwoWay}"/>
+                            <Label Text="{Binding EnabledText}"
+                                   TextColor="{StaticResource White}"
+                                   FontSize="12"
+                                   VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+
+                        <Entry Grid.Column="3"
                                Text="{Binding SensorName, Mode=TwoWay}"
                                TextColor="{StaticResource White}"
                                BackgroundColor="{StaticResource Gray500}"
                                Placeholder="Nazwa sensora"
-                               Margin="10,0,0,0"/>
+                               Margin="8,0"/>
+
+                        <Label Grid.Column="4"
+                               Text="{Binding DetailsText}"
+                               TextColor="{StaticResource White}"
+                               VerticalOptions="Center"
+                               LineBreakMode="TailTruncation"/>
+
+                        <Picker Grid.Column="5"
+                                Title="Kolor"
+                                ItemsSource="{Binding BindingContext.ColorOptions, Source={x:Reference ThisPage}}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedColorOption, Mode=TwoWay}"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

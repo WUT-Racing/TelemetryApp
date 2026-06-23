@@ -11,63 +11,61 @@
                                                OddColor="{StaticResource Gray500}" />
     </ContentPage.Resources>
 
-    <CollectionView ItemsSource="{Binding}">
-        <CollectionView.Header>
-            <Grid BackgroundColor="{StaticResource mainGray}" 
-                  Padding="10,5" 
-                  ColumnDefinitions="*,*,*,*,*">
-                <Label Text="Czujnik" 
-                       TextColor="{StaticResource White}" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"/>
-                <Label Grid.Column="1" 
-                       Text="Min" 
-                       TextColor="{StaticResource White}" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"/>
-                <Label Grid.Column="2" 
-                       Text="Max" 
-                       TextColor="{StaticResource White}" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"/>
-                <Label Grid.Column="3" 
-                       Text="Aktualna" 
-                       TextColor="{StaticResource White}" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"/>
-                <Label Grid.Column="4" 
-                       Text="Średnia" 
-                       TextColor="{StaticResource White}" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center"/>
-            </Grid>
-        </CollectionView.Header>
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Grid Padding="10,5" 
-                      ColumnDefinitions="*,*,*,*,*"
-                      BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
-                    <Label Text="{Binding SensorName}" 
-                           TextColor="{StaticResource White}" 
-                           HorizontalOptions="Center"/>
-                    <Label Grid.Column="1" 
-                           Text="{Binding Min}" 
-                           TextColor="{StaticResource White}" 
-                           HorizontalOptions="Center"/>
-                    <Label Grid.Column="2" 
-                           Text="{Binding Max}" 
-                           TextColor="{StaticResource White}" 
-                           HorizontalOptions="Center"/>
-                    <Label Grid.Column="3" 
-                           Text="{Binding Current}" 
-                           TextColor="{StaticResource White}" 
-                           HorizontalOptions="Center"/>
-                    <Label Grid.Column="4" 
-                           Text="{Binding Average, StringFormat='{0:F1}'}" 
-                           TextColor="{StaticResource White}" 
-                           HorizontalOptions="Center"/>
+    <Grid RowDefinitions="Auto, *" RowSpacing="10">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" ColumnSpacing="8">
+            <SearchBar Grid.Column="0"
+                       Placeholder="Szukaj sensora, CAN ID, klucza albo ramki..."
+                       Text="{Binding SearchText, Mode=TwoWay}"/>
+            <Button Grid.Column="1"
+                    Text="Wyczyść"
+                    Command="{Binding ClearSearchCommand}"/>
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding VisibleSensors}">
+            <CollectionView.Header>
+                <Grid BackgroundColor="{StaticResource mainGray}" 
+                      Padding="10,5" 
+                      ColumnDefinitions="36, 40, 2*,*,*,*,*">
+                    <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold" />
+                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="Czujnik" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="3" Text="Min" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="Max" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="Aktualna" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="6" Text="Średnia" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
                 </Grid>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10,5" 
+                          ColumnDefinitions="36, 40, 2*,*,*,*,*"
+                          BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
+                        <BoxView WidthRequest="12"
+                                 HeightRequest="24"
+                                 Color="{Binding SensorColor}"
+                                 VerticalOptions="Center"/>
+                        <Label Grid.Column="1"
+                               Text="{Binding PinText}"
+                               TextColor="{StaticResource White}"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="2" Spacing="1">
+                            <Label Text="{Binding SensorName}" 
+                                   TextColor="{StaticResource White}" 
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding DetailsText}"
+                                   TextColor="LightGray"
+                                   FontSize="11"
+                                   LineBreakMode="TailTruncation"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="3" Text="{Binding MinText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="4" Text="{Binding MaxText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="5" Text="{Binding CurrentText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Label Grid.Column="6" Text="{Binding AverageText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

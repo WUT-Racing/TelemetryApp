@@ -1,75 +1,79 @@
-using System.ComponentModel;
-using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
+using TelemetryApp.Backend.Sessions;
+
 public partial class SessionViewModel : ObservableObject
 {
-    private readonly TelemetryService _telemetryService;
+    private readonly TelemetrySessionManager _sessionManager;
 
-    public ObservableCollection<TestSession> Sessions { get; } = new();
+    public ObservableCollection<TelemetrySession> Sessions => _sessionManager.Sessions;
 
-    public SessionViewModel(TelemetryService telemetryService)
-    {
-        _telemetryService = telemetryService ?? throw new System.ArgumentNullException(nameof(telemetryService));
-    }
+    [ObservableProperty]
+    private string statusText = "Lista sesji z AppData/Sessions.";
 
-    public void LoadSession(string fileToChange)
+    public SessionViewModel(TelemetrySessionManager sessionManager)
     {
-        _telemetryService.ChangeDatabase(fileToChange);
-    }
-    private void OpenSession(TestSession session)
-    {
-        // TODO: nawigacja / otwarcie pliku DB powiązanego z sesją
-        // przykładowo: Shell.Current.GoToAsync($"sessiondetails?sessionId={session.Id}");
+        _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
+        _sessionManager.SessionsChanged += () => StatusText = $"Sesje: {Sessions.Count}";
+        StatusText = $"Sesje: {Sessions.Count}";
     }
 
     [RelayCommand]
-    private async Task LoadSessionFromPicker()
+    private void RefreshSessions()
     {
-        FileResult result = null;
+        _sessionManager.RefreshFromDisk();
+        StatusText = $"Odświeżono. Sesje: {Sessions.Count}";
+    }
 
-        var sessionFileType = new FilePickerFileType(
-            new Dictionary<DevicePlatform, IEnumerable<string>>
-            {
-                {DevicePlatform.WinUI, new[] {".db"}}
-            }
-        );
-
-        var options = new PickOptions
+    [RelayCommand]
+    private async Task OpenSessionFolder(TelemetrySession session)
+    {
+        if (session is null || string.IsNullOrWhiteSpace(session.DirectoryPath) || !Directory.Exists(session.DirectoryPath))
         {
-            PickerTitle = "Wybierz plik DB",
-            FileTypes = sessionFileType,
-        };
+            await Application.Current!.MainPage!.DisplayAlert("Sesja", "Folder tej sesji nie istnieje.", "OK");
+            return;
+        }
 
         try
         {
-            
-            if (DeviceInfo.Current.Platform == DevicePlatform.WinUI)
+#if WINDOWS
+            Process.Start(new ProcessStartInfo
             {
-                result = await FilePicker.Default.PickAsync(options);
-            }
-            else
-            {
-                result = await FilePicker.Default.PickAsync();
-            }
+                FileName = session.DirectoryPath,
+                UseShellExecute = true
+            });
+#elif MACCATALYST
+            var directoryPath = session.DirectoryPath.EndsWith(Path.DirectorySeparatorChar)
+                ? session.DirectoryPath
+                : session.DirectoryPath + Path.DirectorySeparatorChar;
 
-            if (result == null)
-                return;
-            var newDatabasePath = result.FullPath;
-
-            LoadSession(newDatabasePath);
+            await Launcher.Default.OpenAsync(new Uri(directoryPath));
+#else
+            await Clipboard.Default.SetTextAsync(session.DirectoryPath);
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Sesja",
+                $"Nie umiem automatycznie otworzyć folderu na tej platformie. Skopiowałem ścieżkę do schowka:\n{session.DirectoryPath}",
+                "OK");
+#endif
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Błąd FilePicker: {ex.Message}");
+            await Clipboard.Default.SetTextAsync(session.DirectoryPath);
+            await Application.Current!.MainPage!.DisplayAlert(
+                "Nie udało się otworzyć folderu",
+                $"Skopiowałem ścieżkę do schowka:\n{session.DirectoryPath}\n\nBłąd: {ex.Message}",
+                "OK");
         }
     }
 
     [RelayCommand]
-    private async Task CreateNewSession()
+    private async Task GoToConnection()
     {
-        
+        await Shell.Current.GoToAsync("//ConnectionPage");
     }
 }

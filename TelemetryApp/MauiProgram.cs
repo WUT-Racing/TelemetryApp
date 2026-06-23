@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using TelemetryApp.Frontend.Views;
 using TelemetryApp.Frontend.ViewModels;
+using TelemetryApp.Backend.BoardConnection;
+using TelemetryApp.Backend.Sessions;
+using TelemetryApp.Backend.UserSettings;
 using CommunityToolkit.Maui;
 
 namespace TelemetryApp;
@@ -31,6 +34,9 @@ public static class MauiProgram
 #endif
 
         builder.Services.AddSingleton<SQLiteConnectionFactory>();
+        builder.Services.AddSingleton<TelemetrySessionManager>();
+        builder.Services.AddSingleton<SignalDisplaySettingsStore>();
+        builder.Services.AddSingleton<ClientBoard>();
         builder.Services.AddTransient<TelemetryService>();
         builder.Services.AddTransient<SessionsPage>();
         builder.Services.AddTransient<SessionViewModel>();
@@ -38,10 +44,10 @@ public static class MauiProgram
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<SettingsPage>();
         builder.Services.AddTransient<SettingsViewModel>();
-        builder.Services.AddTransient<SessionDetailPage>();
-        builder.Services.AddTransient<SessionDetailViewModel>();
-        builder.Services.AddTransient<ConnectionPage>();
-        builder.Services.AddTransient<ConnectionPageViewModel>();
+        builder.Services.AddSingleton<SessionDetailPage>();
+        builder.Services.AddSingleton<SessionDetailViewModel>();
+        builder.Services.AddSingleton<ConnectionPage>();
+        builder.Services.AddSingleton<ConnectionPageViewModel>();
 
 
         var mauiApp = builder.Build();

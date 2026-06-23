@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:TelemetryApp.Frontend.Converters"
+             x:Class="TelemetryApp.Frontend.Views.EnumStatusPage"
+             Title="Enumy i statusy"
+             Padding="10">
+    <ContentPage.Resources>
+        <converters:AlternateRowColorConverter x:Key="AltRowColor"
+                                               EvenColor="{StaticResource Gray600}"
+                                               OddColor="{StaticResource Gray500}" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto, *" RowSpacing="10">
+        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" ColumnSpacing="8">
+            <SearchBar Grid.Column="0"
+                       Placeholder="Szukaj enumu/statusu, CAN ID, klucza albo aktualnej wartości..."
+                       Text="{Binding SearchText, Mode=TwoWay}"/>
+            <Button Grid.Column="1"
+                    Text="Wyczyść"
+                    Command="{Binding ClearSearchCommand}"/>
+        </Grid>
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding VisibleStatuses}">
+            <CollectionView.Header>
+                <Grid BackgroundColor="{StaticResource mainGray}" Padding="10,5"
+                      ColumnDefinitions="36, 40, 2*, 2*, *">
+                    <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="2" Text="Enum/status" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="3" Text="Aktualna wartość" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="4" Text="Ostatnia aktualizacja" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10,5" ColumnDefinitions="36, 40, 2*, 2*, *"
+                          BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
+                        <BoxView WidthRequest="12"
+                                 HeightRequest="24"
+                                 Color="{Binding StatusColor}"
+                                 VerticalOptions="Center"/>
+                        <Label Grid.Column="1"
+                               Text="{Binding PinText}"
+                               TextColor="{StaticResource White}"
+                               FontSize="18"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                        <VerticalStackLayout Grid.Column="2" Spacing="1">
+                            <Label Text="{Binding StatusName}"
+                                   TextColor="{StaticResource White}"
+                                   FontAttributes="Bold"/>
+                            <Label Text="{Binding DetailsText}"
+                                   TextColor="LightGray"
+                                   FontSize="11"
+                                   LineBreakMode="TailTruncation"/>
+                        </VerticalStackLayout>
+                        <Label Grid.Column="3"
+                               Text="{Binding CurrentText}"
+                               TextColor="{StaticResource White}"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"/>
+                        <Label Grid.Column="4"
+                               Text="{Binding LastUpdateText}"
+                               TextColor="{StaticResource White}"
+                               VerticalOptions="Center"/>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

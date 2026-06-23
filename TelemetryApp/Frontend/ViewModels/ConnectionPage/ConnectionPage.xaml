@@ -7,46 +7,49 @@
     x:Name="PageRoot"
     Title="Połączenie">
 
-    <Grid Padding="20">
+    <Grid Padding="20" RowDefinitions="Auto, Auto, *" RowSpacing="14">
 
-        <Grid RowDefinitions="Auto, Auto, *"
-              RowSpacing="10"
-              Margin="0, 60, 0, 0">
-
-            <Editor Grid.Row="0"
-                    Text="{Binding ClientText}"
-                    IsReadOnly="True"
-                    AutoSize="TextChanges"
-                    MinimumHeightRequest="300"
-                    MaximumHeightRequest="300"/>
-
-            <HorizontalStackLayout Grid.Row="1"
-                                   Spacing="10"
-                                   Padding="0, 10">
-                <Label HeightRequest="20"
-                       Text="Server"
+        <Frame Grid.Row="0"
+               Padding="12"
+               CornerRadius="12"
+               BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#111827}"
+               BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}">
+            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, 240, Auto, Auto, Auto, *" ColumnSpacing="10" RowSpacing="8">
+                <Label Grid.Row="0" Grid.Column="0"
+                       Text="Sesja"
+                       FontAttributes="Bold"
                        VerticalOptions="Center"/>
-                <Button Text="Connect"/>
-            </HorizontalStackLayout>
+                <Entry Grid.Row="0" Grid.Column="1"
+                       Text="{Binding SessionName}"
+                       Placeholder="Nazwa sesji"
+                       HeightRequest="42"/>
+                <Button Grid.Row="0" Grid.Column="2"
+                        Text="Użyj domyślnej"
+                        Command="{Binding UseDefaultSessionNameCommand}"/>
+                <Button Grid.Row="0" Grid.Column="3"
+                        Text="Start session"
+                        Command="{Binding StartSessionCommand}"/>
+                <Button Grid.Row="0" Grid.Column="4"
+                        Text="End session"
+                        Command="{Binding EndSessionCommand}"/>
+                <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
+                       Text="{Binding ActiveSessionText}"
+                       TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}"
+                       LineBreakMode="WordWrap"/>
+            </Grid>
+        </Frame>
 
-            <Editor Grid.Row="2"
-                    Text="{Binding ServerConsoleText}"
-                    IsReadOnly="True"
-                    AutoSize="TextChanges"
-                    MinimumHeightRequest="10"/>
-        </Grid>
-
-        <Grid ColumnDefinitions="Auto, Auto, Auto, Auto"
+        <Grid Grid.Row="1"
+              ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
               ColumnSpacing="10"
-              VerticalOptions="Start">
+              HeightRequest="50">
             <Label Grid.Column="0"
                    Text="Client"
                    VerticalOptions="Center"/>
 
             <toolkit:Expander Grid.Column="1"
                               WidthRequest="300"
-                              VerticalOptions="Start"
-                              IsExpanded="{Binding IsPortExpanderOpen, Mode=TwoWay}">
+                              VerticalOptions="Start">
                 <toolkit:Expander.Header>
                     <Border Padding="10"
                             HeightRequest="45">
@@ -64,12 +67,10 @@
                 </toolkit:Expander.Header>
 
                 <toolkit:Expander.Content>
-                    <Border StrokeThickness="1"
-                            BackgroundColor="Black">
+                    <Border StrokeThickness="1">
                         <CollectionView ItemsSource="{Binding AvailablePorts}"
                                         SelectionMode="Single"
                                         SelectedItem="{Binding SelectedPort}"
-                                        
                                         HeightRequest="200">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
@@ -89,13 +90,38 @@
                     Command="{Binding ScanPortsCommand}"
                     VerticalOptions="Start"
                     HeightRequest="45"/>
-            <Button Grid.Column="3"
-                    Text="Connect"
+            <Label Grid.Column="3"
+                   Text="Baud"
+                   VerticalOptions="Center"/>
+            <Entry Grid.Column="4"
+                   Text="{Binding BaudRate}"
+                   Keyboard="Numeric"
+                   WidthRequest="100"
+                   VerticalOptions="Start"
+                   HeightRequest="45"/>
+            <Button Grid.Column="5"
+                    Text="{Binding ConnectionButtonText}"
                     Command="{Binding ConnectCommand}"
+                    VerticalOptions="Start"
+                    HeightRequest="45"/>
+
+            <Button Grid.Column="6"
+                    Text="{Binding SimulatorButtonText}"
+                    Command="{Binding StartSimulatorCommand}"
+                    VerticalOptions="Start"
+                    HeightRequest="45"/>
+
+            <Button Grid.Column="7"
+                    Text="Dashboard"
+                    Command="{Binding GoToDashboardCommand}"
                     VerticalOptions="Start"
                     HeightRequest="45"/>
         </Grid>
 
+        <Editor Grid.Row="2"
+                Text="{Binding ClientText}"
+                IsReadOnly="True"
+                AutoSize="TextChanges"
+                MinimumHeightRequest="420"/>
     </Grid>
-
 </ContentPage>
