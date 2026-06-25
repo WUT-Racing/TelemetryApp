@@ -41,18 +41,12 @@ public partial class SessionViewModel : ObservableObject
 
         try
         {
-#if WINDOWS
+#if WINDOWS || MACCATALYST
             Process.Start(new ProcessStartInfo
             {
                 FileName = session.DirectoryPath,
                 UseShellExecute = true
             });
-#elif MACCATALYST
-            var directoryPath = session.DirectoryPath.EndsWith(Path.DirectorySeparatorChar)
-                ? session.DirectoryPath
-                : session.DirectoryPath + Path.DirectorySeparatorChar;
-
-            await Launcher.Default.OpenAsync(new Uri(directoryPath));
 #else
             await Clipboard.Default.SetTextAsync(session.DirectoryPath);
             await Application.Current!.MainPage!.DisplayAlert(
