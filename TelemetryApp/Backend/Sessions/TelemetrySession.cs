@@ -10,6 +10,7 @@ public sealed class TelemetrySession
     public DateTime StartedAtLocal { get; set; } = DateTime.Now;
     public DateTime? EndedAtLocal { get; set; }
     public string DirectoryPath { get; set; } = string.Empty;
+    public string? DriverName { get; set; }
     public List<TelemetrySessionRun> Runs { get; set; } = new();
 
     [JsonIgnore]
