@@ -37,6 +37,7 @@
 
             <VerticalStackLayout IsVisible="False" Spacing="14">
                 <Label Text="Ustawienia danych" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Zarządzanie kierowcami" FontSize="18" FontAttributes="Bold" />
 
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                     <Entry Placeholder="Nazwa kierowcy"
