@@ -14,7 +14,7 @@
                CornerRadius="12"
                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#111827}"
                BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}">
-            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, 240, Auto, Auto, Auto, *" ColumnSpacing="10" RowSpacing="8">
+            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, 240, Auto, Auto, Auto, Auto, Auto, *" ColumnSpacing="10" RowSpacing="8">
                 <Label Grid.Row="0" Grid.Column="0"
                        Text="Sesja"
                        FontAttributes="Bold"
@@ -32,6 +32,18 @@
                 <Button Grid.Row="0" Grid.Column="4"
                         Text="End session"
                         Command="{Binding EndSessionCommand}"/>
+
+                <Label Grid.Row="0" Grid.Column="5"
+                        Text="Kierowca"
+                        VerticalOptions="Center"
+                        FontAttributes="Bold"/>
+                <Picker Grid.Row="0" Grid.Column="6"
+                        ItemsSource="{Binding DriverNames}"
+                        SelectedItem="{Binding SelectedDriver}"
+                        HeightRequest="45"
+                        VerticalOptions="Start"
+                        WidthRequest="180"/>
+
                 <Label Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="6"
                        Text="{Binding ActiveSessionText}"
                        TextColor="{AppThemeBinding Light=#475569, Dark=#CBD5E1}"
