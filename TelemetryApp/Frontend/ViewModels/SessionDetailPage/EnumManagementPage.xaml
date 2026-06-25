@@ -67,8 +67,7 @@
         </Grid>
 
         <Grid Grid.Row="3"
-              x:Name="EnumListHost"
-              ClipToBounds="True">
+              x:Name="EnumListHost">
 
             <Grid.GestureRecognizers>
                 <PointerGestureRecognizer PointerMoved="OnStatusPointerMoved"/>

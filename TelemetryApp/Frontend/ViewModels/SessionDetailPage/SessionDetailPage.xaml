@@ -103,11 +103,8 @@
 
                                             <Border Grid.Row="1"
                                                IsVisible="{Binding IsSignalSearchOpen}"
-                                               BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
                                                BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
                                                Padding="0"
-                                               CornerRadius="8"
-                                               HasShadow="True"
                                                HeightRequest="210"
                                                ZIndex="100">
 

@@ -67,8 +67,7 @@
         </Grid>
 
         <Grid Grid.Row="3"
-              x:Name="SensorListHost"
-              ClipToBounds="True">
+              x:Name="SensorListHost">
 
             <Grid.GestureRecognizers>
                 <PointerGestureRecognizer PointerMoved="OnSensorPointerMoved"/>
