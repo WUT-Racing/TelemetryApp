@@ -43,7 +43,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<SettingsPage>();
-        builder.Services.AddTransient<SettingsViewModel>();
+        builder.Services.AddSingleton<SettingsViewModel>();
         builder.Services.AddSingleton<SessionDetailPage>();
         builder.Services.AddSingleton<SessionDetailViewModel>();
         builder.Services.AddSingleton<ConnectionPage>();
