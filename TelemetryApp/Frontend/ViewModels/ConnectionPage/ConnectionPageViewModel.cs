@@ -5,11 +5,13 @@ using TelemetryApp.Backend.BoardConnection;
 using TelemetryApp.Backend.Decoding;
 using TelemetryApp.Backend.Pipeline;
 using TelemetryApp.Backend.Sessions;
+using TelemetryApp.Frontend.ViewModels;
 
 public partial class ConnectionPageViewModel : ObservableObject
 {
     private readonly ClientBoard _clientBoard;
     private readonly TelemetrySessionManager _sessionManager;
+    private readonly SettingsViewModel _settingsViewModel;
 
     [ObservableProperty]
     private string clientText = string.Empty;
@@ -44,10 +46,16 @@ public partial class ConnectionPageViewModel : ObservableObject
     [ObservableProperty]
     private bool hasActiveSession;
 
-    public ConnectionPageViewModel(ClientBoard clientBoard, TelemetrySessionManager sessionManager)
+    [ObservableProperty]
+    private Driver? selectedDriver;
+
+    public ObservableCollection<Driver> Drivers => _settingsViewModel.Drivers;
+
+    public ConnectionPageViewModel(ClientBoard clientBoard, TelemetrySessionManager sessionManager, SettingsViewModel settingsViewModel)
     {
         _clientBoard = clientBoard ?? throw new ArgumentNullException(nameof(clientBoard));
         _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
+        _settingsViewModel = settingsViewModel ?? throw new ArgumentNullException(nameof(settingsViewModel));
 
         _clientBoard.OnStatusChanged += HandleStatusChanged;
         _clientBoard.OnStatsChanged += HandleStatsChanged;
@@ -248,7 +256,7 @@ public partial class ConnectionPageViewModel : ObservableObject
 
     private void StartSessionInternal(bool isTest)
     {
-        var session = _sessionManager.StartNewSession(SessionName, isTest);
+        var session = _sessionManager.StartNewSession(SessionName, isTest, SelectedDriver?.Name);
         SessionName = TelemetrySessionManager.CreateDefaultSessionName();
         AppendText($"Rozpoczęto sesję: {session.DisplayName}");
         RefreshSessionStatus();
