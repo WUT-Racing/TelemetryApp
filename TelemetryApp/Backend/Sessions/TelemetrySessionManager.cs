@@ -55,7 +55,7 @@ public sealed class TelemetrySessionManager
 
     public static string CreateDefaultSessionName() => DateTime.Now.ToString("yyyy-MM-dd_HH-mm");
 
-    public TelemetrySession StartNewSession(string? requestedName = null, bool isTest = false)
+    public TelemetrySession StartNewSession(string? requestedName = null, bool isTest = false, string? driverName = null)
     {
         var name = string.IsNullOrWhiteSpace(requestedName)
             ? CreateDefaultSessionName()
@@ -71,7 +71,8 @@ public sealed class TelemetrySessionManager
             Name = name,
             IsTest = isTest,
             StartedAtLocal = DateTime.Now,
-            DirectoryPath = directory
+            DirectoryPath = directory,
+            DriverName = driverName
         };
 
         lock (_sync)
