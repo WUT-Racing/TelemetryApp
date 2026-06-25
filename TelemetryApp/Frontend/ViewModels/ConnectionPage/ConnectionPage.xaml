@@ -37,7 +37,8 @@
                         Text="Kierowca"
                         VerticalOptions="Center"
                         FontAttributes="Bold"/>
-                <Picker Grid.Row="0" Grid.Column="6"
+                <Picker x:Name="DriverPicker"
+                        Grid.Row="0" Grid.Column="6"
                         ItemsSource="{Binding Drivers}"
                         SelectedItem="{Binding SelectedDriver}"
                         ItemDisplayBinding="{Binding Name}"
