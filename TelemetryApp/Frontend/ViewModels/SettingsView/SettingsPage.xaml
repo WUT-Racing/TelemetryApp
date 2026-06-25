@@ -37,6 +37,35 @@
 
             <VerticalStackLayout IsVisible="False" Spacing="14">
                 <Label Text="Ustawienia danych" FontSize="24" FontAttributes="Bold" />
+
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <Entry Placeholder="Nazwa kierowcy"
+                        Text="{Binding NewDriverName}" />
+                    <Button Grid.Column="1"
+                            Text="Dodaj"
+                            Command="{Binding AddDriverCommand}" />
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding Drivers}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,Auto" Padding="0,4">
+                                <Entry Text="{Binding Name, Mode=TwoWay}"
+                                    Placeholder="Nazwa" />
+                                <Button Grid.Column="1"
+                                        Text="✕"
+                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteDriverCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="Red"
+                                        FontAttributes="Bold"
+                                        WidthRequest="44"
+                                        HeightRequest="44" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
                 <Label Text="Na razie dane live są trzymane w pamięci dashboardu i raw logu .rfdlog. Kolejne opcje zapisu dodamy później." />
 
                 <VerticalStackLayout.Triggers>
