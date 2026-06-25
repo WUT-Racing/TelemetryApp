@@ -15,10 +15,13 @@ namespace TelemetryApp.Frontend.Data
         private int _rowIndex;
 
         [ObservableProperty]
-        private string _sensorName = string.Empty;
+        private int _displayOrder;
 
         [ObservableProperty]
-        private bool _isPinned;
+        private string _sensorName = string.Empty;
+
+        /*[ObservableProperty]
+        private bool _isPinned;*/
 
         [ObservableProperty]
         private bool _isEnabled = false;
@@ -49,8 +52,8 @@ namespace TelemetryApp.Frontend.Data
         public string AverageText => HasData ? FormatValue(Average) : "—";
         public bool HasData => Values.Count > 0;
 
-        public string PinText => IsPinned ? "★" : "☆";
-        public string PinButtonText => IsPinned ? "Odepnij" : "Przypnij";
+        /*public string PinText => IsPinned ? "★" : "☆";
+        public string PinButtonText => IsPinned ? "Odepnij" : "Przypnij";*/
         public string EnabledText => IsEnabled ? "Włączony" : "Wyłączony";
         public Color SensorColor => ParseColor(ColorHex);
 
@@ -66,11 +69,11 @@ namespace TelemetryApp.Frontend.Data
 
         public string SearchText => $"{SensorName} {OriginalSignalName} {SignalKey} {FrameSummary} 0x{CanId:X3} {Unit}";
 
-        partial void OnIsPinnedChanged(bool value)
+        /*partial void OnIsPinnedChanged(bool value)
         {
             OnPropertyChanged(nameof(PinText));
             OnPropertyChanged(nameof(PinButtonText));
-        }
+        }*/
 
         partial void OnIsEnabledChanged(bool value)
         {

@@ -25,32 +25,25 @@
             <CollectionView.Header>
                 <Grid BackgroundColor="{StaticResource mainGray}" 
                       Padding="10,5" 
-                      ColumnDefinitions="36, 40, 2*,*,*,*,*">
+                      ColumnDefinitions="40, 2*,*,*,*,*">
                     <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold" />
-                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Grid.Column="2" Text="Czujnik" TextColor="{StaticResource White}" FontAttributes="Bold"/>
-                    <Label Grid.Column="3" Text="Min" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Grid.Column="4" Text="Max" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Grid.Column="5" Text="Aktualna" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Grid.Column="6" Text="Średnia" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="1" Text="Czujnik" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="2" Text="Min" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="3" Text="Max" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="4" Text="Aktualna" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
+                    <Label Grid.Column="5" Text="Średnia" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
                 </Grid>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="10,5" 
-                          ColumnDefinitions="36, 40, 2*,*,*,*,*"
+                          ColumnDefinitions="40, 2*,*,*,*,*"
                           BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
                         <BoxView WidthRequest="12"
                                  HeightRequest="24"
                                  Color="{Binding SensorColor}"
                                  VerticalOptions="Center"/>
-                        <Label Grid.Column="1"
-                               Text="{Binding PinText}"
-                               TextColor="{StaticResource White}"
-                               FontSize="18"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
-                        <VerticalStackLayout Grid.Column="2" Spacing="1">
+                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                             <Label Text="{Binding SensorName}" 
                                    TextColor="{StaticResource White}" 
                                    FontAttributes="Bold"/>
@@ -59,10 +52,10 @@
                                    FontSize="11"
                                    LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
-                        <Label Grid.Column="3" Text="{Binding MinText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
-                        <Label Grid.Column="4" Text="{Binding MaxText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
-                        <Label Grid.Column="5" Text="{Binding CurrentText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
-                        <Label Grid.Column="6" Text="{Binding AverageText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="2" Text="{Binding MinText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="3" Text="{Binding MaxText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="4" Text="{Binding CurrentText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                        <Label Grid.Column="5" Text="{Binding AverageText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

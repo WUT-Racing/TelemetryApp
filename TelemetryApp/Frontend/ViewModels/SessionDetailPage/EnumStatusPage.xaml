@@ -24,29 +24,22 @@
         <CollectionView Grid.Row="1" ItemsSource="{Binding VisibleStatuses}">
             <CollectionView.Header>
                 <Grid BackgroundColor="{StaticResource mainGray}" Padding="10,5"
-                      ColumnDefinitions="36, 40, 2*, 2*, *">
+                      ColumnDefinitions="40, 2*, 2*, *">
                     <Label Text="" TextColor="{StaticResource White}" FontAttributes="Bold"/>
-                    <Label Grid.Column="1" Text="Pin" TextColor="{StaticResource White}" FontAttributes="Bold" HorizontalOptions="Center"/>
-                    <Label Grid.Column="2" Text="Enum/status" TextColor="{StaticResource White}" FontAttributes="Bold"/>
-                    <Label Grid.Column="3" Text="Aktualna wartość" TextColor="{StaticResource White}" FontAttributes="Bold"/>
-                    <Label Grid.Column="4" Text="Ostatnia aktualizacja" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="1" Text="Enum/status" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="2" Text="Aktualna wartość" TextColor="{StaticResource White}" FontAttributes="Bold"/>
+                    <Label Grid.Column="3" Text="Ostatnia aktualizacja" TextColor="{StaticResource White}" FontAttributes="Bold"/>
                 </Grid>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Grid Padding="10,5" ColumnDefinitions="36, 40, 2*, 2*, *"
+                    <Grid Padding="10,5" ColumnDefinitions="40, 2*, 2*, *"
                           BackgroundColor="{Binding RowIndex, Converter={StaticResource AltRowColor}}">
                         <BoxView WidthRequest="12"
                                  HeightRequest="24"
                                  Color="{Binding StatusColor}"
                                  VerticalOptions="Center"/>
-                        <Label Grid.Column="1"
-                               Text="{Binding PinText}"
-                               TextColor="{StaticResource White}"
-                               FontSize="18"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"/>
-                        <VerticalStackLayout Grid.Column="2" Spacing="1">
+                        <VerticalStackLayout Grid.Column="1" Spacing="1">
                             <Label Text="{Binding StatusName}"
                                    TextColor="{StaticResource White}"
                                    FontAttributes="Bold"/>
@@ -55,12 +48,12 @@
                                    FontSize="11"
                                    LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
-                        <Label Grid.Column="3"
+                        <Label Grid.Column="2"
                                Text="{Binding CurrentText}"
                                TextColor="{StaticResource White}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"/>
-                        <Label Grid.Column="4"
+                        <Label Grid.Column="3"
                                Text="{Binding LastUpdateText}"
                                TextColor="{StaticResource White}"
                                VerticalOptions="Center"/>

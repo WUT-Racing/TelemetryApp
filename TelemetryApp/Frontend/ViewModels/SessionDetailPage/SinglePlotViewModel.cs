@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using LiveChartsCore;
@@ -11,16 +14,18 @@ namespace TelemetryApp.Frontend.ViewModels;
 
 public partial class SinglePlotViewModel : ObservableObject
 {
-    private const double DefaultLiveWindowSeconds = 60.0;
     private const double MinimumWindowSeconds = 1.0;
 
     private readonly ObservableCollection<ObservablePoint> _points = new();
     private readonly LineSeries<ObservablePoint> _lineSeries;
     private readonly Axis _xAxis;
     private readonly Axis _yAxis;
+    private readonly List<CanSignalOption> _availableSignals = new();
 
     private ulong? _firstTimestampMs;
     private bool _suppressRangeChanged;
+    private bool _suppressSignalSearchTextChanged;
+    private bool _hasManualRangeSelection;
 
     public event Action<SinglePlotViewModel>? SelectedSignalChanged;
 
@@ -31,16 +36,22 @@ public partial class SinglePlotViewModel : ObservableObject
     private CanSignalOption? selectedSignal;
 
     [ObservableProperty]
+    private string signalSearchText = string.Empty;
+
+    [ObservableProperty]
+    private bool isSignalSearchOpen;
+
+    [ObservableProperty]
     private string lastValueText = "Brak danych";
 
     [ObservableProperty]
     private double rangeStartSeconds;
 
     [ObservableProperty]
-    private double rangeEndSeconds = DefaultLiveWindowSeconds;
+    private double rangeEndSeconds = MinimumWindowSeconds;
 
     [ObservableProperty]
-    private double timelineMaximumSeconds = DefaultLiveWindowSeconds;
+    private double timelineMaximumSeconds = MinimumWindowSeconds;
 
     [ObservableProperty]
     private bool hasTimeline;
@@ -49,7 +60,9 @@ public partial class SinglePlotViewModel : ObservableObject
     private bool isFollowingLive = true;
 
     [ObservableProperty]
-    private string scrollText = "Zakres: ostatnia minuta";
+    private string scrollText = "Zakres: brak danych";
+
+    public ObservableCollection<CanSignalOption> FilteredSignals { get; } = new();
 
     public ObservableCollection<ISeries> Series { get; }
     public ObservableCollection<Axis> XAxes { get; }
@@ -77,7 +90,7 @@ public partial class SinglePlotViewModel : ObservableObject
         {
             Name = "Czas",
             MinLimit = 0,
-            MaxLimit = DefaultLiveWindowSeconds,
+            MaxLimit = MinimumWindowSeconds,
             Labeler = FormatAxisSeconds,
             LabelsPaint = labelPaint,
             NamePaint = labelPaint,
@@ -109,13 +122,38 @@ public partial class SinglePlotViewModel : ObservableObject
         };
     }
 
+    public void SetAvailableSignals(IEnumerable<CanSignalOption> signals)
+    {
+        _availableSignals.Clear();
+        _availableSignals.AddRange(signals);
+
+        RefreshFilteredSignals();
+    }
+
+    partial void OnSignalSearchTextChanged(string value)
+    {
+        if (_suppressSignalSearchTextChanged)
+            return;
+
+        IsSignalSearchOpen = true;
+        RefreshFilteredSignals();
+    }
+
     partial void OnSelectedSignalChanged(CanSignalOption? value)
     {
         _points.Clear();
         _firstTimestampMs = null;
+        _hasManualRangeSelection = false;
+
         IsFollowingLive = true;
-        SetTimelineMaximum(DefaultLiveWindowSeconds);
-        SetRangeInternal(0, DefaultLiveWindowSeconds, keepLiveMode: true);
+        SetTimelineMaximum(MinimumWindowSeconds);
+        SetRangeInternal(0, MinimumWindowSeconds, keepLiveMode: true);
+
+        _suppressSignalSearchTextChanged = true;
+        SignalSearchText = value?.DisplayName ?? string.Empty;
+        _suppressSignalSearchTextChanged = false;
+
+        IsSignalSearchOpen = false;
 
         if (value is null)
         {
@@ -123,7 +161,7 @@ public partial class SinglePlotViewModel : ObservableObject
             _lineSeries.Name = "Wybierz sygnał";
             _yAxis.Name = "Wartość";
             LastValueText = "Brak danych";
-            ScrollText = "Zakres: ostatnia minuta";
+            ScrollText = "Zakres: brak danych";
         }
         else
         {
@@ -135,6 +173,70 @@ public partial class SinglePlotViewModel : ObservableObject
         }
 
         SelectedSignalChanged?.Invoke(this);
+    }
+
+    [RelayCommand]
+    public void OpenSignalSearch()
+    {
+        IsSignalSearchOpen = true;
+        RefreshFilteredSignals();
+    }
+
+    [RelayCommand]
+    public void ClearSignalSearch()
+    {
+        SelectedSignal = null;
+        SignalSearchText = string.Empty;
+        IsSignalSearchOpen = true;
+        RefreshFilteredSignals();
+    }
+
+    public void SelectSignal(CanSignalOption option)
+    {
+        SelectedSignal = option;
+    }
+
+    private void RefreshFilteredSignals()
+    {
+        var query = SignalSearchText?.Trim() ?? string.Empty;
+
+        var result = _availableSignals
+            .Where(option => MatchesSearch(option, query))
+            .ToList();
+
+        FilteredSignals.Clear();
+
+        foreach (var option in result)
+            FilteredSignals.Add(option);
+    }
+
+    private static bool MatchesSearch(CanSignalOption option, string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return true;
+
+        var tokens = query.Split(
+            ' ',
+            StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+        foreach (var token in tokens)
+        {
+            var found =
+                option.DisplayName.Contains(token, StringComparison.OrdinalIgnoreCase) ||
+                option.Name.Contains(token, StringComparison.OrdinalIgnoreCase) ||
+                option.Key.Contains(token, StringComparison.OrdinalIgnoreCase) ||
+                $"0x{option.CanId:X3}".Contains(token, StringComparison.OrdinalIgnoreCase) ||
+                option.CanId.ToString().Contains(token, StringComparison.OrdinalIgnoreCase) ||
+                (!string.IsNullOrWhiteSpace(option.Unit) &&
+                 option.Unit.Contains(token, StringComparison.OrdinalIgnoreCase)) ||
+                (!string.IsNullOrWhiteSpace(option.FrameSummary) &&
+                 option.FrameSummary.Contains(token, StringComparison.OrdinalIgnoreCase));
+
+            if (!found)
+                return false;
+        }
+
+        return true;
     }
 
     partial void OnRangeStartSecondsChanged(double value)
@@ -149,6 +251,9 @@ public partial class SinglePlotViewModel : ObservableObject
             start = Math.Max(0, end - MinimumWindowSeconds);
 
         SetRangeInternal(start, end, keepLiveMode: false);
+
+        _hasManualRangeSelection = true;
+
         UpdateLiveModeFromRange();
     }
 
@@ -164,6 +269,9 @@ public partial class SinglePlotViewModel : ObservableObject
             end = Math.Min(TimelineMaximumSeconds, start + MinimumWindowSeconds);
 
         SetRangeInternal(start, end, keepLiveMode: false);
+
+        _hasManualRangeSelection = true;
+
         UpdateLiveModeFromRange();
     }
 
@@ -171,9 +279,11 @@ public partial class SinglePlotViewModel : ObservableObject
     {
         _points.Clear();
         _firstTimestampMs = null;
+        _hasManualRangeSelection = false;
+
         IsFollowingLive = true;
-        SetTimelineMaximum(DefaultLiveWindowSeconds);
-        SetRangeInternal(0, DefaultLiveWindowSeconds, keepLiveMode: true);
+        SetTimelineMaximum(MinimumWindowSeconds);
+        SetRangeInternal(0, MinimumWindowSeconds, keepLiveMode: true);
 
         if (samples.Count == 0)
         {
@@ -202,7 +312,12 @@ public partial class SinglePlotViewModel : ObservableObject
     private void JumpToLive()
     {
         IsFollowingLive = true;
-        MoveRangeToLatestMinute();
+
+        if (_hasManualRangeSelection)
+            MoveRangeToLatestWindow();
+        else
+            MoveRangeToFullData();
+
         RefreshAxisWindow();
     }
 
@@ -223,38 +338,79 @@ public partial class SinglePlotViewModel : ObservableObject
     {
         if (_points.Count == 0)
         {
-            SetTimelineMaximum(DefaultLiveWindowSeconds);
-            SetRangeInternal(0, DefaultLiveWindowSeconds, keepLiveMode: true);
+            SetTimelineMaximum(MinimumWindowSeconds);
+            SetRangeInternal(0, MinimumWindowSeconds, keepLiveMode: true);
             RefreshAxisWindow();
             return;
         }
 
-        var totalDataSeconds = _points[^1].X ?? 0;
-        SetTimelineMaximum(Math.Max(DefaultLiveWindowSeconds, totalDataSeconds));
+        var totalDataSeconds = Math.Max(MinimumWindowSeconds, _points[^1].X ?? 0);
+
+        SetTimelineMaximum(totalDataSeconds);
 
         if (followLive)
-            MoveRangeToLatestMinute();
+        {
+            if (_hasManualRangeSelection)
+                MoveRangeToLatestWindow();
+            else
+                MoveRangeToFullData();
+        }
         else
+        {
             SetRangeInternal(
                 Math.Clamp(RangeStartSeconds, 0, TimelineMaximumSeconds),
                 Math.Clamp(RangeEndSeconds, 0, TimelineMaximumSeconds),
                 keepLiveMode: false);
+        }
 
         RefreshAxisWindow();
     }
 
-    private void MoveRangeToLatestMinute()
+    private void MoveRangeToFullData()
     {
-        var dataEnd = _points.Count == 0 ? DefaultLiveWindowSeconds : Math.Max(DefaultLiveWindowSeconds, _points[^1].X ?? 0);
+        var dataEnd = _points.Count == 0
+            ? MinimumWindowSeconds
+            : Math.Max(MinimumWindowSeconds, _points[^1].X ?? 0);
+
         var end = Math.Min(TimelineMaximumSeconds, dataEnd);
-        var start = Math.Max(0, end - DefaultLiveWindowSeconds);
+
+        SetRangeInternal(0, end, keepLiveMode: true);
+    }
+
+    private void MoveRangeToLatestWindow()
+    {
+        var currentWindowSeconds = GetCurrentWindowSeconds();
+
+        var dataEnd = _points.Count == 0
+            ? MinimumWindowSeconds
+            : Math.Max(MinimumWindowSeconds, _points[^1].X ?? 0);
+
+        var end = Math.Min(TimelineMaximumSeconds, dataEnd);
+        var start = Math.Max(0, end - currentWindowSeconds);
 
         SetRangeInternal(start, end, keepLiveMode: true);
     }
 
+    private double GetCurrentWindowSeconds()
+    {
+        var currentWindowSeconds = RangeEndSeconds - RangeStartSeconds;
+
+        if (double.IsNaN(currentWindowSeconds) ||
+            double.IsInfinity(currentWindowSeconds) ||
+            currentWindowSeconds < MinimumWindowSeconds)
+        {
+            return MinimumWindowSeconds;
+        }
+
+        return Math.Clamp(
+            currentWindowSeconds,
+            MinimumWindowSeconds,
+            TimelineMaximumSeconds);
+    }
+
     private void SetTimelineMaximum(double value)
     {
-        TimelineMaximumSeconds = Math.Max(DefaultLiveWindowSeconds, value);
+        TimelineMaximumSeconds = Math.Max(MinimumWindowSeconds, value);
         HasTimeline = TimelineMaximumSeconds > MinimumWindowSeconds;
     }
 
@@ -287,8 +443,7 @@ public partial class SinglePlotViewModel : ObservableObject
 
     private void UpdateLiveModeFromRange()
     {
-        IsFollowingLive = Math.Abs(RangeEndSeconds - TimelineMaximumSeconds) < 0.25
-            && Math.Abs((RangeEndSeconds - RangeStartSeconds) - DefaultLiveWindowSeconds) < 0.5;
+        IsFollowingLive = Math.Abs(RangeEndSeconds - TimelineMaximumSeconds) < 0.25;
     }
 
     private void RefreshAxisWindow()
@@ -303,6 +458,7 @@ public partial class SinglePlotViewModel : ObservableObject
         _xAxis.MaxLimit = end;
 
         var dataEnd = _points.Count == 0 ? 0 : _points[^1].X ?? 0;
+
         ScrollText = _points.Count == 0
             ? "Zakres: brak danych"
             : $"Zakres: {FormatAxisSeconds(start)} – {FormatAxisSeconds(end)} | dane do {FormatAxisSeconds(dataEnd)}";

@@ -31,8 +31,10 @@ public sealed class SignalDisplaySettingsStore
 
         sensor.SensorName = string.IsNullOrWhiteSpace(saved.DisplayName) ? sensor.SensorName : saved.DisplayName;
         sensor.IsEnabled = saved.IsEnabled;
-        sensor.IsPinned = saved.IsPinned;
+        //sensor.IsPinned = saved.IsPinned;
         sensor.ColorHex = string.IsNullOrWhiteSpace(saved.ColorHex) ? sensor.ColorHex : saved.ColorHex;
+        if (saved.DisplayOrder.HasValue)
+            sensor.DisplayOrder = saved.DisplayOrder.Value;
         sensor.SelectedColorOption = SensorColorOption.FindByHex(sensor.ColorHex);
     }
 
@@ -44,8 +46,10 @@ public sealed class SignalDisplaySettingsStore
 
         status.StatusName = string.IsNullOrWhiteSpace(saved.DisplayName) ? status.StatusName : saved.DisplayName;
         status.IsEnabled = saved.IsEnabled;
-        status.IsPinned = saved.IsPinned;
+        //status.IsPinned = saved.IsPinned;
         status.ColorHex = string.IsNullOrWhiteSpace(saved.ColorHex) ? status.ColorHex : saved.ColorHex;
+        if (saved.DisplayOrder.HasValue)
+            status.DisplayOrder = saved.DisplayOrder.Value;
         status.SelectedColorOption = SensorColorOption.FindByHex(status.ColorHex);
     }
 
@@ -56,8 +60,9 @@ public sealed class SignalDisplaySettingsStore
         {
             DisplayName = sensor.SensorName,
             IsEnabled = sensor.IsEnabled,
-            IsPinned = sensor.IsPinned,
-            ColorHex = sensor.ColorHex
+            //IsPinned = sensor.IsPinned,
+            ColorHex = sensor.ColorHex,
+            DisplayOrder = sensor.DisplayOrder
         });
     }
 
@@ -68,8 +73,9 @@ public sealed class SignalDisplaySettingsStore
         {
             DisplayName = status.StatusName,
             IsEnabled = status.IsEnabled,
-            IsPinned = status.IsPinned,
-            ColorHex = status.ColorHex
+            //IsPinned = status.IsPinned,
+            ColorHex = status.ColorHex,
+            DisplayOrder = status.DisplayOrder
         });
     }
 
@@ -110,6 +116,7 @@ public sealed class SignalDisplaySettings
 {
     public string DisplayName { get; set; } = string.Empty;
     public bool IsEnabled { get; set; }
-    public bool IsPinned { get; set; }
+    //public bool IsPinned { get; set; }
     public string ColorHex { get; set; } = string.Empty;
+    public int? DisplayOrder { get; set; }
 }

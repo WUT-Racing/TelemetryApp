@@ -33,4 +33,41 @@ public partial class SessionDetailPage : ContentPage
             plotVm.Sections[0].Yj = dataValue.Y;
         }
     }
+
+    private void OnSignalSearchFocused(object sender, FocusEventArgs e)
+    {
+        if (sender is Entry entry && entry.BindingContext is SinglePlotViewModel plot)
+        {
+            plot.OpenSignalSearch();
+        }
+    }
+
+    private void OnSignalSearchCompleted(object sender, EventArgs e)
+    {
+        if (sender is Entry entry && entry.BindingContext is SinglePlotViewModel plot)
+        {
+            if (plot.FilteredSignals.Count > 0)
+            {
+                plot.SelectSignal(plot.FilteredSignals[0]);
+            }
+        }
+    }
+
+    private void OnSignalSearchSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (sender is not CollectionView collectionView)
+            return;
+
+        if (collectionView.BindingContext is not SinglePlotViewModel plot)
+            return;
+
+        if (e.CurrentSelection.Count == 0)
+            return;
+
+        if (e.CurrentSelection[0] is not CanSignalOption option)
+            return;
+
+        plot.SelectSignal(option);
+        collectionView.SelectedItem = null;
+    }
 }

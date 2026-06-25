@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Maui.Graphics;
+using System.Runtime.CompilerServices;
 
 namespace TelemetryApp.Frontend.Data;
 
@@ -9,8 +10,13 @@ public partial class EnumStatusReading : ObservableObject
     private int rowIndex;
 
     [ObservableProperty]
+    private int displayOrder;
+
+    [ObservableProperty]
     private string statusName = string.Empty;
 
+    // Zostawione dla kompatybilności ze starymi ustawieniami.
+    // UI już tego nie używa.
     [ObservableProperty]
     private bool isPinned;
 
@@ -34,8 +40,6 @@ public partial class EnumStatusReading : ObservableObject
     public string? FrameSummary { get; set; }
     public string OriginalSignalName { get; set; } = string.Empty;
 
-    public string PinText => IsPinned ? "★" : "☆";
-    public string PinButtonText => IsPinned ? "Odepnij" : "Przypnij";
     public string EnabledText => IsEnabled ? "Włączony" : "Wyłączony";
     public Color StatusColor => ParseColor(ColorHex);
 
@@ -48,13 +52,9 @@ public partial class EnumStatusReading : ObservableObject
         }
     }
 
-    public string SearchText => $"{StatusName} {OriginalSignalName} {SignalKey} {FrameSummary} 0x{CanId:X3} {CurrentText}";
+    public string SearchText =>
+        $"{StatusName} {OriginalSignalName} {SignalKey} {FrameSummary} 0x{CanId:X3} {CurrentText}";
 
-    partial void OnIsPinnedChanged(bool value)
-    {
-        OnPropertyChanged(nameof(PinText));
-        OnPropertyChanged(nameof(PinButtonText));
-    }
 
     partial void OnIsEnabledChanged(bool value)
     {

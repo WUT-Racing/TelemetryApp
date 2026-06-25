@@ -73,15 +73,74 @@
                                             Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
                                             CommandParameter="{Binding .}"/>
 
-                                    <Grid Grid.Row="1" Grid.ColumnSpan="2" ColumnDefinitions="Auto, *" ColumnSpacing="10">
+                                    <Grid Grid.Row="1"
+                                      Grid.ColumnSpan="2"
+                                      ColumnDefinitions="Auto, *"
+                                      ColumnSpacing="10">
+
                                         <Label Grid.Column="0"
-                                               Text="Sygnał:"
-                                               VerticalOptions="Center"/>
-                                        <Picker Grid.Column="1"
-                                                Title="Wybierz co pokazać na wykresie"
-                                                ItemsSource="{Binding BindingContext.AvailableSignals, Source={x:Reference ThisPage}}"
-                                                ItemDisplayBinding="{Binding DisplayName}"
-                                                SelectedItem="{Binding SelectedSignal, Mode=TwoWay}"/>
+                                           Text="Sygnał:"
+                                           VerticalOptions="Start"
+                                           Margin="0,8,0,0"/>
+
+                                        <Grid Grid.Column="1"
+                                          RowDefinitions="Auto, Auto"
+                                          RowSpacing="4">
+
+                                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
+                                                <Entry Grid.Column="0"
+                                                   Text="{Binding SignalSearchText, Mode=TwoWay}"
+                                                   Placeholder="Wpisz nazwę, CAN ID, klucz albo jednostkę..."
+                                                   ClearButtonVisibility="WhileEditing"
+                                                   Focused="OnSignalSearchFocused"
+                                                   Completed="OnSignalSearchCompleted"/>
+
+                                                <Button Grid.Column="1"
+                                                    Text="▾"
+                                                    WidthRequest="44"
+                                                    Command="{Binding OpenSignalSearchCommand}"/>
+                                            </Grid>
+
+                                            <Border Grid.Row="1"
+                                               IsVisible="{Binding IsSignalSearchOpen}"
+                                               BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                                               BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                               Padding="0"
+                                               CornerRadius="8"
+                                               HasShadow="True"
+                                               HeightRequest="210"
+                                               ZIndex="100">
+
+                                                <CollectionView ItemsSource="{Binding FilteredSignals}"
+                                                    SelectionMode="Single"
+                                                    SelectionChanged="OnSignalSearchSelectionChanged">
+
+                                                    <CollectionView.EmptyView>
+                                                        <Grid Padding="12">
+                                                            <Label Text="Brak pasujących sygnałów."
+                                                                TextColor="Gray"/>
+                                                        </Grid>
+                                                    </CollectionView.EmptyView>
+
+                                                    <CollectionView.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Grid Padding="10,8"
+                                                                RowDefinitions="Auto, Auto">
+                                                                <Label Text="{Binding DisplayName}"
+                                                                   FontAttributes="Bold"
+                                                                   LineBreakMode="TailTruncation"/>
+
+                                                                <Label Grid.Row="1"
+                                                                   Text="{Binding Key}"
+                                                                   FontSize="12"
+                                                                   TextColor="Gray"
+                                                                   LineBreakMode="TailTruncation"/>
+                                                            </Grid>
+                                                        </DataTemplate>
+                                                    </CollectionView.ItemTemplate>
+                                                </CollectionView>
+                                            </Border>
+                                        </Grid>
                                     </Grid>
 
                                     <lvc:CartesianChart

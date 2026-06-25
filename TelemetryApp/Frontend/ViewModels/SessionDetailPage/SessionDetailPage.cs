@@ -94,6 +94,10 @@ namespace TelemetryApp.Frontend.ViewModels
                     EnumStatuses.Clear();
                     _sensorsBySignal.Clear();
                     _enumStatusesBySignal.Clear();
+                    foreach (var plot in VisibleCharts)
+                    {
+                        plot.SetAvailableSignals(AvailableSignals);
+                    }
 
                     foreach (var option in numericOptions)
                         AvailableSignals.Add(option);
@@ -118,7 +122,8 @@ namespace TelemetryApp.Frontend.ViewModels
                             Unit = option.Unit,
                             FrameSummary = option.FrameSummary,
                             ColorHex = color.Hex,
-                            SelectedColorOption = color
+                            SelectedColorOption = color,
+                            DisplayOrder = i
                         };
 
                         _displaySettingsStore.ApplyToSensor(sensor);
@@ -140,7 +145,8 @@ namespace TelemetryApp.Frontend.ViewModels
                             CanId = option.CanId,
                             FrameSummary = option.FrameSummary,
                             ColorHex = color.Hex,
-                            SelectedColorOption = color
+                            SelectedColorOption = color,
+                            DisplayOrder = i
                         };
 
                         _displaySettingsStore.ApplyToEnum(status);
@@ -215,7 +221,7 @@ namespace TelemetryApp.Frontend.ViewModels
         {
             return propertyName is nameof(SensorReading.SensorName)
                 or nameof(SensorReading.IsEnabled)
-                or nameof(SensorReading.IsPinned)
+                or nameof(SensorReading.DisplayOrder)
                 or nameof(SensorReading.ColorHex);
         }
 
@@ -223,7 +229,7 @@ namespace TelemetryApp.Frontend.ViewModels
         {
             return propertyName is nameof(EnumStatusReading.StatusName)
                 or nameof(EnumStatusReading.IsEnabled)
-                or nameof(EnumStatusReading.IsPinned)
+                or nameof(EnumStatusReading.DisplayOrder)
                 or nameof(EnumStatusReading.ColorHex);
         }
 
@@ -234,6 +240,8 @@ namespace TelemetryApp.Frontend.ViewModels
             {
                 Title = $"Wykres {VisibleCharts.Count + 1}"
             };
+
+            plot.SetAvailableSignals(AvailableSignals);
 
             plot.SelectedSignalChanged += HandlePlotSelectedSignalChanged;
             VisibleCharts.Add(plot);
@@ -440,7 +448,7 @@ namespace TelemetryApp.Frontend.ViewModels
                     sample.DisplayValue ?? string.Empty,
                     sample.Unit ?? string.Empty,
                     GetEnabledText(sample),
-                    GetPinnedText(sample),
+                    //GetPinnedText(sample),
                     GetFrameSummary(sample)
                 };
 
@@ -636,7 +644,7 @@ namespace TelemetryApp.Frontend.ViewModels
             return string.Empty;
         }
 
-        private string GetPinnedText(SignalSample sample)
+        /*private string GetPinnedText(SignalSample sample)
         {
             var key = MakeSignalKey(sample.CanId, sample.Key);
 
@@ -647,7 +655,7 @@ namespace TelemetryApp.Frontend.ViewModels
                 return sensor.IsPinned ? "tak" : "nie";
 
             return string.Empty;
-        }
+        }*/
 
         private static string EscapeCsvCell(string? value)
         {

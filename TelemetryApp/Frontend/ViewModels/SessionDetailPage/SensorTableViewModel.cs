@@ -35,7 +35,7 @@ public partial class SensorTableViewModel : ObservableObject
         var result = _allSensors
             .Where(sensor => sensor.IsEnabled)
             .Where(sensor => string.IsNullOrWhiteSpace(query) || sensor.SearchText.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(sensor => sensor.IsPinned)
+            .OrderBy(sensor => sensor.DisplayOrder)
             .ThenBy(sensor => sensor.SensorName, StringComparer.CurrentCultureIgnoreCase)
             .ThenBy(sensor => sensor.CanId)
             .ThenBy(sensor => sensor.SignalKey, StringComparer.CurrentCultureIgnoreCase)

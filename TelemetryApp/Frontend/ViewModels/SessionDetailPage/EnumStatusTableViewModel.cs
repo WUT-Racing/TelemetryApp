@@ -35,7 +35,7 @@ public partial class EnumStatusTableViewModel : ObservableObject
         var result = _allStatuses
             .Where(status => status.IsEnabled)
             .Where(status => string.IsNullOrWhiteSpace(query) || status.SearchText.Contains(query, StringComparison.OrdinalIgnoreCase))
-            .OrderByDescending(status => status.IsPinned)
+            .OrderBy(status => status.DisplayOrder)
             .ThenBy(status => status.StatusName, StringComparer.CurrentCultureIgnoreCase)
             .ThenBy(status => status.CanId)
             .ThenBy(status => status.SignalKey, StringComparer.CurrentCultureIgnoreCase)
