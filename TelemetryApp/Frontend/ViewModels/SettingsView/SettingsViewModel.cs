@@ -4,10 +4,9 @@ using System.ComponentModel;
 using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.ApplicationModel.DataTransfer;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
+using TelemetryApp.Backend.Export;
 
 namespace TelemetryApp.Frontend.ViewModels;
 
@@ -15,7 +14,9 @@ public partial class SettingsViewModel : ObservableObject
 {
     private const string ThemePreferenceKey = "AppTheme";
     private const string DriversPreferenceKey = "DriversList";
-    private readonly SessionDetailViewModel _sessionDetailViewModel;
+
+    private readonly TelemetryExportSettingsStore _exportSettingsStore;
+    private bool _isLoadingExportOptions;
 
     [ObservableProperty]
     private string currentTab = "General";
@@ -24,42 +25,91 @@ public partial class SettingsViewModel : ObservableObject
     private string selectedTheme = "Ciemny";
 
     [ObservableProperty]
-    private string exportStatus = "Nie eksportowano jeszcze danych.";
-
-    [ObservableProperty]
-    private bool isExporting;
-
-    [ObservableProperty]
-    private bool includeEnumsInExport = true;
-
-    [ObservableProperty]
     private string newDriverName = string.Empty;
+
+    [ObservableProperty]
+    private bool exportLongCsv = true;
+
+    [ObservableProperty]
+    private bool exportWideCsv = true;
+
+    [ObservableProperty]
+    private bool exportRawFramesCsv = true;
 
     public ObservableCollection<Driver> Drivers { get; } = new();
 
     public bool IsLightTheme => SelectedTheme == "Jasny";
     public bool IsDarkTheme => SelectedTheme == "Ciemny";
 
-    public SettingsViewModel(SessionDetailViewModel sessionDetailViewModel)
+    public SettingsViewModel(TelemetryExportSettingsStore exportSettingsStore)
     {
-        _sessionDetailViewModel = sessionDetailViewModel ?? throw new ArgumentNullException(nameof(sessionDetailViewModel));
+        _exportSettingsStore = exportSettingsStore ?? throw new ArgumentNullException(nameof(exportSettingsStore));
 
         var savedTheme = Preferences.Get(ThemePreferenceKey, "Ciemny");
         ApplyTheme(savedTheme, save: false);
+
+        LoadExportOptions();
 
         Drivers.CollectionChanged += OnDriversCollectionChanged;
 
         LoadDriversFromPreferences();
     }
-    
+
+    private void LoadExportOptions()
+    {
+        _isLoadingExportOptions = true;
+
+        try
+        {
+            var options = _exportSettingsStore.GetOptions();
+
+            ExportLongCsv = options.ExportLongCsv;
+            ExportWideCsv = options.ExportWideCsv;
+            ExportRawFramesCsv = options.ExportRawFramesCsv;
+        }
+        finally
+        {
+            _isLoadingExportOptions = false;
+        }
+    }
+
+    partial void OnExportLongCsvChanged(bool value)
+    {
+        SaveExportOptions();
+    }
+
+    partial void OnExportWideCsvChanged(bool value)
+    {
+        SaveExportOptions();
+    }
+
+    partial void OnExportRawFramesCsvChanged(bool value)
+    {
+        SaveExportOptions();
+    }
+
+    private void SaveExportOptions()
+    {
+        if (_isLoadingExportOptions)
+            return;
+
+        _exportSettingsStore.SaveOptions(new TelemetryExportOptions
+        {
+            ExportLongCsv = ExportLongCsv,
+            ExportWideCsv = ExportWideCsv,
+            ExportRawFramesCsv = ExportRawFramesCsv
+        });
+    }
+
     private void OnDriversCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        if (e.NewItems != null)
+        if (e.NewItems is not null)
         {
             foreach (Driver driver in e.NewItems)
                 driver.PropertyChanged += OnDriverPropertyChanged;
         }
-        if (e.OldItems != null)
+
+        if (e.OldItems is not null)
         {
             foreach (Driver driver in e.OldItems)
                 driver.PropertyChanged -= OnDriverPropertyChanged;
@@ -97,73 +147,47 @@ public partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task ExportCurrentSessionAsync()
-    {
-        if (IsExporting)
-            return;
-
-        try
-        {
-            IsExporting = true;
-            ExportStatus = "Eksportuję aktualną sesję do CSV...";
-
-            var path = await _sessionDetailViewModel.ExportCurrentSessionToCsvAsync(IncludeEnumsInExport);
-            ExportStatus = $"Wyeksportowano folder CSV: {path}";
-
-            await Clipboard.SetTextAsync(path);
-            await Application.Current!.MainPage!.DisplayAlert(
-                "Eksport zakończony",
-                $"Folder eksportu został zapisany tutaj:\n{path}\n\nŚcieżka została skopiowana do schowka.",
-                "OK");
-        }
-        catch (Exception ex)
-        {
-            ExportStatus = $"Błąd eksportu: {ex.Message}";
-            await Application.Current!.MainPage!.DisplayAlert("Błąd eksportu", ex.Message, "OK");
-        }
-        finally
-        {
-            IsExporting = false;
-        }
-    }
-
-    [RelayCommand]
     private void AddDriver()
     {
-        string name = NewDriverName?.Trim();
-        if (!string.IsNullOrWhiteSpace(name))
-        {
-            Drivers.Add(new Driver { Name = name });
-            NewDriverName = string.Empty;
-            SaveDriversToPreferences();
-        }
+        var name = NewDriverName?.Trim();
+
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        Drivers.Add(new Driver { Name = name });
+        NewDriverName = string.Empty;
+
+        SaveDriversToPreferences();
     }
 
     [RelayCommand]
     private void DeleteDriver(Driver? driver)
     {
-        if (driver != null)
-        {
-            Drivers.Remove(driver);
-            SaveDriversToPreferences();
-        }
+        if (driver is null)
+            return;
+
+        Drivers.Remove(driver);
+        SaveDriversToPreferences();
     }
 
     private void LoadDriversFromPreferences()
     {
         try
         {
-            string json = Preferences.Get(DriversPreferenceKey, string.Empty);
-            if (!string.IsNullOrWhiteSpace(json))
-            {
-                var drivers = JsonSerializer.Deserialize<List<Driver>>(json);
-                if (drivers != null)
-                {
-                    Drivers.Clear();
-                    foreach (var d in drivers)
-                        Drivers.Add(d);
-                }
-            }
+            var json = Preferences.Get(DriversPreferenceKey, string.Empty);
+
+            if (string.IsNullOrWhiteSpace(json))
+                return;
+
+            var drivers = JsonSerializer.Deserialize<List<Driver>>(json);
+
+            if (drivers is null)
+                return;
+
+            Drivers.Clear();
+
+            foreach (var driver in drivers)
+                Drivers.Add(driver);
         }
         catch (Exception ex)
         {
@@ -175,7 +199,7 @@ public partial class SettingsViewModel : ObservableObject
     {
         try
         {
-            string json = JsonSerializer.Serialize(Drivers.ToList());
+            var json = JsonSerializer.Serialize(Drivers.ToList());
             Preferences.Set(DriversPreferenceKey, json);
         }
         catch (Exception ex)

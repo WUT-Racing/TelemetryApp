@@ -9,39 +9,60 @@
 
     <Grid RowDefinitions="Auto, *">
         <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
-            <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
-            <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
-            <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
+            <Button Text="Ogólne"
+                    Command="{Binding SelectTabCommand}"
+                    CommandParameter="General" />
+
+            <Button Text="Dane"
+                    Command="{Binding SelectTabCommand}"
+                    CommandParameter="Data" />
         </HorizontalStackLayout>
 
         <Grid Grid.Row="1" Padding="20">
             <VerticalStackLayout IsVisible="False" Spacing="14">
-                <Label Text="Ustawienia ogólne" FontSize="24" FontAttributes="Bold" />
-                <Label Text="Motyw aplikacji" FontSize="18" FontAttributes="Bold" />
+                <Label Text="Ustawienia ogólne"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+
+                <Label Text="Motyw aplikacji"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
                 <Label Text="Wybierz jeden z dwóch motywów. Ustawienie zostanie zapamiętane po restarcie aplikacji." />
 
                 <HorizontalStackLayout Spacing="10">
-                    <Button Text="Jasny" Command="{Binding UseLightThemeCommand}" />
-                    <Button Text="Ciemny" Command="{Binding UseDarkThemeCommand}" />
+                    <Button Text="Jasny"
+                            Command="{Binding UseLightThemeCommand}" />
+
+                    <Button Text="Ciemny"
+                            Command="{Binding UseDarkThemeCommand}" />
                 </HorizontalStackLayout>
 
                 <Label Text="{Binding SelectedTheme, StringFormat='Aktualny motyw: {0}'}"
                        FontAttributes="Bold" />
 
                 <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
+                    <DataTrigger TargetType="VerticalStackLayout"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="General">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </VerticalStackLayout.Triggers>
             </VerticalStackLayout>
 
             <VerticalStackLayout IsVisible="False" Spacing="14">
-                <Label Text="Ustawienia danych" FontSize="24" FontAttributes="Bold" />
-                <Label Text="Zarządzanie kierowcami" FontSize="18" FontAttributes="Bold" />
+                <Label Text="Ustawienia danych"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+
+                <Label Text="Zarządzanie kierowcami"
+                       FontSize="18"
+                       FontAttributes="Bold" />
 
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                     <Entry Placeholder="Nazwa kierowcy"
-                        Text="{Binding NewDriverName}" />
+                           Text="{Binding NewDriverName}" />
+
                     <Button Grid.Column="1"
                             Text="Dodaj"
                             Command="{Binding AddDriverCommand}" />
@@ -52,7 +73,8 @@
                         <DataTemplate>
                             <Grid ColumnDefinitions="*,Auto" Padding="0,4">
                                 <Entry Text="{Binding Name, Mode=TwoWay}"
-                                    Placeholder="Nazwa" />
+                                       Placeholder="Nazwa" />
+
                                 <Button Grid.Column="1"
                                         Text="✕"
                                         Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteDriverCommand}"
@@ -67,31 +89,58 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Label Text="Na razie dane live są trzymane w pamięci dashboardu i raw logu .rfdlog. Kolejne opcje zapisu dodamy później." />
+                <Label Text="Dane telemetryczne są zapisywane jako raw log .rfdlog w sesjach. Eksport CSV jest dostępny w widoku Sesje."
+                       TextColor="Gray"
+                       LineBreakMode="WordWrap" />
 
+                <BoxView HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                     Margin="0,8" />
+
+                <Label Text="Eksport CSV"
+                   FontSize="18"
+                   FontAttributes="Bold" />
+
+                <Label Text="Wybierz, które pliki mają być tworzone podczas eksportu z widoku Sesje. metadata.json jest tworzone zawsze."
+                   TextColor="Gray"
+                   LineBreakMode="WordWrap" />
+
+                <Grid ColumnDefinitions="Auto,*"
+                  RowDefinitions="Auto,Auto,Auto"
+                  ColumnSpacing="10"
+                  RowSpacing="8">
+
+                                <CheckBox Grid.Row="0"
+                          Grid.Column="0"
+                          IsChecked="{Binding ExportLongCsv}" />
+
+                                <Label Grid.Row="0"
+                       Grid.Column="1"
+                       Text="decoded_signals_long.csv"
+                       VerticalTextAlignment="Center" />
+
+                                <CheckBox Grid.Row="1"
+                          Grid.Column="0"
+                          IsChecked="{Binding ExportWideCsv}" />
+
+                                <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Text="decoded_signals_wide.csv"
+                       VerticalTextAlignment="Center" />
+
+                                <CheckBox Grid.Row="2"
+                          Grid.Column="0"
+                          IsChecked="{Binding ExportRawFramesCsv}" />
+
+                                <Label Grid.Row="2"
+                       Grid.Column="1"
+                       Text="raw_frames.csv"
+                       VerticalTextAlignment="Center" />
+                </Grid>
                 <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
-                        <Setter Property="IsVisible" Value="True" />
-                    </DataTrigger>
-                </VerticalStackLayout.Triggers>
-            </VerticalStackLayout>
-
-            <VerticalStackLayout IsVisible="False" Spacing="14">
-                <Label Text="Eksport" FontSize="24" FontAttributes="Bold" />
-                <Label Text="Eksportuje aktualną sesję do folderu z plikami CSV. CSV ma separator średnika, UTF-8 BOM i format zgodny z Excelem." />
-
-                <HorizontalStackLayout Spacing="10">
-                    <CheckBox IsChecked="{Binding IncludeEnumsInExport}" />
-                    <Label Text="Dołącz enumy/statusy do eksportu decoded_signals" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-
-                <Button Text="Eksportuj aktualną sesję do CSV"
-                        Command="{Binding ExportCurrentSessionCommand}" />
-
-                <Label Text="{Binding ExportStatus}" LineBreakMode="WordWrap" />
-
-                <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
+                    <DataTrigger TargetType="VerticalStackLayout"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="Data">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </VerticalStackLayout.Triggers>

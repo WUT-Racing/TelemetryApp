@@ -78,7 +78,17 @@ public sealed class SignalDisplaySettingsStore
             DisplayOrder = status.DisplayOrder
         });
     }
+    public SignalDisplaySettings? GetSettings(string type, ushort canId, string signalKey)
+    {
+        var key = MakeKey(type, canId, signalKey);
 
+        lock (_sync)
+        {
+            return _settings.TryGetValue(key, out var saved)
+                ? saved
+                : null;
+        }
+    }
     private void Save(string key, SignalDisplaySettings value)
     {
         lock (_sync)
