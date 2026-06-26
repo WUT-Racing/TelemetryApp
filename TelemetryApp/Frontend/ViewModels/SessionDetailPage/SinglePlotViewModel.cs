@@ -155,6 +155,15 @@ public partial class SinglePlotViewModel : ObservableObject
 
         IsSignalSearchOpen = false;
 
+        while (Sections.Count > 1) 
+            Sections.RemoveAt(1);
+
+        if (value is not null)
+        {
+            if (value.SafeMin.HasValue) Sections.Add(new RectangularSection { Yi = value.SafeMin.Value, Yj = value.SafeMin.Value, Stroke = new SolidColorPaint(SKColors.DodgerBlue, 2) { PathEffect = new LiveChartsCore.SkiaSharpView.Painting.Effects.DashEffect(new float[] { 8, 16 }) } });
+            if (value.SafeMax.HasValue) Sections.Add(new RectangularSection { Yi = value.SafeMax.Value, Yj = value.SafeMax.Value, Stroke = new SolidColorPaint(SKColors.Red, 2) { PathEffect = new LiveChartsCore.SkiaSharpView.Painting.Effects.DashEffect(new float[] { 8, 16 }) } });
+        }
+
         if (value is null)
         {
             Title = "Nowy wykres";
