@@ -9,6 +9,7 @@
         <converters:AlternateRowColorConverter x:Key="AltRowColor"
                                                EvenColor="{StaticResource Gray600}"
                                                OddColor="{StaticResource Gray500}" />
+        <Color x:Key="LowValueColor">DodgerBlue</Color>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="Auto, *" RowSpacing="10">
@@ -52,10 +53,49 @@
                                    FontSize="11"
                                    LineBreakMode="TailTruncation"/>
                         </VerticalStackLayout>
-                        <Label Grid.Column="2" Text="{Binding MinText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
-                        <Label Grid.Column="3" Text="{Binding MaxText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
-                        <Label Grid.Column="4" Text="{Binding CurrentText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
-                        <Label Grid.Column="5" Text="{Binding AverageText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center"/>
+                        <Label Grid.Column="2" Text="{Binding MinText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding MinStatus}" Value="Low">
+                                    <Setter Property="TextColor" Value="{StaticResource LowValueColor}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding MinStatus}" Value="High">
+                                    <Setter Property="TextColor" Value="{StaticResource mainRed}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                        <Label Grid.Column="3" Text="{Binding MaxText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding MaxStatus}" Value="Low">
+                                    <Setter Property="TextColor" Value="{StaticResource LowValueColor}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding MaxStatus}" Value="High">
+                                    <Setter Property="TextColor" Value="{StaticResource mainRed}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                        <Label Grid.Column="4" Text="{Binding CurrentText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding CurrentStatus}" Value="Low">
+                                    <Setter Property="TextColor" Value="{StaticResource LowValueColor}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding CurrentStatus}" Value="High">
+                                    <Setter Property="TextColor" Value="{StaticResource mainRed}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
+
+                        <Label Grid.Column="5" Text="{Binding AverageText}" TextColor="{StaticResource White}" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label.Triggers>
+                                <DataTrigger TargetType="Label" Binding="{Binding AvgStatus}" Value="Low">
+                                    <Setter Property="TextColor" Value="{StaticResource LowValueColor}" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Label" Binding="{Binding AvgStatus}" Value="High">
+                                    <Setter Property="TextColor" Value="{StaticResource mainRed}" />
+                                </DataTrigger>
+                            </Label.Triggers>
+                        </Label>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
