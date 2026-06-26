@@ -88,4 +88,10 @@ public sealed class CanSignalDefinition
 
     [JsonPropertyName("description")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("safe_min")]
+    public double? SafeMin { get; set; }
+
+    [JsonPropertyName("safe_max")]
+    public double? SafeMax { get; set; }
 }

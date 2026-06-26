@@ -32,6 +32,12 @@ namespace TelemetryApp.Frontend.Data
         [ObservableProperty]
         private SensorColorOption? _selectedColorOption = SensorColorOption.FindByHex("#42A5F5");
 
+        [ObservableProperty]
+        private double? _safeMin;
+
+        [ObservableProperty]
+        private double? _safeMax;
+
         public string SignalKey { get; set; } = string.Empty;
         public ushort CanId { get; set; }
         public string? Unit { get; set; }

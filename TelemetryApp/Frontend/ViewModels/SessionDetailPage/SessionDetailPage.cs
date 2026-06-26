@@ -76,7 +76,9 @@ namespace TelemetryApp.Frontend.ViewModels
                             Name = BuildFriendlySignalName(frame, signal),
                             Unit = signal.Unit,
                             FrameSummary = frame.Summary,
-                            IsEnumLike = IsEnumLike(signal)
+                            IsEnumLike = IsEnumLike(signal),
+                            SafeMin = signal.SafeMin,
+                            SafeMax = signal.SafeMax
                         }))
                     .OrderBy(option => option.SortText, StringComparer.CurrentCultureIgnoreCase)
                     .ThenBy(option => option.CanId)
@@ -123,7 +125,9 @@ namespace TelemetryApp.Frontend.ViewModels
                             FrameSummary = option.FrameSummary,
                             ColorHex = color.Hex,
                             SelectedColorOption = color,
-                            DisplayOrder = i
+                            DisplayOrder = i,
+                            SafeMin = option.SafeMin,
+                            SafeMax = option.SafeMax
                         };
 
                         _displaySettingsStore.ApplyToSensor(sensor);
