@@ -6,6 +6,13 @@ using System.Linq;
 
 namespace TelemetryApp.Frontend.Data
 {
+    public enum ValueLimitStatus
+    {
+        Normal,
+        Low,
+        High
+    }
+
     public partial class SensorReading : ObservableObject
     {
         [ObservableProperty]
@@ -62,6 +69,25 @@ namespace TelemetryApp.Frontend.Data
         public string PinButtonText => IsPinned ? "Odepnij" : "Przypnij";*/
         public string EnabledText => IsEnabled ? "Włączony" : "Wyłączony";
         public Color SensorColor => ParseColor(ColorHex);
+
+        public ValueLimitStatus MinStatus => GetLimitStatus(Min);
+        public ValueLimitStatus MaxStatus => GetLimitStatus(Max);
+        public ValueLimitStatus AvgStatus => GetLimitStatus(Average);
+        public ValueLimitStatus CurrentStatus => GetLimitStatus(Current);
+
+        private ValueLimitStatus GetLimitStatus(double value)
+        {
+            if (!HasData) 
+                return ValueLimitStatus.Normal;
+                
+            if (SafeMin.HasValue && value < SafeMin.Value) 
+                return ValueLimitStatus.Low;
+                
+            if (SafeMax.HasValue && value > SafeMax.Value) 
+                return ValueLimitStatus.High;
+                
+            return ValueLimitStatus.Normal;
+        }
 
         public string DetailsText
         {
@@ -125,6 +151,10 @@ namespace TelemetryApp.Frontend.Data
             OnPropertyChanged(nameof(MaxText));
             OnPropertyChanged(nameof(AverageText));
             OnPropertyChanged(nameof(CurrentText));
+            OnPropertyChanged(nameof(MinStatus));
+            OnPropertyChanged(nameof(MaxStatus));
+            OnPropertyChanged(nameof(AvgStatus));
+            OnPropertyChanged(nameof(CurrentStatus));
         }
 
         public void AddValue(double value, DateTime timestamp)
@@ -141,6 +171,10 @@ namespace TelemetryApp.Frontend.Data
             OnPropertyChanged(nameof(MaxText));
             OnPropertyChanged(nameof(AverageText));
             OnPropertyChanged(nameof(CurrentText));
+            OnPropertyChanged(nameof(MinStatus));
+            OnPropertyChanged(nameof(MaxStatus));
+            OnPropertyChanged(nameof(AvgStatus));
+            OnPropertyChanged(nameof(CurrentStatus));
         }
 
         private string FormatValue(double value)
