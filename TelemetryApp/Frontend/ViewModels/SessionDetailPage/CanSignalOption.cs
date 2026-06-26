@@ -8,6 +8,8 @@ public sealed class CanSignalOption
     public string? Unit { get; init; }
     public string? FrameSummary { get; init; }
     public bool IsEnumLike { get; init; }
+    public double? SafeMin { get; init; }
+    public double? SafeMax { get; init; }
 
     public string DisplayName
     {
