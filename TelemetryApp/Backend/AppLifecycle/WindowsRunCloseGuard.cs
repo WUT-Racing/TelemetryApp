@@ -16,14 +16,20 @@ public static class WindowsRunCloseGuard
 #if WINDOWS
     private static bool _allowClose;
     private static bool _isPromptOpen;
+    private static bool _isMainWindowAttached;
 
     public static void Attach(Microsoft.UI.Xaml.Window nativeWindow)
     {
+        if (_isMainWindowAttached)
+            return;
+
         var hwnd = WindowNative.GetWindowHandle(nativeWindow);
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
         appWindow.Closing += OnAppWindowClosing;
+
+        _isMainWindowAttached = true;
     }
 
     private static async void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
