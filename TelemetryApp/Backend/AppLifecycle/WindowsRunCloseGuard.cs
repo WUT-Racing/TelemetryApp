@@ -14,7 +14,7 @@ namespace TelemetryApp.Backend.AppLifecycle;
 public static class WindowsRunCloseGuard
 {
 #if WINDOWS
-    private static bool _allowMainWindowClose;
+    private static bool _allowClose;
     private static bool _isPromptOpen;
     private static bool _isMainWindowAttached;
 
@@ -32,14 +32,9 @@ public static class WindowsRunCloseGuard
         _isMainWindowAttached = true;
     }
 
-    private static async void OnMainAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
+    private static async void OnAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
     {
-        if (_allowMainWindowClose)
-            return;
-
-        args.Cancel = true;
-
-        if (_isPromptOpen)
+        if (_allowClose)
             return;
 
         var clientBoard = MauiProgram.Services.GetService<ClientBoard>();
@@ -50,17 +45,12 @@ public static class WindowsRunCloseGuard
             sessionManager?.HasActiveRun == true;
 
         if (!hasRunningRun)
-        {
-            CloseAllOtherWindows();
-            _allowMainWindowClose = true;
-
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                Application.Current?.Quit();
-            });
-
             return;
-        }
+
+        args.Cancel = true;
+
+        if (_isPromptOpen)
+            return;
 
         _isPromptOpen = true;
 
@@ -70,14 +60,8 @@ public static class WindowsRunCloseGuard
 
             if (mainPage is null)
             {
-                CloseAllOtherWindows();
-                _allowMainWindowClose = true;
-
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    Application.Current?.Quit();
-                });
-
+                _allowClose = true;
+                Application.Current?.Quit();
                 return;
             }
 
@@ -104,9 +88,7 @@ public static class WindowsRunCloseGuard
                     sessionManager.StopActiveRun();
                 }
 
-                CloseAllOtherWindows();
-
-                _allowMainWindowClose = true;
+                _allowClose = true;
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -126,43 +108,6 @@ public static class WindowsRunCloseGuard
         {
             _isPromptOpen = false;
         }
-    }
-
-    private static void CloseAllOtherWindows()
-    {
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            var app = Application.Current;
-
-            if (app is null)
-                return;
-
-            var windows = app.Windows.ToList();
-
-            foreach (var window in windows)
-            {
-                if (IsMainMauiWindow(window))
-                    continue;
-
-                try
-                {
-                    app.CloseWindow(window);
-                }
-                catch
-                {
-                    // Nie blokujemy zamykania aplikacji, jeśli poboczne okno
-                    // było już w trakcie zamykania.
-                }
-            }
-        });
-    }
-
-    private static bool IsMainMauiWindow(Window window)
-    {
-        if (_mainNativeWindow is null)
-            return false;
-
-        return ReferenceEquals(window.Handler?.PlatformView, _mainNativeWindow);
     }
 #endif
 }
