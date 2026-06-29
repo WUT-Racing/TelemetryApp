@@ -7,38 +7,102 @@
              Title="Dashboard"
              x:Name="ThisPage">
 
-    <Grid RowDefinitions="Auto, Auto, *" Padding="12" RowSpacing="10">
-        <HorizontalStackLayout Grid.Row="0" Spacing="8">
+    <Grid RowDefinitions="Auto, Auto, *"
+          Padding="12"
+          RowSpacing="10">
+
+        <HorizontalStackLayout Grid.Row="0"
+                               Spacing="8">
             <Button Text="Dodaj wykres"
-                    Command="{Binding AddPlotCommand}"/>
+                    Command="{Binding AddPlotCommand}" />
+
             <Button Text="Pokaż tabele"
-                    Command="{Binding ShowTablesCommand}"/>
+                    Command="{Binding ShowTablesCommand}" />
+
             <Button Text="Zarządzaj sensorami"
-                    Command="{Binding ManageSensorsCommand}"/>
+                    Command="{Binding ManageSensorsCommand}" />
+
             <Button Text="Enumy/statusy"
-                    Command="{Binding ShowEnumsCommand}"/>
+                    Command="{Binding ShowEnumsCommand}" />
+
             <Button Text="Zarządzaj enumami"
-                    Command="{Binding ManageEnumsCommand}"/>
+                    Command="{Binding ManageEnumsCommand}" />
         </HorizontalStackLayout>
 
         <Label Grid.Row="1"
                Text="{Binding DashboardStatus}"
                FontSize="13"
-               TextColor="Gray"/>
+               TextColor="Gray" />
 
         <ScrollView Grid.Row="2">
             <VerticalStackLayout Spacing="14">
 
                 <Label Text="Wykresy"
                        FontAttributes="Bold"
-                       FontSize="18"/>
+                       FontSize="18" />
 
+                <!-- ODPIĘTE WYKRESY — małe karty w dashboardzie -->
+                <VerticalStackLayout Spacing="8"
+                                     BindableLayout.ItemsSource="{Binding DetachedCharts}">
+
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <Frame BorderColor="{AppThemeBinding Light=#F59E0B, Dark=#FBBF24}"
+                                   BackgroundColor="{AppThemeBinding Light=#FFFBEB, Dark=#1F2937}"
+                                   CornerRadius="12"
+                                   Padding="12">
+
+                                <Grid ColumnDefinitions="*, Auto, Auto, Auto"
+                                      ColumnSpacing="8">
+
+                                    <VerticalStackLayout Grid.Column="0"
+                                                         Spacing="2">
+                                        <Label Text="{Binding Title, StringFormat='Odpięty wykres: {0}'}"
+                                               FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation" />
+
+                                        <Label Text="{Binding LastValueText}"
+                                               FontSize="12"
+                                               TextColor="{AppThemeBinding Light=#92400E, Dark=#FDE68A}"
+                                               LineBreakMode="TailTruncation" />
+                                    </VerticalStackLayout>
+
+                                    <Button Grid.Column="1"
+                                            Text="Pokaż"
+                                            Command="{Binding BindingContext.ShowDetachedPlotCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Button Grid.Column="2"
+                                            Text="Przypnij"
+                                            Command="{Binding BindingContext.ReattachPlotCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Button Grid.Column="3"
+                                            Text="Usuń"
+                                            TextColor="Red"
+                                            BackgroundColor="Transparent"
+                                            Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </Frame>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <!-- WYKRESY W DASHBOARDZIE -->
                 <VerticalStackLayout Spacing="10"
                                      BindableLayout.ItemsSource="{Binding VisibleCharts}">
+
                     <BindableLayout.EmptyView>
-                        <VerticalStackLayout Padding="20" Spacing="10" HorizontalOptions="Center">
-                            <Label Text="Nie ma jeszcze żadnego wykresu." HorizontalTextAlignment="Center"/>
-                            <Label Text="Kliknij „Dodaj wykres”, a potem wybierz sygnał liczbowy z listy odczytanej z JSON-a." HorizontalTextAlignment="Center" TextColor="Gray"/>
+                        <VerticalStackLayout Padding="20"
+                                             Spacing="10"
+                                             HorizontalOptions="Center">
+                            <Label Text="Nie ma jeszcze żadnego wykresu."
+                                   HorizontalTextAlignment="Center" />
+
+                            <Label Text="Kliknij „Dodaj wykres”, a potem wybierz sygnał liczbowy z listy odczytanej z JSON-a."
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="Gray" />
                         </VerticalStackLayout>
                     </BindableLayout.EmptyView>
 
@@ -50,18 +114,32 @@
                                    HasShadow="True"
                                    HeightRequest="520"
                                    Padding="14">
-                                <Grid RowDefinitions="Auto, Auto, *, Auto, Auto" ColumnDefinitions="*, Auto" RowSpacing="8">
-                                    <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="2">
+
+                                <Grid RowDefinitions="Auto, Auto, *, Auto, Auto"
+                                      ColumnDefinitions="*, Auto, Auto"
+                                      RowSpacing="8"
+                                      ColumnSpacing="8">
+
+                                    <VerticalStackLayout Grid.Row="0"
+                                                         Grid.Column="0"
+                                                         Spacing="2">
                                         <Label Text="{Binding Title}"
                                                FontAttributes="Bold"
-                                               LineBreakMode="TailTruncation"/>
+                                               LineBreakMode="TailTruncation" />
+
                                         <Label Text="{Binding LastValueText}"
                                                FontSize="13"
-                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"/>
+                                               TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}" />
                                     </VerticalStackLayout>
 
                                     <Button Grid.Row="0"
                                             Grid.Column="1"
+                                            Text="Odepnij"
+                                            Command="{Binding BindingContext.DetachPlotCommand, Source={x:Reference ThisPage}}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Button Grid.Row="0"
+                                            Grid.Column="2"
                                             Text="✕"
                                             TextColor="Red"
                                             BackgroundColor="Transparent"
@@ -71,67 +149,68 @@
                                             HeightRequest="30"
                                             WidthRequest="30"
                                             Command="{Binding BindingContext.RemovePlotCommand, Source={x:Reference ThisPage}}"
-                                            CommandParameter="{Binding .}"/>
+                                            CommandParameter="{Binding .}" />
 
                                     <Grid Grid.Row="1"
-                                      Grid.ColumnSpan="2"
-                                      ColumnDefinitions="Auto, *"
-                                      ColumnSpacing="10">
+                                          Grid.ColumnSpan="3"
+                                          ColumnDefinitions="Auto, *"
+                                          ColumnSpacing="10">
 
                                         <Label Grid.Column="0"
-                                           Text="Sygnał:"
-                                           VerticalOptions="Start"
-                                           Margin="0,8,0,0"/>
+                                               Text="Sygnał:"
+                                               VerticalOptions="Start"
+                                               Margin="0,8,0,0" />
 
                                         <Grid Grid.Column="1"
-                                          RowDefinitions="Auto, Auto"
-                                          RowSpacing="4">
+                                              RowDefinitions="Auto, Auto"
+                                              RowSpacing="4">
 
-                                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="6">
+                                            <Grid ColumnDefinitions="*, Auto"
+                                                  ColumnSpacing="6">
                                                 <Entry Grid.Column="0"
-                                                   Text="{Binding SignalSearchText, Mode=TwoWay}"
-                                                   Placeholder="Wpisz nazwę, CAN ID, klucz albo jednostkę..."
-                                                   ClearButtonVisibility="WhileEditing"
-                                                   Focused="OnSignalSearchFocused"
-                                                   Completed="OnSignalSearchCompleted"/>
+                                                       Text="{Binding SignalSearchText, Mode=TwoWay}"
+                                                       Placeholder="Wpisz nazwę, CAN ID, klucz albo jednostkę..."
+                                                       ClearButtonVisibility="WhileEditing"
+                                                       Focused="OnSignalSearchFocused"
+                                                       Completed="OnSignalSearchCompleted" />
 
                                                 <Button Grid.Column="1"
-                                                    Text="▾"
-                                                    WidthRequest="44"
-                                                    Command="{Binding OpenSignalSearchCommand}"/>
+                                                        Text="▾"
+                                                        WidthRequest="44"
+                                                        Command="{Binding OpenSignalSearchCommand}" />
                                             </Grid>
 
                                             <Border Grid.Row="1"
-                                               IsVisible="{Binding IsSignalSearchOpen}"
-                                               BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
-                                               Padding="0"
-                                               HeightRequest="210"
-                                               ZIndex="100">
+                                                    IsVisible="{Binding IsSignalSearchOpen}"
+                                                    BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1E293B}"
+                                                    Padding="0"
+                                                    HeightRequest="210"
+                                                    ZIndex="100">
 
                                                 <CollectionView ItemsSource="{Binding FilteredSignals}"
-                                                    SelectionMode="Single"
-                                                    SelectionChanged="OnSignalSearchSelectionChanged">
+                                                                SelectionMode="Single"
+                                                                SelectionChanged="OnSignalSearchSelectionChanged">
 
                                                     <CollectionView.EmptyView>
                                                         <Grid Padding="12">
                                                             <Label Text="Brak pasujących sygnałów."
-                                                                TextColor="Gray"/>
+                                                                   TextColor="Gray" />
                                                         </Grid>
                                                     </CollectionView.EmptyView>
 
                                                     <CollectionView.ItemTemplate>
                                                         <DataTemplate>
                                                             <Grid Padding="10,8"
-                                                                RowDefinitions="Auto, Auto">
+                                                                  RowDefinitions="Auto, Auto">
                                                                 <Label Text="{Binding DisplayName}"
-                                                                   FontAttributes="Bold"
-                                                                   LineBreakMode="TailTruncation"/>
+                                                                       FontAttributes="Bold"
+                                                                       LineBreakMode="TailTruncation" />
 
                                                                 <Label Grid.Row="1"
-                                                                   Text="{Binding Key}"
-                                                                   FontSize="12"
-                                                                   TextColor="Gray"
-                                                                   LineBreakMode="TailTruncation"/>
+                                                                       Text="{Binding Key}"
+                                                                       FontSize="12"
+                                                                       TextColor="Gray"
+                                                                       LineBreakMode="TailTruncation" />
                                                             </Grid>
                                                         </DataTemplate>
                                                     </CollectionView.ItemTemplate>
@@ -140,42 +219,58 @@
                                         </Grid>
                                     </Grid>
 
-                                    <lvc:CartesianChart
-                                        Grid.Row="2"
-                                        Grid.ColumnSpan="2"
-                                        BackgroundColor="#111827"
-                                        Series="{Binding Series}"
-                                        XAxes="{Binding XAxes}"
-                                        YAxes="{Binding YAxes}"
-                                        Sections="{Binding Sections}">
-                                        <lvc:CartesianChart.GestureRecognizers>
-                                            <PointerGestureRecognizer
-                                                PointerPressed="OnPointerPressed"
-                                                PointerMoved="OnPointerMoved"
-                                                PointerReleased="OnPointerReleased"/>
-                                        </lvc:CartesianChart.GestureRecognizers>
-                                    </lvc:CartesianChart>
+                                    <Grid Grid.Row="2"
+                                        Grid.ColumnSpan="3">
 
-                                    <Grid Grid.Row="3" Grid.ColumnSpan="2" ColumnDefinitions="Auto, *, Auto" ColumnSpacing="10">
+                                        <lvc:CartesianChart
+                                            BackgroundColor="#111827"
+                                            Series="{Binding Series}"
+                                            XAxes="{Binding XAxes}"
+                                            YAxes="{Binding YAxes}"
+                                            Sections="{Binding Sections}">
+
+                                            <lvc:CartesianChart.GestureRecognizers>
+                                                <PointerGestureRecognizer
+                                                    PointerPressed="OnPointerPressed"
+                                                    PointerMoved="OnPointerMoved"
+                                                    PointerReleased="OnPointerReleased" />
+                                            </lvc:CartesianChart.GestureRecognizers>
+                                        </lvc:CartesianChart>
+
+                                        <Label Text="Czas"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="End"
+                                           Margin="0,0,0,2"
+                                           FontSize="12"
+                                           TextColor="{AppThemeBinding Light=#CBD5E1, Dark=#CBD5E1}" />
+                                    </Grid>
+
+                                    <Grid Grid.Row="3"
+                                          Grid.ColumnSpan="3"
+                                          ColumnDefinitions="Auto, *, Auto"
+                                          ColumnSpacing="10">
+
                                         <Label Grid.Column="0"
                                                Text="Zakres:"
-                                               VerticalOptions="Center"/>
+                                               VerticalOptions="Center" />
+
                                         <controls:RangeSliderView Grid.Column="1"
                                                                   Minimum="0"
                                                                   Maximum="{Binding TimelineMaximumSeconds}"
                                                                   LowerValue="{Binding RangeStartSeconds, Mode=TwoWay}"
                                                                   UpperValue="{Binding RangeEndSeconds, Mode=TwoWay}"
-                                                                  IsEnabled="{Binding HasTimeline}"/>
+                                                                  IsEnabled="{Binding HasTimeline}" />
+
                                         <Button Grid.Column="2"
                                                 Text="Na żywo"
-                                                Command="{Binding JumpToLiveCommand}"/>
+                                                Command="{Binding JumpToLiveCommand}" />
                                     </Grid>
 
                                     <Label Grid.Row="4"
-                                           Grid.ColumnSpan="2"
+                                           Grid.ColumnSpan="3"
                                            Text="{Binding ScrollText}"
                                            FontSize="12"
-                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}"/>
+                                           TextColor="{AppThemeBinding Light=#64748B, Dark=#CBD5E1}" />
                                 </Grid>
                             </Frame>
                         </DataTemplate>
