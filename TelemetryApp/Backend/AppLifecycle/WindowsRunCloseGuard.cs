@@ -16,25 +16,20 @@ public static class WindowsRunCloseGuard
 #if WINDOWS
     private static bool _allowMainWindowClose;
     private static bool _isPromptOpen;
-    private static bool _mainWindowAttached;
-
-    private static Microsoft.UI.Xaml.Window? _mainNativeWindow;
+    private static bool _isMainWindowAttached;
 
     public static void Attach(Microsoft.UI.Xaml.Window nativeWindow)
     {
-        // OnWindowCreated odpala się dla każdego okna.
-        // Guard podpinamy tylko do pierwszego utworzonego okna, czyli głównego.
-        if (_mainWindowAttached)
+        if (_isMainWindowAttached)
             return;
-
-        _mainWindowAttached = true;
-        _mainNativeWindow = nativeWindow;
 
         var hwnd = WindowNative.GetWindowHandle(nativeWindow);
         var windowId = Microsoft.UI.Win32Interop.GetWindowIdFromWindow(hwnd);
         var appWindow = AppWindow.GetFromWindowId(windowId);
 
-        appWindow.Closing += OnMainAppWindowClosing;
+        appWindow.Closing += OnAppWindowClosing;
+
+        _isMainWindowAttached = true;
     }
 
     private static async void OnMainAppWindowClosing(AppWindow sender, AppWindowClosingEventArgs args)
