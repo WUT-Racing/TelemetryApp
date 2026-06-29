@@ -16,6 +16,9 @@ using TelemetryApp.Backend.Storage;
 using TelemetryApp.Backend.UserSettings;
 using TelemetryApp.Frontend.Data;
 using TelemetryApp.Frontend.Views;
+using System.Diagnostics;
+using System.Threading;
+using TelemetryApp.Backend.Performance;
 
 namespace TelemetryApp.Frontend.ViewModels
 {
@@ -24,8 +27,11 @@ namespace TelemetryApp.Frontend.ViewModels
         private readonly ClientBoard _clientBoard;
         private readonly TelemetrySessionManager _sessionManager;
         private readonly SignalDisplaySettingsStore _displaySettingsStore;
-        private readonly SignalHistoryStore _historyStore = new();
+        private readonly SignalHistoryStore _historyStore;
+        private readonly TelemetryPerformanceSettingsStore _performanceSettingsStore;
 
+        private TelemetryPerformanceOptions _performanceOptions = TelemetryPerformanceOptions.CreateDefault();
+        private long _lastLiveUiUpdateTicks;
         private string? _currentSessionId;
         private TelemetrySession? _lastKnownSession;
 
@@ -58,11 +64,16 @@ namespace TelemetryApp.Frontend.ViewModels
         public SessionDetailViewModel(
             ClientBoard clientBoard,
             TelemetrySessionManager sessionManager,
-            SignalDisplaySettingsStore displaySettingsStore)
+            SignalDisplaySettingsStore displaySettingsStore,
+            TelemetryPerformanceSettingsStore performanceSettingsStore)
         {
             _clientBoard = clientBoard ?? throw new ArgumentNullException(nameof(clientBoard));
             _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
             _displaySettingsStore = displaySettingsStore ?? throw new ArgumentNullException(nameof(displaySettingsStore));
+            _performanceSettingsStore = performanceSettingsStore ?? throw new ArgumentNullException(nameof(performanceSettingsStore));
+            _performanceOptions = _performanceSettingsStore.GetOptions();
+            _historyStore = new SignalHistoryStore(_performanceOptions);
+            _performanceSettingsStore.OptionsChanged += HandlePerformanceOptionsChanged;
 
             _clientBoard.OnSignalsDecoded += HandleSignalsDecoded;
             _sessionManager.ActiveSessionChanged += HandleActiveSessionChanged;
@@ -79,6 +90,58 @@ namespace TelemetryApp.Frontend.ViewModels
                 .Concat(DetachedCharts)
                 .Distinct()
                 .ToList();
+        }
+        private bool ShouldUpdateLiveUi()
+        {
+            var fps = Math.Clamp(_performanceOptions.DashboardFps, 2, 30);
+            var minIntervalMs = 1000.0 / fps;
+
+            var now = Stopwatch.GetTimestamp();
+            var last = Interlocked.Read(ref _lastLiveUiUpdateTicks);
+
+            if (last != 0)
+            {
+                var elapsedMs = (now - last) * 1000.0 / Stopwatch.Frequency;
+
+                if (elapsedMs < minIntervalMs)
+                    return false;
+            }
+
+            Interlocked.Exchange(ref _lastLiveUiUpdateTicks, now);
+            return true;
+        }
+
+        private void HandlePerformanceOptionsChanged(TelemetryPerformanceOptions options)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _performanceOptions = options.Clone();
+                _performanceOptions.Normalize();
+
+                _historyStore.ApplyOptions(_performanceOptions, pruneExisting: true);
+
+                foreach (var plot in GetAllChartViewModels())
+                    ReloadPlotHistory(plot);
+
+                DashboardStatus = $"Zastosowano ustawienia wydajności: {_performanceOptions.BuildSummary()}";
+            });
+        }
+
+        private void ReloadPlotHistory(SinglePlotViewModel plot)
+        {
+            var selected = plot.SelectedSignal;
+
+            if (selected is null)
+            {
+                plot.LoadHistory(Array.Empty<SignalSample>());
+                return;
+            }
+
+            var history = _historyStore.GetHistory(selected.CanId, selected.Key)
+                .Where(sample => !sample.IsEnumLike)
+                .ToList();
+
+            plot.LoadHistory(history);
         }
 
         private async Task LoadAvailableSignalsAsync()
@@ -244,6 +307,37 @@ namespace TelemetryApp.Frontend.ViewModels
                     ? "Brak aktywnej sesji. Rozpocznij sesję i połączenie, żeby zbierać dane."
                     : "Rozpoczęto nową sesję — historia dashboardu została wyczyszczona.";
             });
+        }
+
+        public void ClearDashboardPreviewHistory()
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                _historyStore.Clear();
+
+                foreach (var sensor in Sensors)
+                    sensor.ClearValues();
+
+                foreach (var status in EnumStatuses)
+                    status.ClearValue();
+
+                foreach (var plot in GetAllChartViewModels())
+                    plot.LoadHistory(Array.Empty<SignalSample>());
+
+                DashboardStatus = "Wyczyszczono historię podglądu dashboardu. Zapis .rfdlog nie został naruszony.";
+            });
+        }
+
+        public int GetDashboardHistoryPointCount()
+        {
+            return _historyStore.GetTotalSampleCount();
+        }
+
+        public int GetTrackedSignalCount()
+        {
+            return Math.Max(
+                Sensors.Count + EnumStatuses.Count,
+                _historyStore.GetTrackedSignalCount());
         }
 
         private void HandleSensorSettingsChanged(object? sender, PropertyChangedEventArgs e)
@@ -452,19 +546,7 @@ namespace TelemetryApp.Frontend.ViewModels
 
         private void HandlePlotSelectedSignalChanged(SinglePlotViewModel plot)
         {
-            var selected = plot.SelectedSignal;
-
-            if (selected is null)
-            {
-                plot.LoadHistory(Array.Empty<SignalSample>());
-                return;
-            }
-
-            var history = _historyStore.GetHistory(selected.CanId, selected.Key)
-                .Where(sample => !sample.IsEnumLike)
-                .ToList();
-
-            plot.LoadHistory(history);
+            ReloadPlotHistory(plot);
         }
 
         private void HandleSignalsDecoded(DecodedSignalBatch batch)
@@ -475,6 +557,9 @@ namespace TelemetryApp.Frontend.ViewModels
             var appendedSamples = _historyStore.AppendBatch(batch);
 
             if (appendedSamples.Count == 0)
+                return;
+
+            if (!ShouldUpdateLiveUi())
                 return;
 
             MainThread.BeginInvokeOnMainThread(() =>

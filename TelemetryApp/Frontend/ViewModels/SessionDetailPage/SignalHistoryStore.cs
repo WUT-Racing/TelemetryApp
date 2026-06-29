@@ -1,18 +1,44 @@
 using TelemetryApp.Backend.Decoding;
+using TelemetryApp.Backend.Performance;
 
 namespace TelemetryApp.Frontend.ViewModels;
 
 public sealed class SignalHistoryStore
 {
-    private const ulong DefaultMaxHistoryMs = 3UL * 60UL * 60UL * 1000UL; // 3 godziny
-
     private readonly object _sync = new();
     private readonly Dictionary<string, List<SignalSample>> _historyBySignal = new(StringComparer.OrdinalIgnoreCase);
-    private readonly ulong _maxHistoryMs;
 
-    public SignalHistoryStore(ulong maxHistoryMs = DefaultMaxHistoryMs)
+    private ulong _maxHistoryMs;
+    private ulong _minSampleIntervalMs;
+    private int _maxSamplesPerSignal;
+
+    public SignalHistoryStore(TelemetryPerformanceOptions? options = null)
     {
-        _maxHistoryMs = maxHistoryMs;
+        ApplyOptions(options ?? TelemetryPerformanceOptions.CreateDefault(), pruneExisting: false);
+    }
+
+    public void ApplyOptions(TelemetryPerformanceOptions options, bool pruneExisting = true)
+    {
+        options.Normalize();
+
+        lock (_sync)
+        {
+            _maxHistoryMs = (ulong)options.DashboardHistoryMinutes * 60UL * 1000UL;
+            _minSampleIntervalMs = (ulong)options.MinSampleIntervalMs;
+            _maxSamplesPerSignal = Math.Max(500, options.MaxSamplesPerSignal);
+
+            if (!pruneExisting)
+                return;
+
+            foreach (var samples in _historyBySignal.Values)
+            {
+                if (samples.Count == 0)
+                    continue;
+
+                PruneOldSamples(samples, samples[^1].TimestampMs);
+                PruneByCount(samples);
+            }
+        }
     }
 
     public void Clear()
@@ -23,13 +49,27 @@ public sealed class SignalHistoryStore
         }
     }
 
+    public int GetTotalSampleCount()
+    {
+        lock (_sync)
+        {
+            return _historyBySignal.Values.Sum(samples => samples.Count);
+        }
+    }
+
+    public int GetTrackedSignalCount()
+    {
+        lock (_sync)
+        {
+            return _historyBySignal.Count;
+        }
+    }
+
     public IReadOnlyList<SignalSample> AppendBatch(DecodedSignalBatch batch)
     {
         if (batch.Signals.Length == 0)
             return Array.Empty<SignalSample>();
 
-        // Jeden blok ma jeden timestamp. Jeżeli w paczce ten sam sygnał pojawi się kilka razy,
-        // do historii dashboardu dopisujemy tylko ostatnią wartość z tego bloku.
         var latestInBatch = new Dictionary<string, SignalSample>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var signal in batch.Signals)
@@ -48,22 +88,29 @@ public sealed class SignalHistoryStore
             latestInBatch[MakeKey(signal.CanId, signal.Key)] = sample;
         }
 
+        var acceptedSamples = new List<SignalSample>(latestInBatch.Count);
+
         lock (_sync)
         {
             foreach (var pair in latestInBatch)
             {
                 if (!_historyBySignal.TryGetValue(pair.Key, out var samples))
                 {
-                    samples = new List<SignalSample>(capacity: 4096);
+                    samples = new List<SignalSample>(capacity: 1024);
                     _historyBySignal[pair.Key] = samples;
                 }
 
-                samples.Add(pair.Value);
+                if (!AddThrottled(samples, pair.Value))
+                    continue;
+
                 PruneOldSamples(samples, pair.Value.TimestampMs);
+                PruneByCount(samples);
+
+                acceptedSamples.Add(pair.Value);
             }
         }
 
-        return latestInBatch.Values.ToArray();
+        return acceptedSamples;
     }
 
     public IReadOnlyList<SignalSample> GetHistory(ushort canId, string key)
@@ -101,6 +148,31 @@ public sealed class SignalHistoryStore
         }
     }
 
+    private bool AddThrottled(List<SignalSample> samples, SignalSample sample)
+    {
+        if (samples.Count == 0)
+        {
+            samples.Add(sample);
+            return true;
+        }
+
+        var last = samples[^1];
+
+        if (sample.TimestampMs <= last.TimestampMs)
+        {
+            samples[^1] = sample;
+            return true;
+        }
+
+        var deltaMs = sample.TimestampMs - last.TimestampMs;
+
+        if (deltaMs < _minSampleIntervalMs)
+            return false;
+
+        samples.Add(sample);
+        return true;
+    }
+
     private void PruneOldSamples(List<SignalSample> samples, ulong newestTimestampMs)
     {
         if (samples.Count == 0 || newestTimestampMs < _maxHistoryMs)
@@ -116,5 +188,18 @@ public sealed class SignalHistoryStore
             samples.RemoveRange(0, removeCount);
     }
 
-    private static string MakeKey(ushort canId, string key) => $"{canId:X3}|{key}";
+    private void PruneByCount(List<SignalSample> samples)
+    {
+        var overflow = samples.Count - _maxSamplesPerSignal;
+
+        if (overflow <= 0)
+            return;
+
+        samples.RemoveRange(0, overflow);
+    }
+
+    private static string MakeKey(ushort canId, string key)
+    {
+        return $"{canId:X3}|{key}";
+    }
 }

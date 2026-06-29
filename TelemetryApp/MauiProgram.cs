@@ -10,6 +10,7 @@ using CommunityToolkit.Maui;
 using TelemetryApp.Backend.Export;
 using Microsoft.Maui.LifecycleEvents;
 using TelemetryApp.Backend.AppLifecycle;
+using TelemetryApp.Backend.Performance;
 
 namespace TelemetryApp;
 
@@ -53,6 +54,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<SignalDisplaySettingsStore>();
         builder.Services.AddSingleton<TelemetryExportSettingsStore>();
         builder.Services.AddSingleton<TelemetryCsvExportService>();
+        builder.Services.AddSingleton<TelemetryPerformanceSettingsStore>();
+        builder.Services.AddSingleton<TelemetryPerformanceMonitor>();
         builder.Services.AddSingleton<ClientBoard>();
         builder.Services.AddTransient<TelemetryService>();
         builder.Services.AddTransient<SessionsPage>();

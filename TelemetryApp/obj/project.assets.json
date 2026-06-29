@@ -6754,18 +6754,18 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
+      "projectUniqueName": "C:\\Users\\Robert\\Downloads\\telemetriaApka\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
       "projectName": "TelemetryApp",
-      "projectPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
+      "projectPath": "C:\\Users\\Robert\\Downloads\\telemetriaApka\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
       "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\obj\\",
+      "outputPath": "C:\\Users\\Robert\\Downloads\\telemetriaApka\\TelemetryApp\\TelemetryApp\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\NuGet.Config",
+        "C:\\Users\\Robert\\Downloads\\telemetriaApka\\TelemetryApp\\NuGet.Config",
         "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
