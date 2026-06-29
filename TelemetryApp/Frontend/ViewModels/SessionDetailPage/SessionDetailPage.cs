@@ -6,7 +6,9 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.ApplicationModel;
 using Microsoft.Maui.Controls;
+using Microsoft.Maui.Storage;
 using TelemetryApp.Backend.BoardConnection;
 using TelemetryApp.Backend.Decoding;
 using TelemetryApp.Backend.Sessions;
@@ -23,40 +25,60 @@ namespace TelemetryApp.Frontend.ViewModels
         private readonly TelemetrySessionManager _sessionManager;
         private readonly SignalDisplaySettingsStore _displaySettingsStore;
         private readonly SignalHistoryStore _historyStore = new();
+
         private string? _currentSessionId;
         private TelemetrySession? _lastKnownSession;
+
         private readonly Dictionary<string, SensorReading> _sensorsBySignal = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, EnumStatusReading> _enumStatusesBySignal = new(StringComparer.OrdinalIgnoreCase);
 
+        private Window? _showTablesWindow;
+        private Window? _sensorManagementWindow;
+        private Window? _enumStatusWindow;
+        private Window? _enumManagementWindow;
+
+        private readonly Dictionary<SinglePlotViewModel, Window> _detachedPlotWindows = new();
+        private readonly HashSet<Window> _detachedPlotWindowsClosingProgrammatically = new();
+
         public ObservableCollection<SinglePlotViewModel> VisibleCharts { get; } = new();
 
+        public ObservableCollection<SinglePlotViewModel> DetachedCharts { get; } = new();
 
-        // Ta kolekcja zawiera tylko sygnały liczbowe. Jest używana przez wykresy.
         public ObservableCollection<CanSignalOption> AvailableSignals { get; } = new();
 
-        // Ta kolekcja zawiera enumy/statusy/bitfieldy. Jest używana przez osobne okna enumów.
         public ObservableCollection<CanSignalOption> AvailableEnumSignals { get; } = new();
 
-        // Lista używana przez „Zarządzaj sensorami” i „Pokaż tabele”.
         public ObservableCollection<SensorReading> Sensors { get; } = new();
 
-        // Lista używana przez „Enumy/statusy” i „Zarządzaj enumami”.
         public ObservableCollection<EnumStatusReading> EnumStatuses { get; } = new();
 
         [ObservableProperty]
         private string dashboardStatus = "Ładowanie listy sygnałów z JSON-a...";
 
-        public SessionDetailViewModel(ClientBoard clientBoard, TelemetrySessionManager sessionManager, SignalDisplaySettingsStore displaySettingsStore)
+        public SessionDetailViewModel(
+            ClientBoard clientBoard,
+            TelemetrySessionManager sessionManager,
+            SignalDisplaySettingsStore displaySettingsStore)
         {
             _clientBoard = clientBoard ?? throw new ArgumentNullException(nameof(clientBoard));
             _sessionManager = sessionManager ?? throw new ArgumentNullException(nameof(sessionManager));
             _displaySettingsStore = displaySettingsStore ?? throw new ArgumentNullException(nameof(displaySettingsStore));
+
             _clientBoard.OnSignalsDecoded += HandleSignalsDecoded;
             _sessionManager.ActiveSessionChanged += HandleActiveSessionChanged;
+
             _lastKnownSession = _sessionManager.ActiveSession;
             _currentSessionId = _lastKnownSession?.Id;
 
             _ = LoadAvailableSignalsAsync();
+        }
+
+        private IEnumerable<SinglePlotViewModel> GetAllChartViewModels()
+        {
+            return VisibleCharts
+                .Concat(DetachedCharts)
+                .Distinct()
+                .ToList();
         }
 
         private async Task LoadAvailableSignalsAsync()
@@ -68,7 +90,9 @@ namespace TelemetryApp.Frontend.ViewModels
 
                 var allOptions = definitions.Source.Frames
                     .SelectMany(frame => frame.Signals
-                        .Where(signal => !signal.Reserved && !string.Equals(signal.DataType, "reserved", StringComparison.OrdinalIgnoreCase))
+                        .Where(signal =>
+                            !signal.Reserved &&
+                            !string.Equals(signal.DataType, "reserved", StringComparison.OrdinalIgnoreCase))
                         .Select(signal => new CanSignalOption
                         {
                             CanId = frame.Id,
@@ -85,8 +109,13 @@ namespace TelemetryApp.Frontend.ViewModels
                     .ThenBy(option => option.Key, StringComparer.CurrentCultureIgnoreCase)
                     .ToList();
 
-                var numericOptions = allOptions.Where(option => !option.IsEnumLike).ToList();
-                var enumOptions = allOptions.Where(option => option.IsEnumLike).ToList();
+                var numericOptions = allOptions
+                    .Where(option => !option.IsEnumLike)
+                    .ToList();
+
+                var enumOptions = allOptions
+                    .Where(option => option.IsEnumLike)
+                    .ToList();
 
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
@@ -96,10 +125,6 @@ namespace TelemetryApp.Frontend.ViewModels
                     EnumStatuses.Clear();
                     _sensorsBySignal.Clear();
                     _enumStatusesBySignal.Clear();
-                    foreach (var plot in VisibleCharts)
-                    {
-                        plot.SetAvailableSignals(AvailableSignals);
-                    }
 
                     foreach (var option in numericOptions)
                         AvailableSignals.Add(option);
@@ -107,12 +132,18 @@ namespace TelemetryApp.Frontend.ViewModels
                     foreach (var option in enumOptions)
                         AvailableEnumSignals.Add(option);
 
+                    foreach (var plot in GetAllChartViewModels())
+                    {
+                        plot.SetAvailableSignals(AvailableSignals);
+                    }
+
                     var colorOptions = SensorColorOption.Defaults;
 
                     for (var i = 0; i < numericOptions.Count; i++)
                     {
                         var option = numericOptions[i];
                         var color = colorOptions[i % colorOptions.Count];
+
                         var sensor = new SensorReading
                         {
                             SensorId = i + 1,
@@ -131,7 +162,9 @@ namespace TelemetryApp.Frontend.ViewModels
                         };
 
                         _displaySettingsStore.ApplyToSensor(sensor);
+
                         sensor.PropertyChanged += HandleSensorSettingsChanged;
+
                         Sensors.Add(sensor);
                         _sensorsBySignal[MakeSignalKey(option.CanId, option.Key)] = sensor;
                     }
@@ -140,6 +173,7 @@ namespace TelemetryApp.Frontend.ViewModels
                     {
                         var option = enumOptions[i];
                         var color = colorOptions[(i + 4) % colorOptions.Count];
+
                         var status = new EnumStatusReading
                         {
                             RowIndex = i,
@@ -154,12 +188,15 @@ namespace TelemetryApp.Frontend.ViewModels
                         };
 
                         _displaySettingsStore.ApplyToEnum(status);
+
                         status.PropertyChanged += HandleEnumSettingsChanged;
+
                         EnumStatuses.Add(status);
                         _enumStatusesBySignal[MakeSignalKey(option.CanId, option.Key)] = status;
                     }
 
-                    DashboardStatus = $"Sygnały liczbowe: {AvailableSignals.Count}, enum/status: {AvailableEnumSignals.Count}. Dashboard pokazuje wykresy; wartości liczbowe są w „Pokaż tabele”, a enumy w osobnym oknie.";
+                    DashboardStatus =
+                        $"Sygnały liczbowe: {AvailableSignals.Count}, enum/status: {AvailableEnumSignals.Count}. Dashboard pokazuje wykresy; wartości liczbowe są w „Pokaż tabele”, a enumy w osobnym oknie.";
                 });
             }
             catch (Exception ex)
@@ -200,7 +237,7 @@ namespace TelemetryApp.Frontend.ViewModels
                 foreach (var status in EnumStatuses)
                     status.ClearValue();
 
-                foreach (var plot in VisibleCharts)
+                foreach (var plot in GetAllChartViewModels())
                     plot.LoadHistory(Array.Empty<SignalSample>());
 
                 DashboardStatus = _currentSessionId is null
@@ -242,7 +279,7 @@ namespace TelemetryApp.Frontend.ViewModels
         {
             var plot = new SinglePlotViewModel
             {
-                Title = $"Wykres {VisibleCharts.Count + 1}"
+                Title = $"Wykres {VisibleCharts.Count + DetachedCharts.Count + 1}"
             };
 
             plot.SetAvailableSignals(AvailableSignals);
@@ -252,15 +289,165 @@ namespace TelemetryApp.Frontend.ViewModels
         }
 
         [RelayCommand]
-        public void RemovePlot(SinglePlotViewModel plot)
+        public void RemovePlot(SinglePlotViewModel? plot)
         {
             if (plot is null)
                 return;
+
+            CloseDetachedPlotWindow(plot);
 
             plot.SelectedSignalChanged -= HandlePlotSelectedSignalChanged;
 
             if (VisibleCharts.Contains(plot))
                 VisibleCharts.Remove(plot);
+
+            if (DetachedCharts.Contains(plot))
+                DetachedCharts.Remove(plot);
+
+            DashboardStatus = $"Usunięto wykres: {plot.Title}";
+        }
+
+        [RelayCommand]
+        private void DetachPlot(SinglePlotViewModel? plot)
+        {
+            if (plot is null)
+                return;
+
+            if (_detachedPlotWindows.TryGetValue(plot, out var existingWindow) &&
+                IsWindowStillOpen(existingWindow))
+            {
+                BringWindowToFront(existingWindow);
+                DashboardStatus = $"Wykres „{plot.Title}” jest już odpięty — przeniesiono okno na wierzch.";
+                return;
+            }
+
+            if (VisibleCharts.Contains(plot))
+                VisibleCharts.Remove(plot);
+
+            if (!DetachedCharts.Contains(plot))
+                DetachedCharts.Add(plot);
+
+            OpenDetachedPlotWindow(plot);
+
+            DashboardStatus = $"Odpięto wykres: {plot.Title}";
+        }
+
+        [RelayCommand]
+        private void ShowDetachedPlot(SinglePlotViewModel? plot)
+        {
+            if (plot is null)
+                return;
+
+            if (_detachedPlotWindows.TryGetValue(plot, out var existingWindow) &&
+                IsWindowStillOpen(existingWindow))
+            {
+                BringWindowToFront(existingWindow);
+                DashboardStatus = $"Przeniesiono okno wykresu „{plot.Title}” na wierzch.";
+                return;
+            }
+
+            OpenDetachedPlotWindow(plot);
+
+            DashboardStatus = $"Pokazano odpięty wykres: {plot.Title}";
+        }
+
+        [RelayCommand]
+        public void ReattachPlot(SinglePlotViewModel? plot)
+        {
+            if (plot is null)
+                return;
+
+            CloseDetachedPlotWindow(plot);
+
+            if (DetachedCharts.Contains(plot))
+                DetachedCharts.Remove(plot);
+
+            if (!VisibleCharts.Contains(plot))
+                VisibleCharts.Add(plot);
+
+            DashboardStatus = $"Przypięto wykres z powrotem: {plot.Title}";
+        }
+
+        private void OpenDetachedPlotWindow(SinglePlotViewModel plot)
+        {
+            if (_detachedPlotWindows.TryGetValue(plot, out var existingWindow) &&
+                IsWindowStillOpen(existingWindow))
+            {
+                BringWindowToFront(existingWindow);
+                return;
+            }
+
+            var page = new DetachedPlotPage(plot, this);
+
+            var window = new Window(page)
+            {
+                MinimumWidth = 900,
+                MinimumHeight = 560,
+                Title = plot.Title
+            };
+
+            PropertyChangedEventHandler titleHandler = (_, e) =>
+            {
+                if (e.PropertyName == nameof(SinglePlotViewModel.Title))
+                    window.Title = plot.Title;
+            };
+
+            plot.PropertyChanged += titleHandler;
+
+            _detachedPlotWindows[plot] = window;
+
+            window.Destroying += (_, _) =>
+            {
+                plot.PropertyChanged -= titleHandler;
+
+                if (_detachedPlotWindows.TryGetValue(plot, out var registeredWindow) &&
+                    ReferenceEquals(registeredWindow, window))
+                {
+                    _detachedPlotWindows.Remove(plot);
+                }
+
+                if (_detachedPlotWindowsClosingProgrammatically.Remove(window))
+                    return;
+
+                RemoveDetachedPlotAfterWindowClosed(plot);
+            };
+
+            Application.Current?.OpenWindow(window);
+        }
+
+        private void RemoveDetachedPlotAfterWindowClosed(SinglePlotViewModel plot)
+        {
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                plot.SelectedSignalChanged -= HandlePlotSelectedSignalChanged;
+
+                if (DetachedCharts.Contains(plot))
+                    DetachedCharts.Remove(plot);
+
+                if (VisibleCharts.Contains(plot))
+                    VisibleCharts.Remove(plot);
+
+                DashboardStatus = $"Zamknięto i usunięto wykres: {plot.Title}";
+            });
+        }
+
+        private void CloseDetachedPlotWindow(SinglePlotViewModel plot)
+        {
+            if (!_detachedPlotWindows.TryGetValue(plot, out var window))
+                return;
+
+            _detachedPlotWindowsClosingProgrammatically.Add(window);
+
+            try
+            {
+                Application.Current?.CloseWindow(window);
+            }
+            catch
+            {
+                _detachedPlotWindowsClosingProgrammatically.Remove(window);
+            }
+
+            _detachedPlotWindows.Remove(plot);
         }
 
         private void HandlePlotSelectedSignalChanged(SinglePlotViewModel plot)
@@ -301,10 +488,13 @@ namespace TelemetryApp.Frontend.ViewModels
                     }
                     else
                     {
-                        foreach (var plot in VisibleCharts)
+                        foreach (var plot in GetAllChartViewModels())
                         {
-                            if (plot.SelectedSignal is not null && plot.SelectedSignal.Matches(sample.Key, sample.CanId))
+                            if (plot.SelectedSignal is not null &&
+                                plot.SelectedSignal.Matches(sample.Key, sample.CanId))
+                            {
                                 plot.AddSample(sample);
+                            }
                         }
 
                         if (_sensorsBySignal.TryGetValue(MakeSignalKey(sample.CanId, sample.Key), out var sensor))
@@ -319,52 +509,148 @@ namespace TelemetryApp.Frontend.ViewModels
         [RelayCommand]
         private void ShowTables()
         {
+            if (IsWindowStillOpen(_showTablesWindow))
+            {
+                BringWindowToFront(_showTablesWindow);
+                DashboardStatus = "Okno „Tabela sensorów” jest już otwarte — przeniesiono je na wierzch.";
+                return;
+            }
+
             var window = new Window(new ShowTables(Sensors.ToList()))
             {
                 MinimumWidth = 900,
                 MinimumHeight = 500,
                 Title = "Tabela sensorów"
             };
+
+            _showTablesWindow = window;
+
+            window.Destroying += (_, _) =>
+            {
+                if (ReferenceEquals(_showTablesWindow, window))
+                    _showTablesWindow = null;
+            };
+
             Application.Current?.OpenWindow(window);
         }
 
         [RelayCommand]
         private void ManageSensors()
         {
+            if (IsWindowStillOpen(_sensorManagementWindow))
+            {
+                BringWindowToFront(_sensorManagementWindow);
+                DashboardStatus = "Okno „Zarządzaj sensorami” jest już otwarte — przeniesiono je na wierzch.";
+                return;
+            }
+
             var window = new Window(new SensorManagementPage(Sensors.ToList()))
             {
                 MinimumWidth = 950,
                 MinimumHeight = 520,
                 Title = "Zarządzaj sensorami"
             };
+
+            _sensorManagementWindow = window;
+
+            window.Destroying += (_, _) =>
+            {
+                if (ReferenceEquals(_sensorManagementWindow, window))
+                    _sensorManagementWindow = null;
+            };
+
             Application.Current?.OpenWindow(window);
         }
 
         [RelayCommand]
         private void ShowEnums()
         {
+            if (IsWindowStillOpen(_enumStatusWindow))
+            {
+                BringWindowToFront(_enumStatusWindow);
+                DashboardStatus = "Okno „Enumy i statusy” jest już otwarte — przeniesiono je na wierzch.";
+                return;
+            }
+
             var window = new Window(new EnumStatusPage(EnumStatuses.ToList()))
             {
                 MinimumWidth = 850,
                 MinimumHeight = 500,
                 Title = "Enumy i statusy"
             };
+
+            _enumStatusWindow = window;
+
+            window.Destroying += (_, _) =>
+            {
+                if (ReferenceEquals(_enumStatusWindow, window))
+                    _enumStatusWindow = null;
+            };
+
             Application.Current?.OpenWindow(window);
         }
 
         [RelayCommand]
         private void ManageEnums()
         {
+            if (IsWindowStillOpen(_enumManagementWindow))
+            {
+                BringWindowToFront(_enumManagementWindow);
+                DashboardStatus = "Okno „Zarządzaj enumami” jest już otwarte — przeniesiono je na wierzch.";
+                return;
+            }
+
             var window = new Window(new EnumManagementPage(EnumStatuses.ToList()))
             {
                 MinimumWidth = 950,
                 MinimumHeight = 520,
                 Title = "Zarządzaj enumami"
             };
+
+            _enumManagementWindow = window;
+
+            window.Destroying += (_, _) =>
+            {
+                if (ReferenceEquals(_enumManagementWindow, window))
+                    _enumManagementWindow = null;
+            };
+
             Application.Current?.OpenWindow(window);
         }
 
-        public async Task<string> ExportCurrentSessionToCsvAsync(bool includeEnums = true, CancellationToken cancellationToken = default)
+        private static bool IsWindowStillOpen(Window? window)
+        {
+            var app = Application.Current;
+
+            return window is not null &&
+                   app is not null &&
+                   app.Windows.Contains(window);
+        }
+
+        private static void BringWindowToFront(Window? window)
+        {
+            if (window is null)
+                return;
+
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+#if WINDOWS
+                if (window.Handler?.PlatformView is Microsoft.UI.Xaml.Window nativeWindow)
+                {
+                    nativeWindow.Activate();
+                }
+#elif MACCATALYST || IOS
+                if (window.Handler?.PlatformView is UIKit.UIWindow nativeWindow)
+                {
+                    nativeWindow.MakeKeyAndVisible();
+                }
+#endif
+            });
+        }
+
+        public async Task<string> ExportCurrentSessionToCsvAsync(
+            bool includeEnums = true,
+            CancellationToken cancellationToken = default)
         {
             var samples = _historyStore.GetAllHistory()
                 .Where(sample => includeEnums || !sample.IsEnumLike)
@@ -399,15 +685,22 @@ namespace TelemetryApp.Frontend.ViewModels
         {
             var baseDirectory = session?.DirectoryPath ?? Path.Combine(FileSystem.AppDataDirectory, "Exports");
             var exportRoot = Path.Combine(baseDirectory, "Exports");
+
             Directory.CreateDirectory(exportRoot);
 
             var sessionName = session is null ? "current" : MakeSafeFileName(session.Name);
             var directory = Path.Combine(exportRoot, $"{DateTime.Now:yyyyMMdd_HHmmss}_{sessionName}");
+
             Directory.CreateDirectory(directory);
+
             return directory;
         }
 
-        private async Task WriteExportMetadataAsync(string path, TelemetrySession? session, bool includeEnums, CancellationToken cancellationToken)
+        private async Task WriteExportMetadataAsync(
+            string path,
+            TelemetrySession? session,
+            bool includeEnums,
+            CancellationToken cancellationToken)
         {
             var metadata = new
             {
@@ -422,19 +715,32 @@ namespace TelemetryApp.Frontend.ViewModels
                 WriteIndented = true
             });
 
-            await File.WriteAllTextAsync(path, json, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true), cancellationToken);
+            await File.WriteAllTextAsync(
+                path,
+                json,
+                new UTF8Encoding(encoderShouldEmitUTF8Identifier: true),
+                cancellationToken);
         }
 
-        private async Task WriteLongSignalsCsvAsync(string filePath, IReadOnlyList<SignalSample> samples, CancellationToken cancellationToken)
+        private async Task WriteLongSignalsCsvAsync(
+            string filePath,
+            IReadOnlyList<SignalSample> samples,
+            CancellationToken cancellationToken)
         {
             await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
+
             await writer.WriteLineAsync("sep=;");
-            await writer.WriteLineAsync("Czas lokalny;Czas od początku [s];Timestamp ms;Sequence;Typ;Nazwa;CAN ID;Klucz;Wartość;Wartość tekstowa;Jednostka;Włączony;Przypięty;Ramka");
+            await writer.WriteLineAsync(
+                "Czas lokalny;Czas od początku [s];Timestamp ms;Sequence;Typ;Nazwa;CAN ID;Klucz;Wartość;Wartość tekstowa;Jednostka;Włączony;Ramka");
 
             var polishCulture = CultureInfo.GetCultureInfo("pl-PL");
             var firstTimestamp = samples.Min(sample => sample.TimestampMs);
 
-            foreach (var sample in samples.OrderBy(sample => sample.TimestampMs).ThenBy(sample => sample.BlockSequence).ThenBy(sample => sample.CanId).ThenBy(sample => sample.Key, StringComparer.OrdinalIgnoreCase))
+            foreach (var sample in samples
+                .OrderBy(sample => sample.TimestampMs)
+                .ThenBy(sample => sample.BlockSequence)
+                .ThenBy(sample => sample.CanId)
+                .ThenBy(sample => sample.Key, StringComparer.OrdinalIgnoreCase))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -452,7 +758,6 @@ namespace TelemetryApp.Frontend.ViewModels
                     sample.DisplayValue ?? string.Empty,
                     sample.Unit ?? string.Empty,
                     GetEnabledText(sample),
-                    //GetPinnedText(sample),
                     GetFrameSummary(sample)
                 };
 
@@ -460,9 +765,13 @@ namespace TelemetryApp.Frontend.ViewModels
             }
         }
 
-        private async Task WriteWideSignalsCsvAsync(string filePath, IReadOnlyList<SignalSample> samples, CancellationToken cancellationToken)
+        private async Task WriteWideSignalsCsvAsync(
+            string filePath,
+            IReadOnlyList<SignalSample> samples,
+            CancellationToken cancellationToken)
         {
             await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
+
             await writer.WriteLineAsync("sep=;");
 
             var polishCulture = CultureInfo.GetCultureInfo("pl-PL");
@@ -473,17 +782,31 @@ namespace TelemetryApp.Frontend.ViewModels
                 .Select(group =>
                 {
                     var sample = group.First();
-                    return new ExportColumn(MakeSignalKey(sample.CanId, sample.Key), BuildUniqueExportHeader(GetDisplayName(sample), sample), sample.IsEnumLike);
+
+                    return new ExportColumn(
+                        MakeSignalKey(sample.CanId, sample.Key),
+                        BuildUniqueExportHeader(GetDisplayName(sample), sample),
+                        sample.IsEnumLike);
                 })
                 .OrderBy(column => column.Header, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
 
-            var header = new[] { "Czas lokalny", "Czas od początku [s]", "Timestamp ms", "Sequence" }
-                .Concat(columns.Select(column => column.Header));
+            var header = new[]
+            {
+                "Czas lokalny",
+                "Czas od początku [s]",
+                "Timestamp ms",
+                "Sequence"
+            }.Concat(columns.Select(column => column.Header));
+
             await writer.WriteLineAsync(string.Join(';', header.Select(EscapeCsvCell)));
 
             var rows = samples
-                .GroupBy(sample => new { sample.TimestampMs, sample.BlockSequence })
+                .GroupBy(sample => new
+                {
+                    sample.TimestampMs,
+                    sample.BlockSequence
+                })
                 .OrderBy(group => group.Key.TimestampMs)
                 .ThenBy(group => group.Key.BlockSequence);
 
@@ -493,7 +816,10 @@ namespace TelemetryApp.Frontend.ViewModels
 
                 var valuesBySignal = group
                     .GroupBy(sample => MakeSignalKey(sample.CanId, sample.Key), StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(g => g.Key, g => g.Last(), StringComparer.OrdinalIgnoreCase);
+                    .ToDictionary(
+                        group => group.Key,
+                        group => group.Last(),
+                        StringComparer.OrdinalIgnoreCase);
 
                 var row = new List<string>
                 {
@@ -520,7 +846,10 @@ namespace TelemetryApp.Frontend.ViewModels
             }
         }
 
-        private async Task WriteRawFramesCsvAsync(string filePath, TelemetrySession session, CancellationToken cancellationToken)
+        private async Task WriteRawFramesCsvAsync(
+            string filePath,
+            TelemetrySession session,
+            CancellationToken cancellationToken)
         {
             var existingRuns = session.Runs
                 .Where(run => File.Exists(run.RawLogPath))
@@ -531,6 +860,7 @@ namespace TelemetryApp.Frontend.ViewModels
                 return;
 
             await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
+
             await writer.WriteLineAsync("sep=;");
             await writer.WriteLineAsync("Czas lokalny;Czas od początku [s];Timestamp ms;Run;Sequence;Network;CAN ID;Data hex");
 
@@ -542,6 +872,7 @@ namespace TelemetryApp.Frontend.ViewModels
                 cancellationToken.ThrowIfCancellationRequested();
 
                 await using var reader = await RawTelemetryLogReader.OpenAsync(run.RawLogPath, cancellationToken);
+
                 await foreach (var block in reader.ReadAllBlocksAsync(cancellationToken))
                 {
                     firstTimestamp ??= block.Timestamp;
@@ -566,7 +897,9 @@ namespace TelemetryApp.Frontend.ViewModels
             }
         }
 
-        private static async Task<StreamWriter> CreateExcelCsvWriterAsync(string filePath, CancellationToken cancellationToken)
+        private static async Task<StreamWriter> CreateExcelCsvWriterAsync(
+            string filePath,
+            CancellationToken cancellationToken)
         {
             var stream = new FileStream(
                 filePath,
@@ -577,6 +910,7 @@ namespace TelemetryApp.Frontend.ViewModels
                 options: FileOptions.Asynchronous | FileOptions.SequentialScan);
 
             var utf8Bom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true).GetPreamble();
+
             await stream.WriteAsync(utf8Bom, cancellationToken);
 
             return new StreamWriter(
@@ -588,7 +922,10 @@ namespace TelemetryApp.Frontend.ViewModels
 
         private string BuildUniqueExportHeader(string displayName, SignalSample sample)
         {
-            var suffix = string.IsNullOrWhiteSpace(sample.Unit) || sample.IsEnumLike ? string.Empty : $" [{sample.Unit}]";
+            var suffix = string.IsNullOrWhiteSpace(sample.Unit) || sample.IsEnumLike
+                ? string.Empty
+                : $" [{sample.Unit}]";
+
             return $"{displayName}{suffix} (0x{sample.CanId:X3}/{sample.Key})";
         }
 
@@ -603,11 +940,18 @@ namespace TelemetryApp.Frontend.ViewModels
         {
             var invalidChars = Path.GetInvalidFileNameChars();
             var safe = new string(value.Select(ch => invalidChars.Contains(ch) ? '_' : ch).ToArray());
+
             safe = Regex.Replace(safe, "\\s+", "_").Trim('_');
-            return string.IsNullOrWhiteSpace(safe) ? "session" : safe;
+
+            return string.IsNullOrWhiteSpace(safe)
+                ? "session"
+                : safe;
         }
 
-        private readonly record struct ExportColumn(string Key, string Header, bool IsEnumLike);
+        private readonly record struct ExportColumn(
+            string Key,
+            string Header,
+            bool IsEnumLike);
 
         private string GetDisplayName(SignalSample sample)
         {
@@ -648,25 +992,17 @@ namespace TelemetryApp.Frontend.ViewModels
             return string.Empty;
         }
 
-        /*private string GetPinnedText(SignalSample sample)
-        {
-            var key = MakeSignalKey(sample.CanId, sample.Key);
-
-            if (sample.IsEnumLike && _enumStatusesBySignal.TryGetValue(key, out var status))
-                return status.IsPinned ? "tak" : "nie";
-
-            if (!sample.IsEnumLike && _sensorsBySignal.TryGetValue(key, out var sensor))
-                return sensor.IsPinned ? "tak" : "nie";
-
-            return string.Empty;
-        }*/
-
         private static string EscapeCsvCell(string? value)
         {
             value ??= string.Empty;
 
-            if (value.Contains(';') || value.Contains('"') || value.Contains('\n') || value.Contains('\r'))
+            if (value.Contains(';') ||
+                value.Contains('"') ||
+                value.Contains('\n') ||
+                value.Contains('\r'))
+            {
                 return $"\"{value.Replace("\"", "\"\"")}\"";
+            }
 
             return value;
         }
@@ -682,7 +1018,9 @@ namespace TelemetryApp.Frontend.ViewModels
             return signal.Enum is { Count: > 0 };
         }
 
-        private static string BuildFriendlySignalName(CanFrameDefinition frame, CanSignalDefinition signal)
+        private static string BuildFriendlySignalName(
+            CanFrameDefinition frame,
+            CanSignalDefinition signal)
         {
             var signalName = FirstNonEmpty(signal.Name, HumanizeKey(signal.Key), "Sygnał");
             var frameName = CleanName(frame.Summary);
@@ -729,7 +1067,10 @@ namespace TelemetryApp.Frontend.ViewModels
             return string.Empty;
         }
 
-        private static string MakeSignalKey(ushort canId, string key) => $"{canId:X3}|{key}";
+        private static string MakeSignalKey(ushort canId, string key)
+        {
+            return $"{canId:X3}|{key}";
+        }
 
         private static DateTime ToDateTime(ulong timestampMs)
         {
