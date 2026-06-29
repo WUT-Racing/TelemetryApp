@@ -88,12 +88,11 @@ public partial class SinglePlotViewModel : ObservableObject
 
         _xAxis = new Axis
         {
-            Name = "Czas",
+            Name = string.Empty,
             MinLimit = 0,
             MaxLimit = MinimumWindowSeconds,
             Labeler = FormatAxisSeconds,
             LabelsPaint = labelPaint,
-            NamePaint = labelPaint,
             SeparatorsPaint = separatorPaint,
             TextSize = 12
         };

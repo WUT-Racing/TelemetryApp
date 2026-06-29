@@ -53,6 +53,12 @@
         <PackageReference Include="System.IO.Ports" Version="10.0.2" />
     </ItemGroup>
 
+    <ItemGroup>
+      <MauiXaml Update="Frontend\ViewModels\SessionDetailPage\DetachedPlotPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
+    </ItemGroup>
+
     <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst'))">
         <InvariantGlobalization>true</InvariantGlobalization>
         <MtouchExtraArgs>$(MtouchExtraArgs) --setenv:SKIA_SKIP_OPENGL_TEST=1</MtouchExtraArgs>
