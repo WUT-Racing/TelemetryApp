@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using TelemetryApp.Backend.Export;
+using TelemetryApp.Frontend.Models;
 
 namespace TelemetryApp.Frontend.ViewModels;
 
@@ -221,6 +222,173 @@ public partial class SettingsViewModel : ObservableObject
 
         if (save)
             Preferences.Set(ThemePreferenceKey, SelectedTheme);
+    }
+
+    [ObservableProperty]
+    private CanDefinition? _loadedCanConfig;
+
+    [ObservableProperty]
+    private string _canConfigFilePath = string.Empty;
+
+    [RelayCommand]
+    private async Task LoadCanConfigAsync()
+    {
+        try
+        {
+            var result = await FilePicker.Default.PickAsync(new PickOptions
+            {
+                PickerTitle = "Wybierz plik sygnaly.json",
+            });
+
+            if (result != null)
+            {
+                CanConfigFilePath = result.FullPath;
+                var backendSet = await Backend.Decoding.CanDefinitionLoader.LoadFromFileAsync(result.FullPath);
+                
+                LoadedCanConfig = MapToFrontendDefinition(backendSet.Source);
+            }
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Błąd", $"Nie udało się wczytać pliku:\n{ex.Message}", "OK");
+        }
+    }
+
+    [RelayCommand]
+    private async Task SaveCanConfigAsync()
+    {
+        if (LoadedCanConfig == null || string.IsNullOrWhiteSpace(CanConfigFilePath))
+        {
+            await Shell.Current.DisplayAlertAsync("Błąd", "Brak wczytanej konfiguracji lub ścieżki do zapisu.", "OK");
+            return;
+        }
+
+        try
+        {
+            var backendFile = MapToBackendDefinition(LoadedCanConfig);
+            
+            await Backend.Decoding.CanDefinitionSaver.SaveToFileAsync(backendFile, CanConfigFilePath);
+            await Shell.Current.DisplayAlertAsync("Sukces", "Pomyślnie zapisano plik CAN.", "OK");
+        }
+        catch (Exception ex)
+        {
+            await Shell.Current.DisplayAlertAsync("Błąd", $"Nie udało się zapisać pliku:\n{ex.Message}", "OK");
+        }
+    }
+
+    private CanDefinition MapToFrontendDefinition(Backend.Decoding.CanDefinitionFile backendDef)
+    {
+        var frontendDef = new CanDefinition();
+        
+        if (backendDef.Metadata != null)
+        {
+            frontendDef.Metadata.Name = backendDef.Metadata.Name ?? string.Empty;
+            frontendDef.Metadata.Version = backendDef.Metadata.Version ?? string.Empty;
+        }
+
+        foreach (var bf in backendDef.Frames)
+        {
+            var ff = new CanFrame
+            {
+                Id = bf.Id,
+                Summary = bf.Summary ?? string.Empty,
+                FrequencyHz = (int)(bf.FrequencyHz ?? 0),
+                Dlc = bf.Dlc,
+                Endianness = bf.Endianness ?? "little"
+            };
+
+            foreach (var bs in bf.Signals)
+            {
+                var fs = new CanSignal
+                {
+                    Name = bs.Name,
+                    Key = bs.Key,
+                    ByteStart = bs.ByteStart,
+                    BitStart = bs.BitStart,
+                    BitLength = bs.BitLength,
+                    Factor = bs.Factor,
+                    Offset = bs.Offset,
+                    Unit = bs.Unit ?? string.Empty
+                };
+
+                if (bs.Enum != null)
+                {
+                    fs.Enum = new Dictionary<string, SignalEnumItem>();
+                    foreach (var kvp in bs.Enum)
+                    {
+                        fs.Enum[kvp.Key] = new SignalEnumItem
+                        {
+                            IsSimple = kvp.Value.IsSimple,
+                            StringValue = kvp.Value.StringValue,
+                            Key = kvp.Value.Key,
+                            Label = kvp.Value.Label,
+                            Description = kvp.Value.Description
+                        };
+                    }
+                }
+                ff.Signals.Add(fs);
+            }
+            frontendDef.Frames.Add(ff);
+        }
+        return frontendDef;
+    }
+
+    private Backend.Decoding.CanDefinitionFile MapToBackendDefinition(CanDefinition frontendDef)
+    {
+        var backendDef = new Backend.Decoding.CanDefinitionFile
+        {
+            Metadata = new Backend.Decoding.CanDefinitionMetadata
+            {
+                Name = string.IsNullOrWhiteSpace(frontendDef.Metadata.Name) ? null : frontendDef.Metadata.Name,
+                Version = string.IsNullOrWhiteSpace(frontendDef.Metadata.Version) ? null : frontendDef.Metadata.Version
+            }
+        };
+
+        foreach (var ff in frontendDef.Frames)
+        {
+            var bf = new Backend.Decoding.CanFrameDefinition
+            {
+                Id = (ushort)ff.Id,
+                Summary = string.IsNullOrWhiteSpace(ff.Summary) ? null : ff.Summary,
+                FrequencyHz = ff.FrequencyHz == 0 ? null : ff.FrequencyHz,
+                Dlc = ff.Dlc,
+                Endianness = string.IsNullOrWhiteSpace(ff.Endianness) ? null : ff.Endianness
+            };
+
+            foreach (var fs in ff.Signals)
+            {
+                var bs = new Backend.Decoding.CanSignalDefinition
+                {
+                    Name = fs.Name,
+                    Key = fs.Key,
+                    ByteStart = fs.ByteStart,
+                    BitStart = fs.BitStart,
+                    BitLength = fs.BitLength,
+                    Factor = fs.Factor,
+                    Offset = fs.Offset,
+                    Unit = string.IsNullOrWhiteSpace(fs.Unit) ? null : fs.Unit
+                };
+
+                if (fs.Enum != null)
+                {
+                    bs.Enum = new Dictionary<string, Backend.Decoding.CanEnumItemDefinition>();
+                    foreach (var kvp in fs.Enum)
+                    {
+                        bs.Enum[kvp.Key] = new Backend.Decoding.CanEnumItemDefinition
+                        {
+                            IsSimple = kvp.Value.IsSimple,
+                            StringValue = string.IsNullOrWhiteSpace(kvp.Value.StringValue) ? null : kvp.Value.StringValue,
+                            Key = string.IsNullOrWhiteSpace(kvp.Value.Key) ? null : kvp.Value.Key,
+                            Label = string.IsNullOrWhiteSpace(kvp.Value.Label) ? null : kvp.Value.Label,
+                            Description = string.IsNullOrWhiteSpace(kvp.Value.Description) ? null : kvp.Value.Description
+                        };
+                    }
+                }
+                bf.Signals.Add(bs);
+            }
+            backendDef.Frames.Add(bf);
+        }
+        return backendDef;
     }
 }
 

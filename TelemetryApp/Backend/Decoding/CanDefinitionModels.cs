@@ -20,8 +20,21 @@ public sealed class CanDefinitionMetadata
     [JsonPropertyName("version")]
     public string? Version { get; set; }
 
+    [JsonPropertyName("byte_indexing")]
+    public int ByteIndexing { get; set; } = 0;
+
+    [JsonPropertyName("bit_indexing")]
+    public int BitIndexing { get; set; } = 0;
+
     [JsonPropertyName("default_dlc")]
     public int DefaultDlc { get; set; } = 8;
+    
+    [JsonPropertyName("default_offset")]
+    public double DefaultOffset { get; set; } = 0;
+
+    [JsonPropertyName("value_formula")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? ValueFormula { get; set; }
 }
 
 public sealed class CanFrameDefinition
@@ -71,6 +84,18 @@ public sealed class CanSignalDefinition
     [JsonPropertyName("data_type")]
     public string DataType { get; set; } = "unsigned";
 
+    [JsonPropertyName("range_min")]
+    public double? RangeMin { get; set; }
+
+    [JsonPropertyName("range_max")]
+    public double? RangeMax { get; set; }
+    
+    [JsonPropertyName("raw_min")]
+    public double? RawMin { get; set; }
+
+    [JsonPropertyName("raw_max")]
+    public double? RawMax { get; set; }
+
     [JsonPropertyName("factor")]
     public double Factor { get; set; } = 1.0;
 
@@ -81,7 +106,7 @@ public sealed class CanSignalDefinition
     public string? Unit { get; set; }
 
     [JsonPropertyName("enum")]
-    public Dictionary<string, JsonElement>? Enum { get; set; }
+    public Dictionary<string, CanEnumItemDefinition>? Enum { get; set; }
 
     [JsonPropertyName("reserved")]
     public bool Reserved { get; set; }
