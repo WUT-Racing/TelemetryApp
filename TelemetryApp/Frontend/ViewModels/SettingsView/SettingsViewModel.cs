@@ -282,8 +282,13 @@ public partial class SettingsViewModel : ObservableObject
         
         if (backendDef.Metadata != null)
         {
-            frontendDef.Metadata.Name = backendDef.Metadata.Name ?? string.Empty;
-            frontendDef.Metadata.Version = backendDef.Metadata.Version ?? string.Empty;
+            frontendDef.Metadata.Name = backendDef.Metadata.Name;
+            frontendDef.Metadata.Version = backendDef.Metadata.Version;
+            frontendDef.Metadata.ByteIndexing = backendDef.Metadata.ByteIndexing;
+            frontendDef.Metadata.BitIndexing = backendDef.Metadata.BitIndexing;
+            frontendDef.Metadata.DefaultDlc = backendDef.Metadata.DefaultDlc;
+            frontendDef.Metadata.DefaultOffset = backendDef.Metadata.DefaultOffset;
+            frontendDef.Metadata.ValueFormula = backendDef.Metadata.ValueFormula;
         }
 
         foreach (var bf in backendDef.Frames)
@@ -291,10 +296,10 @@ public partial class SettingsViewModel : ObservableObject
             var ff = new CanFrame
             {
                 Id = bf.Id,
-                Summary = bf.Summary ?? string.Empty,
-                FrequencyHz = (int)(bf.FrequencyHz ?? 0),
+                Summary = bf.Summary,
+                FrequencyHz = bf.FrequencyHz,
                 Dlc = bf.Dlc,
-                Endianness = bf.Endianness ?? "little"
+                Endianness = bf.Endianness
             };
 
             foreach (var bs in bf.Signals)
@@ -304,11 +309,22 @@ public partial class SettingsViewModel : ObservableObject
                     Name = bs.Name,
                     Key = bs.Key,
                     ByteStart = bs.ByteStart,
+                    ByteLength = bs.ByteLength,
                     BitStart = bs.BitStart,
                     BitLength = bs.BitLength,
+                    Endianness = bs.Endianness,
+                    DataType = bs.DataType,
+                    RangeMin = bs.RangeMin,
+                    RangeMax = bs.RangeMax,
+                    RawMin = bs.RawMin,
+                    RawMax = bs.RawMax,
                     Factor = bs.Factor,
                     Offset = bs.Offset,
-                    Unit = bs.Unit ?? string.Empty
+                    Unit = bs.Unit,
+                    Reserved = bs.Reserved,
+                    Description = bs.Description,
+                    SafeMin = bs.SafeMin,
+                    SafeMax = bs.SafeMax
                 };
 
                 if (bs.Enum != null)
@@ -339,8 +355,13 @@ public partial class SettingsViewModel : ObservableObject
         {
             Metadata = new Backend.Decoding.CanDefinitionMetadata
             {
-                Name = string.IsNullOrWhiteSpace(frontendDef.Metadata.Name) ? null : frontendDef.Metadata.Name,
-                Version = string.IsNullOrWhiteSpace(frontendDef.Metadata.Version) ? null : frontendDef.Metadata.Version
+                Name = frontendDef.Metadata.Name,
+                Version = frontendDef.Metadata.Version,
+                ByteIndexing = frontendDef.Metadata.ByteIndexing,
+                BitIndexing = frontendDef.Metadata.BitIndexing,
+                DefaultDlc = frontendDef.Metadata.DefaultDlc,
+                DefaultOffset = frontendDef.Metadata.DefaultOffset,
+                ValueFormula = frontendDef.Metadata.ValueFormula
             }
         };
 
@@ -348,11 +369,11 @@ public partial class SettingsViewModel : ObservableObject
         {
             var bf = new Backend.Decoding.CanFrameDefinition
             {
-                Id = (ushort)ff.Id,
-                Summary = string.IsNullOrWhiteSpace(ff.Summary) ? null : ff.Summary,
-                FrequencyHz = ff.FrequencyHz == 0 ? null : ff.FrequencyHz,
+                Id = ff.Id,
+                Summary = ff.Summary,
+                FrequencyHz = ff.FrequencyHz,
                 Dlc = ff.Dlc,
-                Endianness = string.IsNullOrWhiteSpace(ff.Endianness) ? null : ff.Endianness
+                Endianness = ff.Endianness
             };
 
             foreach (var fs in ff.Signals)
@@ -362,11 +383,22 @@ public partial class SettingsViewModel : ObservableObject
                     Name = fs.Name,
                     Key = fs.Key,
                     ByteStart = fs.ByteStart,
+                    ByteLength = fs.ByteLength,
                     BitStart = fs.BitStart,
                     BitLength = fs.BitLength,
+                    Endianness = fs.Endianness,
+                    DataType = fs.DataType,
+                    RangeMin = fs.RangeMin,
+                    RangeMax = fs.RangeMax,
+                    RawMin = fs.RawMin,
+                    RawMax = fs.RawMax,
                     Factor = fs.Factor,
                     Offset = fs.Offset,
-                    Unit = string.IsNullOrWhiteSpace(fs.Unit) ? null : fs.Unit
+                    Unit = fs.Unit,
+                    Reserved = fs.Reserved,
+                    Description = fs.Description,
+                    SafeMin = fs.SafeMin,
+                    SafeMax = fs.SafeMax
                 };
 
                 if (fs.Enum != null)
@@ -377,10 +409,10 @@ public partial class SettingsViewModel : ObservableObject
                         bs.Enum[kvp.Key] = new Backend.Decoding.CanEnumItemDefinition
                         {
                             IsSimple = kvp.Value.IsSimple,
-                            StringValue = string.IsNullOrWhiteSpace(kvp.Value.StringValue) ? null : kvp.Value.StringValue,
-                            Key = string.IsNullOrWhiteSpace(kvp.Value.Key) ? null : kvp.Value.Key,
-                            Label = string.IsNullOrWhiteSpace(kvp.Value.Label) ? null : kvp.Value.Label,
-                            Description = string.IsNullOrWhiteSpace(kvp.Value.Description) ? null : kvp.Value.Description
+                            StringValue = kvp.Value.StringValue,
+                            Key = kvp.Value.Key,
+                            Label = kvp.Value.Label,
+                            Description = kvp.Value.Description
                         };
                     }
                 }
