@@ -276,6 +276,112 @@ public partial class SettingsViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    private void AddFrame()
+    {
+        if (LoadedCanConfig == null) return;
+
+        var newFrame = new CanFrame
+        {
+            Id = 0,
+            Summary = "Nowa Ramka",
+            FrequencyHz = 10,
+            Dlc = 8,
+            Endianness = "little"
+        };
+        LoadedCanConfig.Frames.Add(newFrame);
+    }
+
+    [RelayCommand]
+    private void DeleteFrame(CanFrame frame)
+    {
+        if (LoadedCanConfig == null || frame == null) return;
+        LoadedCanConfig.Frames.Remove(frame);
+    }
+
+    [RelayCommand]
+    private void AddSignal(CanFrame frame)
+    {
+        if (frame == null) return;
+
+        var newSignal = new CanSignal
+        {
+            Name = "Nowy Sygnał",
+            Key = "nowy_sygnal_" + DateTime.Now.Ticks.ToString().Substring(10),
+            ByteStart = 0,
+            BitStart = 0,
+            BitLength = 8,
+            DataType = "unsigned",
+            Factor = 1,
+            Offset = 0,
+            Unit = ""
+        };
+        frame.Signals.Add(newSignal);
+    }
+
+    [RelayCommand]
+    private void DeleteSignal(CanSignal signal)
+    {
+        if (LoadedCanConfig == null || signal == null) return;
+
+        foreach (var frame in LoadedCanConfig.Frames)
+        {
+            if (frame.Signals.Contains(signal))
+            {
+                frame.Signals.Remove(signal);
+                break;
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void AddEnumItem(CanSignal signal)
+    {
+        if (signal == null) return;
+
+        signal.Enum ??= new Dictionary<string, SignalEnumItem>();
+
+        int keyIndex = 0;
+        while (signal.Enum.ContainsKey(keyIndex.ToString()))
+        {
+            keyIndex++;
+        }
+
+        signal.Enum[keyIndex.ToString()] = new SignalEnumItem
+        {
+            IsSimple = true,
+            StringValue = "Wartość",
+            Label = "Etykieta",
+            Description = ""
+        };
+
+        var currentEnum = signal.Enum;
+        signal.Enum = null;
+        signal.Enum = new Dictionary<string, SignalEnumItem>(currentEnum);
+    }
+
+    [RelayCommand]
+    private void DeleteEnumItem(KeyValuePair<string, SignalEnumItem> pair)
+    {
+        if (LoadedCanConfig == null) return;
+
+        foreach (var frame in LoadedCanConfig.Frames)
+        {
+            foreach (var signal in frame.Signals)
+            {
+                if (signal.Enum != null && signal.Enum.ContainsKey(pair.Key) && signal.Enum[pair.Key] == pair.Value)
+                {
+                    signal.Enum.Remove(pair.Key);
+                    
+                    var currentEnum = signal.Enum;
+                    signal.Enum = null;
+                    signal.Enum = new Dictionary<string, SignalEnumItem>(currentEnum);
+                    return;
+                }
+            }
+        }
+    }
+
     private CanDefinition MapToFrontendDefinition(Backend.Decoding.CanDefinitionFile backendDef)
     {
         var frontendDef = new CanDefinition();
