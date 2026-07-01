@@ -1,5 +1,4 @@
 using System.Buffers.Binary;
-using System.Text.Json;
 using TelemetryApp.Backend.Protocol;
 
 namespace TelemetryApp.Backend.Decoding;
@@ -103,21 +102,13 @@ public sealed class CanSignalDecoder
         return $"nieznane ({rawSigned})";
     }
 
-    private static string? ReadEnumLabel(JsonElement value)
+    // Zamiast JsonElement używamy dedykowanego modelu
+    private static string? ReadEnumLabel(CanEnumItemDefinition value)
     {
-        if (value.ValueKind == JsonValueKind.String)
-            return value.GetString();
+        if (value.IsSimple)
+            return value.StringValue;
 
-        if (value.ValueKind == JsonValueKind.Object)
-        {
-            if (value.TryGetProperty("label", out var label) && label.ValueKind == JsonValueKind.String)
-                return label.GetString();
-
-            if (value.TryGetProperty("key", out var key) && key.ValueKind == JsonValueKind.String)
-                return key.GetString();
-        }
-
-        return value.ToString();
+        return value.Label ?? value.Key ?? value.StringValue;
     }
 
     private static ulong ExtractRawValue(ReadOnlySpan<byte> data, CanSignalDefinition signal, string endianness)
