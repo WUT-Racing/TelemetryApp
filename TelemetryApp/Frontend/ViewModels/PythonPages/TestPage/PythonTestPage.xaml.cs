@@ -29,7 +29,7 @@ namespace TelemetryApp.Frontend.ViewModels.PythonPages.TestPage
             {
                 // PAMIĘTAJ O ZMIANIE ŚCIEŻKI! (Podwójne ukośniki są wymagane)
                 string testCsvPath = "C:\\ścieżka\\do\\twojego\\pliku\\decoded_signals_wide.csv";
-                string competition = "Skidpad";
+                string competition = "Auto";
                 string configJson = "{}";
 
                 string result = await Task.Run(() =>
