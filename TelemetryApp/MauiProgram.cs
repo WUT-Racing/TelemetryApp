@@ -10,6 +10,7 @@ using CommunityToolkit.Maui;
 using TelemetryApp.Backend.Export;
 using Microsoft.Maui.LifecycleEvents;
 using TelemetryApp.Backend.AppLifecycle;
+using TelemetryApp.Frontend.ViewModels.PythonPages.TestPage;
 
 namespace TelemetryApp;
 
@@ -65,6 +66,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<SessionDetailViewModel>();
         builder.Services.AddSingleton<ConnectionPage>();
         builder.Services.AddSingleton<ConnectionPageViewModel>();
+        builder.Services.AddSingleton<PythonTestPage>();
 
 
         var mauiApp = builder.Build();

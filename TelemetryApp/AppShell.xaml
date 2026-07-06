@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:TelemetryApp"
     xmlns:views="clr-namespace:TelemetryApp.Frontend.Views"
+    xmlns:pythonPages="clr-namespace:TelemetryApp.Frontend.ViewModels.PythonPages.TestPage"
     Title="Telemetry App"
     Shell.FlyoutBehavior="Flyout">
 
@@ -20,7 +21,8 @@
             ContentTemplate="{DataTemplate views:SessionsPage}"
             Route="SessionsPage"/>
     </FlyoutItem>
-    <FlyoutItem Title="Dashboard" Route="Dashboard">
+    <FlyoutItem Title="Dashboard"
+            Route="Dashboard">
         <ShellContent Title="Dashboard"
                       ContentTemplate="{DataTemplate views:SessionDetailPage}"
                       Route="SessionDetailPage"/>
@@ -30,6 +32,12 @@
             Title="Ustawienia"
             ContentTemplate="{DataTemplate views:SettingsPage}"
             Route="SettingsPage"/>
+    </FlyoutItem>
+    <FlyoutItem Title="Python Test">
+        <ShellContent
+            Title="Python Test"
+            ContentTemplate="{DataTemplate pythonPages:PythonTestPage}"
+            Route="PythonTestPage"/>
     </FlyoutItem>
 
 </Shell>

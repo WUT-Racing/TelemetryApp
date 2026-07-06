@@ -1,25 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj": {}
+    "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj": {
+    "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
+        "projectUniqueName": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
         "projectName": "TelemetryApp",
-        "projectPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
-        "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\obj\\",
+        "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
+        "packagesPath": "C:\\Users\\Baka\\.nuget\\packages\\",
+        "outputPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\obj\\",
         "projectStyle": "PackageReference",
         "crossTargeting": true,
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+          "G:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\NuGet.Config",
-          "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "F:\\WUT\\Programing\\Telemetria\\NuGet.Config",
+          "C:\\Users\\Baka\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -31,8 +31,7 @@
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net10.0-windows10.0.19041.0": {
-            "framework": "net10.0-windows10.0.19041",
+          "net10.0-windows10.0.19041": {
             "targetAlias": "net10.0-windows10.0.19041.0",
             "projectReferences": {}
           }
@@ -47,11 +46,10 @@
           "auditLevel": "low",
           "auditMode": "all"
         },
-        "SdkAnalysisLevel": "10.0.300"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
-        "net10.0-windows10.0.19041.0": {
-          "framework": "net10.0-windows10.0.19041",
+        "net10.0-windows10.0.19041": {
           "targetAlias": "net10.0-windows10.0.19041.0",
           "dependencies": {
             "CommunityToolkit.Maui": {
@@ -77,6 +75,10 @@
             "Microsoft.Maui.Essentials": {
               "target": "Package",
               "version": "[10.0.10, )"
+            },
+            "Python.Included": {
+              "target": "Package",
+              "version": "[3.11.1, )"
             },
             "SkiaSharp": {
               "target": "Package",
@@ -120,7 +122,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.CSharp": "(,4.7.32767]",
             "Microsoft.VisualBasic": "(,10.4.32767]",

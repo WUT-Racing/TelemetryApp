@@ -1,7 +1,7 @@
 {
-  "version": 4,
+  "version": 3,
   "targets": {
-    "net10.0-windows10.0.19041.0": {
+    "net10.0-windows10.0.19041": {
       "CommunityToolkit.Maui/13.0.0": {
         "type": "package",
         "dependencies": {
@@ -873,6 +873,41 @@
           "runtimes/win-x86/native/Microsoft.WindowsAppRuntime.Bootstrap.dll": {
             "assetType": "native",
             "rid": "win-x86"
+          }
+        }
+      },
+      "Python.Deployment/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Python.Deployment.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Deployment.dll": {}
+        }
+      },
+      "Python.Included/3.11.1": {
+        "type": "package",
+        "dependencies": {
+          "Python.Deployment": "2.0.0",
+          "pythonnet": "3.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Python.Included.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Included.dll": {}
+        }
+      },
+      "pythonnet/3.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Python.Runtime.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Runtime.dll": {
+            "related": ".xml"
           }
         }
       },
@@ -2401,7 +2436,7 @@
         }
       }
     },
-    "net10.0-windows10.0.19041.0/win-x64": {
+    "net10.0-windows10.0.19041/win-x64": {
       "CommunityToolkit.Maui/13.0.0": {
         "type": "package",
         "dependencies": {
@@ -3211,6 +3246,41 @@
         "build": {
           "buildTransitive/Microsoft.WindowsAppSDK.props": {},
           "buildTransitive/Microsoft.WindowsAppSDK.targets": {}
+        }
+      },
+      "Python.Deployment/2.0.0": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Python.Deployment.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Deployment.dll": {}
+        }
+      },
+      "Python.Included/3.11.1": {
+        "type": "package",
+        "dependencies": {
+          "Python.Deployment": "2.0.0",
+          "pythonnet": "3.0.1"
+        },
+        "compile": {
+          "lib/netstandard2.0/Python.Included.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Included.dll": {}
+        }
+      },
+      "pythonnet/3.0.1": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/Python.Runtime.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/netstandard2.0/Python.Runtime.dll": {
+            "related": ".xml"
+          }
         }
       },
       "runtime.android-arm.runtime.native.System.IO.Ports/10.0.2": {
@@ -5806,6 +5876,48 @@
         "tools/x86/GenXbf.dll"
       ]
     },
+    "Python.Deployment/2.0.0": {
+      "sha512": "if4M/aBaQWx1ENSUy12XKYTz2zKWpJiHhOXLhOdYj+g3UQy70sOplSyTrw5aNOMvUXkPbGrKNGfWXRB5ffevjQ==",
+      "type": "package",
+      "path": "python.deployment/2.0.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "lib/netstandard2.0/Python.Deployment.dll",
+        "python.deployment.2.0.0.nupkg.sha512",
+        "python.deployment.nuspec"
+      ]
+    },
+    "Python.Included/3.11.1": {
+      "sha512": "RTXUIfyie6ekfKGOCXppfuZWaAtw891r6EHJtIhEI/WtlJtCo3SmcRlhElIEZZ284WE96e1q6I3RiLqw1fm8dg==",
+      "type": "package",
+      "path": "python.included/3.11.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "lib/netstandard2.0/Python.Included.dll",
+        "python.included.3.11.1.nupkg.sha512",
+        "python.included.nuspec",
+        "python_included_nuget.png"
+      ]
+    },
+    "pythonnet/3.0.1": {
+      "sha512": "FYgnTnIUDE/9CC1m/046UvevJW9RYLtvyc98pycc+76lFG+MdTlwkKoG63RkvPKgbqlJJSMqu8zxeiqHS8vR9Q==",
+      "type": "package",
+      "path": "pythonnet/3.0.1",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "LICENSE",
+        "README.md",
+        "lib/netstandard2.0/Python.Runtime.dll",
+        "lib/netstandard2.0/Python.Runtime.xml",
+        "python-clear.png",
+        "pythonnet.3.0.1.nupkg.sha512",
+        "pythonnet.nuspec"
+      ]
+    },
     "runtime.android-arm.runtime.native.System.IO.Ports/10.0.2": {
       "sha512": "iv4A6c1a0pBn8vdbi86vfbcgSmYNLcv++EUqraO46JS4VZatJFIr3VMExUoulAZJQbL9JNl/qHSYX/1SSNTN9Q==",
       "type": "package",
@@ -6734,13 +6846,14 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net10.0-windows10.0.19041.0": [
+    "net10.0-windows10.0.19041": [
       "CommunityToolkit.Maui >= 13.0.0",
       "CommunityToolkit.Mvvm >= 8.4.0",
       "LiveChartsCore.SkiaSharpView.Maui >= 2.0.0-rc5",
       "Microsoft.Extensions.Logging.Debug >= 10.0.0",
       "Microsoft.Maui.Controls >= 10.0.10",
       "Microsoft.Maui.Essentials >= 10.0.10",
+      "Python.Included >= 3.11.1",
       "SkiaSharp >= 3.119.1",
       "SkiaSharp.Views.Maui.Controls >= 3.119.1",
       "System.IO.Ports >= 10.0.2",
@@ -6748,25 +6861,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Robert\\.nuget\\packages\\": {},
-    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Users\\Baka\\.nuget\\packages\\": {},
+    "G:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
+      "projectUniqueName": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
       "projectName": "TelemetryApp",
-      "projectPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\TelemetryApp.csproj",
-      "packagesPath": "C:\\Users\\Robert\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\TelemetryApp\\obj\\",
+      "projectPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\TelemetryApp.csproj",
+      "packagesPath": "C:\\Users\\Baka\\.nuget\\packages\\",
+      "outputPath": "F:\\WUT\\Programing\\Telemetria\\TelemetryApp\\obj\\",
       "projectStyle": "PackageReference",
       "crossTargeting": true,
       "fallbackFolders": [
-        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "G:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Robert\\Downloads\\testtele\\TelemetryApp\\NuGet.Config",
-        "C:\\Users\\Robert\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "F:\\WUT\\Programing\\Telemetria\\NuGet.Config",
+        "C:\\Users\\Baka\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -6778,8 +6891,7 @@
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net10.0-windows10.0.19041.0": {
-          "framework": "net10.0-windows10.0.19041",
+        "net10.0-windows10.0.19041": {
           "targetAlias": "net10.0-windows10.0.19041.0",
           "projectReferences": {}
         }
@@ -6794,11 +6906,10 @@
         "auditLevel": "low",
         "auditMode": "all"
       },
-      "SdkAnalysisLevel": "10.0.300"
+      "SdkAnalysisLevel": "10.0.100"
     },
     "frameworks": {
-      "net10.0-windows10.0.19041.0": {
-        "framework": "net10.0-windows10.0.19041",
+      "net10.0-windows10.0.19041": {
         "targetAlias": "net10.0-windows10.0.19041.0",
         "dependencies": {
           "CommunityToolkit.Maui": {
@@ -6824,6 +6935,10 @@
           "Microsoft.Maui.Essentials": {
             "target": "Package",
             "version": "[10.0.10, )"
+          },
+          "Python.Included": {
+            "target": "Package",
+            "version": "[3.11.1, )"
           },
           "SkiaSharp": {
             "target": "Package",
@@ -6867,7 +6982,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.301/PortableRuntimeIdentifierGraph.json",
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.100/PortableRuntimeIdentifierGraph.json",
         "packagesToPrune": {
           "Microsoft.CSharp": "(,4.7.32767]",
           "Microsoft.VisualBasic": "(,10.4.32767]",
@@ -7155,11 +7270,11 @@
       "code": "NU1903",
       "level": "Warning",
       "warningLevel": 1,
-      "message": "Pakiet „SQLitePCLRaw.lib.e_sqlite3” 2.1.2 ma znane wysoka luki w zabezpieczeniach o ważności, https://github.com/advisories/GHSA-2m69-gcr7-jv3q",
+      "message": "Package 'SQLitePCLRaw.lib.e_sqlite3' 2.1.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-2m69-gcr7-jv3q",
       "libraryId": "SQLitePCLRaw.lib.e_sqlite3",
       "targetGraphs": [
-        "net10.0-windows10.0.19041.0",
-        "net10.0-windows10.0.19041.0/win-x64"
+        "net10.0-windows10.0.19041",
+        "net10.0-windows10.0.19041/win-x64"
       ]
     }
   ]

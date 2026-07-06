@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TelemetryApp.Frontend.ViewModels.PythonPages.TestPage.PythonTestPage">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30"
+                             Spacing="20">
+
+            <Label Text="Test integracji C# z Pythonem"
+                   FontSize="24"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center"/>
+
+            <Button x:Name="AnalyzeButton"
+                    Text="Uruchom analizę Skidpada (Python)"
+                    Clicked="OnAnalyzeButtonClicked"
+                    HorizontalOptions="Center"
+                    WidthRequest="300"/>
+
+            <ActivityIndicator x:Name="LoadingIndicator"
+                               IsRunning="False"
+                               IsVisible="False"
+                               HorizontalOptions="Center"/>
+
+            <Editor x:Name="ResultEditor"
+                    HeightRequest="300"
+                    IsReadOnly="True"
+                    Text="Tutaj pojawi się wynik z Pythona..."
+                    BackgroundColor="#1E1E1E"
+                    TextColor="LightGreen"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

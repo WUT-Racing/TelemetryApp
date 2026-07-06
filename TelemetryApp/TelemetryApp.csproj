@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <!-- Na Windows budujemy i uruchamiamy tylko target Windows. MacCatalyst jest dostępny tylko na macOS. -->
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net10.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Na Windows budujemy i uruchamiamy tylko target Windows. MacCatalyst jest dostępny tylko
+        na macOS. -->
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">
+            net10.0-windows10.0.19041.0</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net10.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0-windows10.0.19041.0</TargetFrameworks>
 
@@ -20,16 +22,26 @@
 
         <WindowsPackageType>None</WindowsPackageType>
 
-        <!-- RuntimeIdentifier dla MacCatalyst zostawiamy Visual Studio/.NET SDK, żeby nie próbować odpalać MacCatalyst na Windows. -->
-        
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
-        <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
+        <!-- RuntimeIdentifier dla MacCatalyst zostawiamy Visual Studio/.NET SDK, żeby nie próbować
+        odpalać MacCatalyst na Windows. -->
+
+        <SupportedOSPlatformVersion
+            Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+            15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion
+            Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+            21.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion
+            Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+            10.0.17763.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion
+            Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">
+            10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
     <ItemGroup>
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
+        <MauiIcon Include="Resources\AppIcon\appicon.svg"
+            ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
         <MauiImage Include="Resources\Images\*" />
         <MauiImage Update="Resources\Images\dotnet_bot.png" Resize="True" BaseSize="300,185" />
@@ -44,24 +56,34 @@
         <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.10" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.10" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0" />
-        
-        <PackageReference Include="SkiaSharp" Version="3.119.1" /> 
+        <PackageReference Include="Python.Included" Version="3.11.1" />
+
+        <PackageReference Include="SkiaSharp" Version="3.119.1" />
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.1" />
-        
+
         <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-        
+
         <PackageReference Include="System.IO.Ports" Version="10.0.2" />
     </ItemGroup>
 
     <ItemGroup>
-      <MauiXaml Update="Frontend\ViewModels\SessionDetailPage\DetachedPlotPage.xaml">
-        <Generator>MSBuild:Compile</Generator>
-      </MauiXaml>
+        <MauiXaml Update="Frontend\ViewModels\SessionDetailPage\DetachedPlotPage.xaml">
+            <Generator>MSBuild:Compile</Generator>
+        </MauiXaml>
     </ItemGroup>
 
     <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst'))">
         <InvariantGlobalization>true</InvariantGlobalization>
         <MtouchExtraArgs>$(MtouchExtraArgs) --setenv:SKIA_SKIP_OPENGL_TEST=1</MtouchExtraArgs>
     </PropertyGroup>
+
+    <ItemGroup>
+        <None Update="PythonEngine\**\*.py">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="PythonEngine\requirements.txt">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
 
 </Project>
