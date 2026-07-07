@@ -22,24 +22,38 @@ namespace TelemetryApp.Frontend.ViewModels.PythonPages.TestPage
             AnalyzeButton.IsEnabled = false;
             LoadingIndicator.IsRunning = true;
             LoadingIndicator.IsVisible = true;
-            ResultEditor.Text = "Inicjalizacja środowiska Python (może potrwać chwilę przy pierwszym uruchomieniu)...\nTrwa przetwarzanie...";
+
+            // Czyścimy okno przed nową analizą
+            ResultEditor.Text = "Czekam na uruchomienie procesu...\n";
             ResultEditor.TextColor = Colors.LightGreen;
 
             try
             {
-                // PAMIĘTAJ O ZMIANIE ŚCIEŻKI! (Podwójne ukośniki są wymagane)
-                string testCsvPath = "C:\\ścieżka\\do\\twojego\\pliku\\decoded_signals_wide.csv";
+                // Twoja ścieżka do pliku
+                string testCsvPath = "F:\\WUT\\Programing\\Pliki_z_danymi_do_telemetrii\\converted_output_Endu.csv";
                 string competition = "Auto";
                 string configJson = "{}";
 
-                string result = await Task.Run(() =>
-                    _telemetryAnalysisService.AnalyzeSessionAsync(testCsvPath, competition, configJson));
+                // TWORZYMY FUNKCJĘ LOGUJĄCĄ (CALLBACK)
+                Action<string> progressCallback = (message) =>
+                {
+                    // Przekazanie zadania aktualizacji tekstu do wątku rysującego interfejs
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        ResultEditor.Text += message + "\n";
+                    });
+                };
 
-                ResultEditor.Text = result;
+                // Wywołanie z przekazaniem callbacka
+                string result = await Task.Run(() =>
+                    _telemetryAnalysisService.AnalyzeSessionAsync(testCsvPath, competition, configJson, progressCallback));
+
+                // Doklejenie wyniku końcowego na samym dole
+                ResultEditor.Text += "\n--- WYNIK KOŃCOWY (JSON) ---\n" + result;
             }
             catch (Exception ex)
             {
-                ResultEditor.Text = $"Wystąpił błąd:\n{ex.Message}";
+                ResultEditor.Text += $"\nWystąpił błąd:\n{ex.Message}";
                 ResultEditor.TextColor = Colors.Red;
             }
             finally

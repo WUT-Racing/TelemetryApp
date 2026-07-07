@@ -14,7 +14,6 @@ namespace TelemetryApp.Services
         {
             if (_isPythonInitialized) return;
 
-            // W wersji 3.11.1 te metody po prostu działają
             await Installer.SetupPython();
             await Installer.TryInstallPip();
 
@@ -26,10 +25,12 @@ namespace TelemetryApp.Services
             _isPythonInitialized = true;
         }
 
-        public async Task<string> AnalyzeSessionAsync(string csvFilePath, string competitionType, string configJson)
+        // DODANO: Parametr Action<string> onProgress
+        public async Task<string> AnalyzeSessionAsync(string csvFilePath, string competitionType, string configJson, Action<string> onProgress = null)
         {
             if (!_isPythonInitialized)
             {
+                if (onProgress != null) onProgress("Uruchamianie silnika Python w tle...");
                 await InitializePythonAsync();
             }
 
@@ -45,9 +46,10 @@ namespace TelemetryApp.Services
                     sys.path.append(pythonEnginePath);
 
                     dynamic coreApi = Py.Import("core_api");
-                    
-                    dynamic pyResult = coreApi.process_session(csvFilePath, competitionType, configJson);
-                    
+
+                    // MAGIA PYTHON.NET: Przekazujemy delegat C# (onProgress) bezpośrednio jako parametr Pythona!
+                    dynamic pyResult = coreApi.process_session(csvFilePath, competitionType, configJson, onProgress);
+
                     jsonResult = pyResult.ToString();
                 }
                 catch (PythonException ex)
