@@ -256,7 +256,7 @@
                                                                                                         
                                                                                                         <VerticalStackLayout>
                                                                                                             <Label Text="Value" FontSize="10" TextColor="Gray"/>
-                                                                                                            <Entry Text="{Binding Value, Mode=TwoWay}" Placeholder="Wartość (np. 'ON')"/>
+                                                                                                            <Entry Text="{Binding Value, Mode=TwoWay}" Placeholder="Wartość"/>
                                                                                                         </VerticalStackLayout>
                                                                                                     </Grid>
 
@@ -270,7 +270,7 @@
 
                                                                                                         <VerticalStackLayout Grid.Column="0">
                                                                                                             <Label Text="Key" FontSize="10" TextColor="Gray"/>
-                                                                                                            <Entry Text="{Binding Key, Mode=TwoWay}" Placeholder="Klucz (np. 'STATE_ON')"/>
+                                                                                                            <Entry Text="{Binding Key, Mode=TwoWay}" Placeholder="Klucz"/>
                                                                                                         </VerticalStackLayout>
 
                                                                                                         <VerticalStackLayout Grid.Column="1">
