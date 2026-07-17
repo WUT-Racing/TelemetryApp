@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace TelemetryApp.Frontend.Models;
@@ -51,7 +51,7 @@ public partial class CanSignal : ObservableObject
     private string? _unit;
 
     [ObservableProperty]
-    private Dictionary<string, SignalEnumItem>? _enum;
+    private ObservableCollection<SignalEnumItem>? _enum;
 
     [ObservableProperty]
     private bool _reserved;

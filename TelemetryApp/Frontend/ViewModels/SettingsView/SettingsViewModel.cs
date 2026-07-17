@@ -339,43 +339,36 @@ public partial class SettingsViewModel : ObservableObject
     {
         if (signal == null) return;
 
-        signal.Enum ??= new Dictionary<string, SignalEnumItem>();
+        signal.Enum ??= new ObservableCollection<SignalEnumItem>();
 
         int keyIndex = 0;
-        while (signal.Enum.ContainsKey(keyIndex.ToString()))
+        while (signal.Enum.Any(x => x.Id == keyIndex.ToString()))
         {
             keyIndex++;
         }
 
-        signal.Enum[keyIndex.ToString()] = new SignalEnumItem
+        signal.Enum.Add(new SignalEnumItem
         {
-            IsSimple = true,
-            StringValue = "Wartość",
+            Id = keyIndex.ToString(),
+            IsComplex = false,
+            Value = "Wartość",
             Label = "Etykieta",
             Description = ""
-        };
-
-        var currentEnum = signal.Enum;
-        signal.Enum = null;
-        signal.Enum = new Dictionary<string, SignalEnumItem>(currentEnum);
+        });
     }
 
     [RelayCommand]
-    private void DeleteEnumItem(KeyValuePair<string, SignalEnumItem> pair)
+    private void DeleteEnumItem(SignalEnumItem item)
     {
-        if (LoadedCanConfig == null) return;
+        if (LoadedCanConfig == null || item == null) return;
 
         foreach (var frame in LoadedCanConfig.Frames)
         {
             foreach (var signal in frame.Signals)
             {
-                if (signal.Enum != null && signal.Enum.ContainsKey(pair.Key) && signal.Enum[pair.Key] == pair.Value)
+                if (signal.Enum != null && signal.Enum.Contains(item))
                 {
-                    signal.Enum.Remove(pair.Key);
-                    
-                    var currentEnum = signal.Enum;
-                    signal.Enum = null;
-                    signal.Enum = new Dictionary<string, SignalEnumItem>(currentEnum);
+                    signal.Enum.Remove(item);
                     return;
                 }
             }
@@ -435,17 +428,18 @@ public partial class SettingsViewModel : ObservableObject
 
                 if (bs.Enum != null)
                 {
-                    fs.Enum = new Dictionary<string, SignalEnumItem>();
+                    fs.Enum = new ObservableCollection<SignalEnumItem>();
                     foreach (var kvp in bs.Enum)
                     {
-                        fs.Enum[kvp.Key] = new SignalEnumItem
+                        fs.Enum.Add(new SignalEnumItem
                         {
-                            IsSimple = kvp.Value.IsSimple,
-                            StringValue = kvp.Value.StringValue,
+                            Id = kvp.Key,
+                            IsComplex = !kvp.Value.IsSimple,
+                            Value = kvp.Value.StringValue,
                             Key = kvp.Value.Key,
                             Label = kvp.Value.Label,
                             Description = kvp.Value.Description
-                        };
+                        });
                     }
                 }
                 ff.Signals.Add(fs);
@@ -507,18 +501,20 @@ public partial class SettingsViewModel : ObservableObject
                     SafeMax = fs.SafeMax
                 };
 
-                if (fs.Enum != null)
+                if (fs.Enum != null && fs.Enum.Count > 0)
                 {
                     bs.Enum = new Dictionary<string, Backend.Decoding.CanEnumItemDefinition>();
-                    foreach (var kvp in fs.Enum)
+                    foreach (var item in fs.Enum)
                     {
-                        bs.Enum[kvp.Key] = new Backend.Decoding.CanEnumItemDefinition
+                        var dictKey = string.IsNullOrWhiteSpace(item.Id) ? "0" : item.Id; 
+                        
+                        bs.Enum[dictKey] = new Backend.Decoding.CanEnumItemDefinition
                         {
-                            IsSimple = kvp.Value.IsSimple,
-                            StringValue = kvp.Value.StringValue,
-                            Key = kvp.Value.Key,
-                            Label = kvp.Value.Label,
-                            Description = kvp.Value.Description
+                            IsSimple = !item.IsComplex,
+                            StringValue = item.Value,
+                            Key = item.Key,
+                            Label = item.Label,
+                            Description = item.Description
                         };
                     }
                 }

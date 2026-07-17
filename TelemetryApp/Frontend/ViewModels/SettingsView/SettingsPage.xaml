@@ -12,216 +12,106 @@
         <HorizontalStackLayout Grid.Row="0"
                                Spacing="10"
                                Padding="10">
-            <Button Text="Ogólne"
-                    Command="{Binding SelectTabCommand}"
-                    CommandParameter="General" />
-
-            <Button Text="Dane"
-                    Command="{Binding SelectTabCommand}"
-                    CommandParameter="Data" />
-
-            <Button Text="Eksport"
-                    Command="{Binding SelectTabCommand}"
-                    CommandParameter="Export" />
-
-            <Button Text="Edytor CAN"
-                    Command="{Binding SelectTabCommand}"
-                    CommandParameter="CanEditor" />
+            <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
+            <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
+            <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
+            <Button Text="Edytor CAN" Command="{Binding SelectTabCommand}" CommandParameter="CanEditor" />
         </HorizontalStackLayout>
 
-        <Grid Grid.Row="1"
-              Padding="20">
+        <Grid Grid.Row="1" Padding="20">
 
             <!-- OGÓLNE -->
-            <VerticalStackLayout IsVisible="False"
-                                 Spacing="14">
-                <Label Text="Ustawienia ogólne"
-                       FontSize="24"
-                       FontAttributes="Bold" />
-
-                <Label Text="Motyw aplikacji"
-                       FontSize="18"
-                       FontAttributes="Bold" />
-
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Ustawienia ogólne" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Motyw aplikacji" FontSize="18" FontAttributes="Bold" />
                 <Label Text="Wybierz jeden z dwóch motywów. Ustawienie zostanie zapamiętane po restarcie aplikacji." />
-
                 <HorizontalStackLayout Spacing="10">
-                    <Button Text="Jasny"
-                            Command="{Binding UseLightThemeCommand}" />
-
-                    <Button Text="Ciemny"
-                            Command="{Binding UseDarkThemeCommand}" />
+                    <Button Text="Jasny" Command="{Binding UseLightThemeCommand}" />
+                    <Button Text="Ciemny" Command="{Binding UseDarkThemeCommand}" />
                 </HorizontalStackLayout>
-
-                <Label Text="{Binding SelectedTheme, StringFormat='Aktualny motyw: {0}'}"
-                       FontAttributes="Bold" />
-
+                <Label Text="{Binding SelectedTheme, StringFormat='Aktualny motyw: {0}'}" FontAttributes="Bold" />
                 <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout"
-                                 Binding="{Binding CurrentTab}"
-                                 Value="General">
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </VerticalStackLayout.Triggers>
             </VerticalStackLayout>
 
             <!-- DANE -->
-            <VerticalStackLayout IsVisible="False"
-                                 Spacing="14">
-                <Label Text="Ustawienia danych"
-                       FontSize="24"
-                       FontAttributes="Bold" />
-
-                <Label Text="Zarządzanie kierowcami"
-                       FontSize="18"
-                       FontAttributes="Bold" />
-
-                <Grid ColumnDefinitions="*,Auto"
-                      ColumnSpacing="10">
-                    <Entry Placeholder="Nazwa kierowcy"
-                           Text="{Binding NewDriverName}" />
-
-                    <Button Grid.Column="1"
-                            Text="Dodaj"
-                            Command="{Binding AddDriverCommand}" />
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Ustawienia danych" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Zarządzanie kierowcami" FontSize="18" FontAttributes="Bold" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                    <Entry Placeholder="Nazwa kierowcy" Text="{Binding NewDriverName}" />
+                    <Button Grid.Column="1" Text="Dodaj" Command="{Binding AddDriverCommand}" />
                 </Grid>
-
                 <CollectionView ItemsSource="{Binding Drivers}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid ColumnDefinitions="*,Auto"
-                                  Padding="0,4">
-                                <Entry Text="{Binding Name, Mode=TwoWay}"
-                                       Placeholder="Nazwa" />
-
-                                <Button Grid.Column="1"
-                                        Text="✕"
-                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteDriverCommand}"
-                                        CommandParameter="{Binding .}"
-                                        BackgroundColor="Transparent"
-                                        TextColor="Red"
-                                        FontAttributes="Bold"
-                                        WidthRequest="44"
-                                        HeightRequest="44" />
+                            <Grid ColumnDefinitions="*,Auto" Padding="0,4">
+                                <Entry Text="{Binding Name, Mode=TwoWay}" Placeholder="Nazwa" />
+                                <Button Grid.Column="1" Text="✕" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteDriverCommand}" CommandParameter="{Binding .}" BackgroundColor="Transparent" TextColor="Red" FontAttributes="Bold" WidthRequest="44" HeightRequest="44" />
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
-                <Label Text="Dane telemetryczne są zapisywane jako raw log .rfdlog w sesjach."
-                       TextColor="Gray"
-                       LineBreakMode="WordWrap" />
-
+                <Label Text="Dane telemetryczne są zapisywane jako raw log .rfdlog w sesjach." TextColor="Gray" LineBreakMode="WordWrap" />
                 <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout"
-                                 Binding="{Binding CurrentTab}"
-                                 Value="Data">
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </VerticalStackLayout.Triggers>
             </VerticalStackLayout>
 
             <!-- EKSPORT -->
-            <VerticalStackLayout IsVisible="False"
-                                 Spacing="14">
-                <Label Text="Ustawienia eksportu"
-                       FontSize="24"
-                       FontAttributes="Bold" />
-
-                <Label Text="Pliki CSV"
-                       FontSize="18"
-                       FontAttributes="Bold" />
-
-                <Label Text="Wybierz, które pliki mają być tworzone podczas eksportu z widoku Sesje. metadata.json jest tworzony zawsze."
-                       TextColor="Gray"
-                       LineBreakMode="WordWrap" />
-
-                <Grid ColumnDefinitions="Auto,*"
-                      RowDefinitions="Auto,Auto,Auto"
-                      ColumnSpacing="10"
-                      RowSpacing="8">
-
-                    <CheckBox Grid.Row="0"
-                              Grid.Column="0"
-                              IsChecked="{Binding ExportLongCsv}" />
-
-                    <Label Grid.Row="0"
-                           Grid.Column="1"
-                           Text="decoded_signals_long.csv"
-                           VerticalTextAlignment="Center" />
-
-                    <CheckBox Grid.Row="1"
-                              Grid.Column="0"
-                              IsChecked="{Binding ExportWideCsv}" />
-
-                    <Label Grid.Row="1"
-                           Grid.Column="1"
-                           Text="decoded_signals_wide.csv"
-                           VerticalTextAlignment="Center" />
-
-                    <CheckBox Grid.Row="2"
-                              Grid.Column="0"
-                              IsChecked="{Binding ExportRawFramesCsv}" />
-
-                    <Label Grid.Row="2"
-                           Grid.Column="1"
-                           Text="raw_frames.csv"
-                           VerticalTextAlignment="Center" />
+            <VerticalStackLayout IsVisible="False" Spacing="14">
+                <Label Text="Ustawienia eksportu" FontSize="24" FontAttributes="Bold" />
+                <Label Text="Pliki CSV" FontSize="18" FontAttributes="Bold" />
+                <Label Text="Wybierz, które pliki mają być tworzone podczas eksportu z widoku Sesje. metadata.json jest tworzony zawsze." TextColor="Gray" LineBreakMode="WordWrap" />
+                <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="8">
+                    <CheckBox Grid.Row="0" Grid.Column="0" IsChecked="{Binding ExportLongCsv}" />
+                    <Label Grid.Row="0" Grid.Column="1" Text="decoded_signals_long.csv" VerticalTextAlignment="Center" />
+                    <CheckBox Grid.Row="1" Grid.Column="0" IsChecked="{Binding ExportWideCsv}" />
+                    <Label Grid.Row="1" Grid.Column="1" Text="decoded_signals_wide.csv" VerticalTextAlignment="Center" />
+                    <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding ExportRawFramesCsv}" />
+                    <Label Grid.Row="2" Grid.Column="1" Text="raw_frames.csv" VerticalTextAlignment="Center" />
                 </Grid>
-
-                <BoxView HeightRequest="1"
-                         BackgroundColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
-                         Margin="0,8" />
-
-                <Label Text="Eksport wykonywany jest w widoku Sesje."
-                       FontAttributes="Bold" />
-
-                <Label Text="Możesz eksportować całą sesję albo konkretny run. Dla aktywnego runu aplikacja zapyta, czy zakończyć run przed eksportem, czy eksportować częściowo i kontynuować."
-                       TextColor="Gray"
-                       LineBreakMode="WordWrap" />
-
+                <BoxView HeightRequest="1" BackgroundColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}" Margin="0,8" />
+                <Label Text="Eksport wykonywany jest w widoku Sesje." FontAttributes="Bold" />
+                <Label Text="Możesz eksportować całą sesję albo konkretny run. Dla aktywnego runu aplikacja zapyta, czy zakończyć run przed eksportem, czy eksportować częściowo i kontynuować." TextColor="Gray" LineBreakMode="WordWrap" />
                 <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout"
-                                 Binding="{Binding CurrentTab}"
-                                 Value="Export">
+                    <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </VerticalStackLayout.Triggers>
             </VerticalStackLayout>
 
             <!-- EDYTOR CAN -->
-            <VerticalStackLayout IsVisible="False" Spacing="14">
-                <VerticalStackLayout.Triggers>
-                    <DataTrigger TargetType="VerticalStackLayout"
-                                 Binding="{Binding CurrentTab}"
-                                 Value="CanEditor">
+            <Grid IsVisible="False" RowDefinitions="Auto, Auto, Auto, *">
+                <Grid.Triggers>
+                    <DataTrigger TargetType="Grid" Binding="{Binding CurrentTab}" Value="CanEditor">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
-                </VerticalStackLayout.Triggers>
+                </Grid.Triggers>
 
-                <Label Text="Edytor Definicji CAN"
-                       FontSize="24"
-                       FontAttributes="Bold" />
-
-                <HorizontalStackLayout Spacing="15">
+                <Label Grid.Row="0" Text="Edytor Definicji CAN" FontSize="24" FontAttributes="Bold" Margin="0,0,0,14" />
+                <HorizontalStackLayout Grid.Row="1" Spacing="15" Margin="0,0,0,14">
                     <Button Text="Wczytaj z pliku" Command="{Binding LoadCanConfigCommand}" />
                     <Button Text="Zapisz zmiany" Command="{Binding SaveCanConfigCommand}" BackgroundColor="Green" TextColor="White" />
                     <Button Text="+ Dodaj nową ramkę" Command="{Binding AddFrameCommand}" BackgroundColor="{StaticResource Primary}" TextColor="White" />
                 </HorizontalStackLayout>
-                
-                <Label Text="{Binding CanConfigFilePath}" TextColor="Gray" FontAttributes="Italic" />
+                <Label Grid.Row="2" Text="{Binding CanConfigFilePath}" TextColor="Gray" FontAttributes="Italic" Margin="0,0,0,10" />
 
-                <ScrollView HeightRequest="600" Margin="0,10,0,0">
-                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding LoadedCanConfig.Frames}" Spacing="15">
+                <ScrollView Grid.Row="3" Margin="0,10,0,0">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding LoadedCanConfig.Frames}" Spacing="15" Padding="0,0,0,20">
                         <BindableLayout.ItemTemplate>
                             <DataTemplate>
-                                <Border Stroke="{AppThemeBinding Light=LightGray, Dark=#334155}" 
-                                        StrokeThickness="1">
+                                <Border Stroke="{AppThemeBinding Light=LightGray, Dark=#334155}" StrokeThickness="1">
                                     <Border.StrokeShape>
                                         <RoundRectangle CornerRadius="8"/>
                                     </Border.StrokeShape>
 
-                                    <!-- Expander zarządzający widocznością sygnałów ramki -->
+                                    <!-- Ramka i Sygnały -->
                                     <toolkit:Expander>
                                         <toolkit:Expander.Header>
                                             <Grid ColumnDefinitions="70, *, 80, 80, Auto" ColumnSpacing="10" BackgroundColor="{AppThemeBinding Light=#F1F5F9, Dark=#1E293B}" Padding="10">
@@ -231,7 +121,7 @@
                                                 </VerticalStackLayout>
                                                 
                                                 <VerticalStackLayout Grid.Column="1">
-                                                    <Label Text="Opis (Summary) [Kliknij pasek aby rozwinąć]" FontSize="10" TextColor="Gray"/>
+                                                    <Label Text="Opis (Summary)" FontSize="10" TextColor="Gray"/>
                                                     <Entry Text="{Binding Summary, Mode=TwoWay}" />
                                                 </VerticalStackLayout>
                                                 
@@ -245,13 +135,7 @@
                                                     <Entry Text="{Binding Dlc, Mode=TwoWay}" Keyboard="Numeric" />
                                                 </VerticalStackLayout>
 
-                                                <Button Grid.Column="4" 
-                                                        Text="Usuń ramkę" 
-                                                        TextColor="Red" 
-                                                        BackgroundColor="Transparent"
-                                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteFrameCommand}"
-                                                        CommandParameter="{Binding .}"
-                                                        VerticalOptions="Center" />
+                                                <Button Grid.Column="4" Text="Usuń ramkę" TextColor="Red" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteFrameCommand}" CommandParameter="{Binding .}" VerticalOptions="Center" />
                                             </Grid>
                                         </toolkit:Expander.Header>
 
@@ -259,11 +143,7 @@
                                             <VerticalStackLayout Padding="15" Spacing="10" BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}">
                                                 <Grid ColumnDefinitions="*, Auto">
                                                     <Label Text="Sygnały w ramce:" FontAttributes="Bold" VerticalOptions="Center"/>
-                                                    <Button Grid.Column="1" 
-                                                            Text="+ Dodaj sygnał" 
-                                                            Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddSignalCommand}" 
-                                                            CommandParameter="{Binding .}"
-                                                            HeightRequest="35" Padding="10,0"/>
+                                                    <Button Grid.Column="1" Text="+ Dodaj sygnał" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddSignalCommand}" CommandParameter="{Binding .}" HeightRequest="35" Padding="10,0"/>
                                                 </Grid>
                                                 
                                                 <VerticalStackLayout BindableLayout.ItemsSource="{Binding Signals}" Spacing="15">
@@ -275,120 +155,141 @@
                                                                 </Border.StrokeShape>
                                                                 <VerticalStackLayout Spacing="10">
                                                                     
-                                                                    <!-- Wiersz podstawowy sygnału -->
-                                                                    <Grid ColumnDefinitions="2*, 1.5*, *, *, *, *, Auto" ColumnSpacing="8">
+                                                                    <!-- Identyfikacja i Typy -->
+                                                                    <Grid ColumnDefinitions="2*, 1.5*, *, *, Auto, Auto" ColumnSpacing="8">
                                                                         <VerticalStackLayout Grid.Column="0">
                                                                             <Label Text="Name" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding Name, Mode=TwoWay}"/>
                                                                         </VerticalStackLayout>
-
                                                                         <VerticalStackLayout Grid.Column="1">
                                                                             <Label Text="Key" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding Key, Mode=TwoWay}"/>
                                                                         </VerticalStackLayout>
-
                                                                         <VerticalStackLayout Grid.Column="2">
-                                                                            <Label Text="Byte St." FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding ByteStart, Mode=TwoWay}" Keyboard="Numeric"/>
-                                                                        </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="3">
-                                                                            <Label Text="Bit St." FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding BitStart, Mode=TwoWay}" Keyboard="Numeric"/>
-                                                                        </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="4">
-                                                                            <Label Text="Bit Len" FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding BitLength, Mode=TwoWay}" Keyboard="Numeric"/>
-                                                                        </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="5">
                                                                             <Label Text="Data Type" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding DataType, Mode=TwoWay}"/>
                                                                         </VerticalStackLayout>
-
-                                                                        <Button Grid.Column="6" 
-                                                                                Text="✕" 
-                                                                                TextColor="Red" 
-                                                                                BackgroundColor="Transparent"
-                                                                                Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteSignalCommand}"
-                                                                                CommandParameter="{Binding .}"
-                                                                                VerticalOptions="End"/>
+                                                                        <VerticalStackLayout Grid.Column="3">
+                                                                            <Label Text="Endianness" FontSize="10" TextColor="Gray"/>
+                                                                            <Entry Text="{Binding Endianness, Mode=TwoWay}"/>
+                                                                        </VerticalStackLayout>
+                                                                        <VerticalStackLayout Grid.Column="4">
+                                                                            <Label Text="Reserved" FontSize="10" TextColor="Gray"/>
+                                                                            <CheckBox IsChecked="{Binding Reserved, Mode=TwoWay}" HorizontalOptions="Start" />
+                                                                        </VerticalStackLayout>
+                                                                        <Button Grid.Column="5" Text="✕" TextColor="Red" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteSignalCommand}" CommandParameter="{Binding .}" VerticalOptions="End"/>
                                                                     </Grid>
 
-                                                                    <!-- Wiersz zaawansowanych obliczeń i jednostek -->
-                                                                    <Grid ColumnDefinitions="*, *, *, *, *, *" ColumnSpacing="8">
+                                                                    <!-- Pozycja, Konwersja i Limity -->
+                                                                    <Grid ColumnDefinitions="*, *, *, *, *, *, *" ColumnSpacing="8">
                                                                         <VerticalStackLayout Grid.Column="0">
+                                                                            <Label Text="Byte/Bit St." FontSize="10" TextColor="Gray"/>
+                                                                            <Entry Text="{Binding ByteStart, Mode=TwoWay}" Keyboard="Numeric"/>
+                                                                        </VerticalStackLayout>
+                                                                        <VerticalStackLayout Grid.Column="1">
+                                                                            <Label Text="Byte/Bit Len" FontSize="10" TextColor="Gray"/>
+                                                                            <Entry Text="{Binding ByteLength, Mode=TwoWay}" Keyboard="Numeric"/>
+                                                                        </VerticalStackLayout>
+                                                                        <VerticalStackLayout Grid.Column="2">
                                                                             <Label Text="Factor" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding Factor, Mode=TwoWay}" Keyboard="Numeric"/>
                                                                         </VerticalStackLayout>
-                                                                        
-                                                                        <VerticalStackLayout Grid.Column="1">
+                                                                        <VerticalStackLayout Grid.Column="3">
                                                                             <Label Text="Offset" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding Offset, Mode=TwoWay}" Keyboard="Numeric"/>
                                                                         </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="2">
+                                                                        <VerticalStackLayout Grid.Column="4">
                                                                             <Label Text="Unit" FontSize="10" TextColor="Gray"/>
                                                                             <Entry Text="{Binding Unit, Mode=TwoWay}"/>
                                                                         </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="3">
-                                                                            <Label Text="Safe Min" FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding SafeMin, Mode=TwoWay}" Keyboard="Numeric"/>
-                                                                        </VerticalStackLayout>
-
-                                                                        <VerticalStackLayout Grid.Column="4">
-                                                                            <Label Text="Safe Max" FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding SafeMax, Mode=TwoWay}" Keyboard="Numeric"/>
-                                                                        </VerticalStackLayout>
-
                                                                         <VerticalStackLayout Grid.Column="5">
-                                                                            <Label Text="Raw Max" FontSize="10" TextColor="Gray"/>
-                                                                            <Entry Text="{Binding RawMax, Mode=TwoWay}" Keyboard="Numeric"/>
+                                                                            <Label Text="Range Min" FontSize="10" TextColor="Gray"/>
+                                                                            <Entry Text="{Binding RangeMin, Mode=TwoWay}" Keyboard="Numeric"/>
+                                                                        </VerticalStackLayout>
+                                                                        <VerticalStackLayout Grid.Column="6">
+                                                                            <Label Text="Range Max" FontSize="10" TextColor="Gray"/>
+                                                                            <Entry Text="{Binding RangeMax, Mode=TwoWay}" Keyboard="Numeric"/>
                                                                         </VerticalStackLayout>
                                                                     </Grid>
 
-                                                                    <!-- Expander dla Słowników / Enumów sygnału -->
+                                                                    <!-- SEKCJA ENUMÓW -->
                                                                     <toolkit:Expander Margin="0,5,0,0">
                                                                         <toolkit:Expander.Header>
                                                                             <Label Text="▶ Słownik wartości (Enum / Opisy stanów)" FontSize="11" TextColor="{StaticResource Primary}" FontAttributes="Bold" Margin="5,0"/>
                                                                         </toolkit:Expander.Header>
                                                                         <toolkit:Expander.Content>
-                                                                            <VerticalStackLayout Padding="10,5" Spacing="5" BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1F2937}">
+                                                                            <VerticalStackLayout Padding="10,5" Spacing="8" BackgroundColor="{AppThemeBinding Light=#FAFAFA, Dark=#1F2937}">
                                                                                 
-                                                                                <!-- Lista elementów ze słownika Dictionary<string, SignalEnumItem> -->
-                                                                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Enum}" Spacing="4">
+                                                                                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Enum}" Spacing="8">
                                                                                     <BindableLayout.ItemTemplate>
                                                                                         <DataTemplate>
-                                                                                            <Grid ColumnDefinitions="50, *, 2*, Auto" ColumnSpacing="8" Padding="2">
-                                                                                                <!-- Klucz słownika (zawsze jako tekst z pary KeyValuePair) -->
-                                                                                                <Label Text="{Binding Key}" VerticalOptions="Center" FontAttributes="Bold"/>
+                                                                                            <Border Stroke="{AppThemeBinding Light=#E2E8F0, Dark=#334155}" Padding="8" StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=White, Dark=#111827}">
+                                                                                                <Border.StrokeShape>
+                                                                                                    <RoundRectangle CornerRadius="4"/>
+                                                                                                </Border.StrokeShape>
                                                                                                 
-                                                                                                <!-- Wartość prosta (StringValue) -->
-                                                                                                <Entry Grid.Column="1" Text="{Binding Value.StringValue, Mode=TwoWay}" Placeholder="StringValue"/>
-                                                                                                
-                                                                                                <!-- Etykieta rozszerzona (Label) -->
-                                                                                                <Entry Grid.Column="2" Text="{Binding Value.Label, Mode=TwoWay}" Placeholder="Label / Opis stanu"/>
-                                                                                                
-                                                                                                <Button Grid.Column="3" 
-                                                                                                        Text="✕" 
-                                                                                                        TextColor="Orange" 
-                                                                                                        BackgroundColor="Transparent"
-                                                                                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteEnumItemCommand}"
-                                                                                                        CommandParameter="{Binding .}"
-                                                                                                        HeightRequest="30"/>
-                                                                                            </Grid>
+                                                                                                <VerticalStackLayout Spacing="5">
+                                                                                                    <!-- Nagłówek wspólny: ID i Typ złożony -->
+                                                                                                    <Grid ColumnDefinitions="60, *, Auto, Auto" ColumnSpacing="8">
+                                                                                                        <VerticalStackLayout Grid.Column="0">
+                                                                                                            <Label Text="ID" FontSize="10" TextColor="Gray"/>
+                                                                                                            <Entry Text="{Binding Id, Mode=TwoWay}" Placeholder="ID"/>
+                                                                                                        </VerticalStackLayout>
+
+                                                                                                        <VerticalStackLayout Grid.Column="2" VerticalOptions="Center" Margin="0,12,0,0">
+                                                                                                            <HorizontalStackLayout Spacing="4">
+                                                                                                                <CheckBox IsChecked="{Binding IsComplex, Mode=TwoWay}" />
+                                                                                                                <Label Text="Typ złożony" VerticalOptions="Center" FontSize="11"/>
+                                                                                                            </HorizontalStackLayout>
+                                                                                                        </VerticalStackLayout>
+
+                                                                                                        <Button Grid.Column="3" Text="✕" TextColor="Orange" BackgroundColor="Transparent" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteEnumItemCommand}" CommandParameter="{Binding .}" VerticalOptions="End" HeightRequest="40"/>
+                                                                                                    </Grid>
+
+                                                                                                    <!-- ENUM PROSTY (Ukrywany, gdy IsComplex = True) -->
+                                                                                                    <Grid ColumnDefinitions="*" IsVisible="False">
+                                                                                                        <Grid.Triggers>
+                                                                                                            <DataTrigger TargetType="Grid" Binding="{Binding IsComplex}" Value="False">
+                                                                                                                <Setter Property="IsVisible" Value="True" />
+                                                                                                            </DataTrigger>
+                                                                                                        </Grid.Triggers>
+                                                                                                        
+                                                                                                        <VerticalStackLayout>
+                                                                                                            <Label Text="Value" FontSize="10" TextColor="Gray"/>
+                                                                                                            <Entry Text="{Binding Value, Mode=TwoWay}" Placeholder="Wartość (np. 'ON')"/>
+                                                                                                        </VerticalStackLayout>
+                                                                                                    </Grid>
+
+                                                                                                    <!-- ENUM ZŁOŻONY (Pokazywany, gdy IsComplex = True) -->
+                                                                                                    <Grid ColumnDefinitions="*, *, *" ColumnSpacing="8" IsVisible="False">
+                                                                                                        <Grid.Triggers>
+                                                                                                            <DataTrigger TargetType="Grid" Binding="{Binding IsComplex}" Value="True">
+                                                                                                                <Setter Property="IsVisible" Value="True" />
+                                                                                                            </DataTrigger>
+                                                                                                        </Grid.Triggers>
+
+                                                                                                        <VerticalStackLayout Grid.Column="0">
+                                                                                                            <Label Text="Key" FontSize="10" TextColor="Gray"/>
+                                                                                                            <Entry Text="{Binding Key, Mode=TwoWay}" Placeholder="Klucz (np. 'STATE_ON')"/>
+                                                                                                        </VerticalStackLayout>
+
+                                                                                                        <VerticalStackLayout Grid.Column="1">
+                                                                                                            <Label Text="Label" FontSize="10" TextColor="Gray"/>
+                                                                                                            <Entry Text="{Binding Label, Mode=TwoWay}" Placeholder="Etykieta"/>
+                                                                                                        </VerticalStackLayout>
+
+                                                                                                        <VerticalStackLayout Grid.Column="2">
+                                                                                                            <Label Text="Description" FontSize="10" TextColor="Gray"/>
+                                                                                                            <Entry Text="{Binding Description, Mode=TwoWay}" Placeholder="Opis"/>
+                                                                                                        </VerticalStackLayout>
+                                                                                                    </Grid>
+                                                                                                </VerticalStackLayout>
+                                                                                            </Border>
                                                                                         </DataTemplate>
                                                                                     </BindableLayout.ItemTemplate>
                                                                                 </VerticalStackLayout>
 
-                                                                                <Button Text="+ Dodaj wpis do Słownika" 
-                                                                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddEnumItemCommand}" 
-                                                                                        CommandParameter="{Binding .}"
-                                                                                        HorizontalOptions="Start" 
-                                                                                        FontSize="11" 
-                                                                                        HeightRequest="30" Padding="10,0"/>
+                                                                                <Button Text="+ Dodaj wpis do Słownika" Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.AddEnumItemCommand}" CommandParameter="{Binding .}" HorizontalOptions="Start" FontSize="11" HeightRequest="30" Padding="10,0"/>
                                                                             </VerticalStackLayout>
                                                                         </toolkit:Expander.Content>
                                                                     </toolkit:Expander>
@@ -407,7 +308,7 @@
                         </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
                 </ScrollView>
-            </VerticalStackLayout>
+            </Grid>
         </Grid>
     </Grid>
 </ContentPage>
