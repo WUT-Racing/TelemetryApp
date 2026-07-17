@@ -5,10 +5,13 @@ namespace TelemetryApp.Frontend.Models;
 public partial class SignalEnumItem : ObservableObject
 {
     [ObservableProperty]
-    private bool _isSimple;
+    private string? _id;
 
     [ObservableProperty]
-    private string? _stringValue;
+    private bool _isComplex;
+
+    [ObservableProperty]
+    private string? _value;
 
     [ObservableProperty]
     private string? _key;
