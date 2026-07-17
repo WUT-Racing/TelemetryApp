@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelemetryApp", "TelemetryApp\TelemetryApp.csproj", "{68DBDE7C-4B6F-4071-84DF-67FE32728432}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TelemetryApp.Tests", "TelemetryApp.Tests\TelemetryApp.Tests.csproj", "{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{68DBDE7C-4B6F-4071-84DF-67FE32728432}.Release|x64.Build.0 = Release|Any CPU
 		{68DBDE7C-4B6F-4071-84DF-67FE32728432}.Release|x86.ActiveCfg = Release|Any CPU
 		{68DBDE7C-4B6F-4071-84DF-67FE32728432}.Release|x86.Build.0 = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|x64.Build.0 = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Debug|x86.Build.0 = Debug|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|x64.ActiveCfg = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|x64.Build.0 = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|x86.ActiveCfg = Release|Any CPU
+		{C8C7D9AE-7EC9-493A-8FD9-56210CB51733}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
