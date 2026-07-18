@@ -6,6 +6,7 @@ using TelemetryApp.Backend.Sessions;
 
 namespace TelemetryApp.Backend.Tests
 {
+    [Collection("Sequential FileSystem")]
     public class ClientBoardTests : IDisposable
     {
         private readonly string _testTempPath;
