@@ -94,7 +94,8 @@ public sealed class ClientBoard : IAsyncDisposable
             BlocksPerSecond = 10,
             RecordsPerBlock = 211,
             ProtocolVersion = 1,
-            CanIds = knownIds
+            CanIds = knownIds,
+            Definitions = definitions
         };
 
         _simulationStream = new SimulatedTelemetryStream(options);

@@ -1,23 +1,15 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Globalization;
-using System.Text;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.ApplicationModel;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Storage;
 using TelemetryApp.Backend.BoardConnection;
 using TelemetryApp.Backend.Decoding;
 using TelemetryApp.Backend.Sessions;
-using TelemetryApp.Backend.Storage;
 using TelemetryApp.Backend.UserSettings;
 using TelemetryApp.Frontend.Data;
 using TelemetryApp.Frontend.Views;
 using System.Diagnostics;
-using System.Threading;
 using TelemetryApp.Backend.Performance;
 
 namespace TelemetryApp.Frontend.ViewModels
@@ -33,7 +25,6 @@ namespace TelemetryApp.Frontend.ViewModels
         private TelemetryPerformanceOptions _performanceOptions = TelemetryPerformanceOptions.CreateDefault();
         private long _lastLiveUiUpdateTicks;
         private string? _currentSessionId;
-        private TelemetrySession? _lastKnownSession;
 
         private readonly Dictionary<string, SensorReading> _sensorsBySignal = new(StringComparer.OrdinalIgnoreCase);
         private readonly Dictionary<string, EnumStatusReading> _enumStatusesBySignal = new(StringComparer.OrdinalIgnoreCase);
@@ -78,8 +69,7 @@ namespace TelemetryApp.Frontend.ViewModels
             _clientBoard.OnSignalsDecoded += HandleSignalsDecoded;
             _sessionManager.ActiveSessionChanged += HandleActiveSessionChanged;
 
-            _lastKnownSession = _sessionManager.ActiveSession;
-            _currentSessionId = _lastKnownSession?.Id;
+            _currentSessionId = _sessionManager.ActiveSession?.Id;
 
             _ = LoadAvailableSignalsAsync();
         }
@@ -279,7 +269,6 @@ namespace TelemetryApp.Frontend.ViewModels
                 return;
             }
 
-            _lastKnownSession = session;
 
             if (session.Id == _currentSessionId)
                 return;
@@ -733,364 +722,6 @@ namespace TelemetryApp.Frontend.ViewModels
             });
         }
 
-        public async Task<string> ExportCurrentSessionToCsvAsync(
-            bool includeEnums = true,
-            CancellationToken cancellationToken = default)
-        {
-            var samples = _historyStore.GetAllHistory()
-                .Where(sample => includeEnums || !sample.IsEnumLike)
-                .ToList();
-
-            var activeSession = _sessionManager.ActiveSession ?? _lastKnownSession;
-
-            if (samples.Count == 0 && activeSession?.Runs.Count is not > 0)
-                throw new InvalidOperationException("Brak danych do eksportu. Uruchom symulator lub połączenie i poczekaj na pierwsze próbki.");
-
-            var exportDirectory = CreateExportDirectory(activeSession);
-            var metadataPath = Path.Combine(exportDirectory, "metadata.json");
-            var widePath = Path.Combine(exportDirectory, "decoded_signals_wide.csv");
-            var longPath = Path.Combine(exportDirectory, "decoded_signals_long.csv");
-            var rawPath = Path.Combine(exportDirectory, "raw_frames.csv");
-
-            await WriteExportMetadataAsync(metadataPath, activeSession, includeEnums, cancellationToken);
-
-            if (samples.Count > 0)
-            {
-                await WriteWideSignalsCsvAsync(widePath, samples, cancellationToken);
-                await WriteLongSignalsCsvAsync(longPath, samples, cancellationToken);
-            }
-
-            if (activeSession?.Runs.Count > 0)
-                await WriteRawFramesCsvAsync(rawPath, activeSession, cancellationToken);
-
-            return exportDirectory;
-        }
-
-        private string CreateExportDirectory(TelemetrySession? session)
-        {
-            var baseDirectory = session?.DirectoryPath ?? Path.Combine(FileSystem.AppDataDirectory, "Exports");
-            var exportRoot = Path.Combine(baseDirectory, "Exports");
-
-            Directory.CreateDirectory(exportRoot);
-
-            var sessionName = session is null ? "current" : MakeSafeFileName(session.Name);
-            var directory = Path.Combine(exportRoot, $"{DateTime.Now:yyyyMMdd_HHmmss}_{sessionName}");
-
-            Directory.CreateDirectory(directory);
-
-            return directory;
-        }
-
-        private async Task WriteExportMetadataAsync(
-            string path,
-            TelemetrySession? session,
-            bool includeEnums,
-            CancellationToken cancellationToken)
-        {
-            var metadata = new
-            {
-                ExportedAtLocal = DateTime.Now,
-                IncludeEnums = includeEnums,
-                Session = session,
-                Notes = "CSV używa separatora średnika i kodowania UTF-8 BOM dla Excela."
-            };
-
-            var json = JsonSerializer.Serialize(metadata, new JsonSerializerOptions(JsonSerializerDefaults.Web)
-            {
-                WriteIndented = true
-            });
-
-            await File.WriteAllTextAsync(
-                path,
-                json,
-                new UTF8Encoding(encoderShouldEmitUTF8Identifier: true),
-                cancellationToken);
-        }
-
-        private async Task WriteLongSignalsCsvAsync(
-            string filePath,
-            IReadOnlyList<SignalSample> samples,
-            CancellationToken cancellationToken)
-        {
-            await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
-
-            await writer.WriteLineAsync("sep=;");
-            await writer.WriteLineAsync(
-                "Czas lokalny;Czas od początku [s];Timestamp ms;Sequence;Typ;Nazwa;CAN ID;Klucz;Wartość;Wartość tekstowa;Jednostka;Włączony;Ramka");
-
-            var polishCulture = CultureInfo.GetCultureInfo("pl-PL");
-            var firstTimestamp = samples.Min(sample => sample.TimestampMs);
-
-            foreach (var sample in samples
-                .OrderBy(sample => sample.TimestampMs)
-                .ThenBy(sample => sample.BlockSequence)
-                .ThenBy(sample => sample.CanId)
-                .ThenBy(sample => sample.Key, StringComparer.OrdinalIgnoreCase))
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var row = new[]
-                {
-                    ToDateTime(sample.TimestampMs).ToString("yyyy-MM-dd HH:mm:ss.fff", polishCulture),
-                    ToRelativeSeconds(sample.TimestampMs, firstTimestamp).ToString("0.000", polishCulture),
-                    sample.TimestampMs.ToString(),
-                    sample.BlockSequence.ToString(),
-                    sample.IsEnumLike ? "enum" : "sensor",
-                    GetDisplayName(sample),
-                    $"0x{sample.CanId:X3}",
-                    sample.Key,
-                    sample.IsEnumLike ? string.Empty : sample.Value.ToString("0.############", polishCulture),
-                    sample.DisplayValue ?? string.Empty,
-                    sample.Unit ?? string.Empty,
-                    GetEnabledText(sample),
-                    GetFrameSummary(sample)
-                };
-
-                await writer.WriteLineAsync(string.Join(';', row.Select(EscapeCsvCell)));
-            }
-        }
-
-        private async Task WriteWideSignalsCsvAsync(
-            string filePath,
-            IReadOnlyList<SignalSample> samples,
-            CancellationToken cancellationToken)
-        {
-            await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
-
-            await writer.WriteLineAsync("sep=;");
-
-            var polishCulture = CultureInfo.GetCultureInfo("pl-PL");
-            var firstTimestamp = samples.Min(sample => sample.TimestampMs);
-
-            var columns = samples
-                .GroupBy(sample => MakeSignalKey(sample.CanId, sample.Key), StringComparer.OrdinalIgnoreCase)
-                .Select(group =>
-                {
-                    var sample = group.First();
-
-                    return new ExportColumn(
-                        MakeSignalKey(sample.CanId, sample.Key),
-                        BuildUniqueExportHeader(GetDisplayName(sample), sample),
-                        sample.IsEnumLike);
-                })
-                .OrderBy(column => column.Header, StringComparer.CurrentCultureIgnoreCase)
-                .ToList();
-
-            var header = new[]
-            {
-                "Czas lokalny",
-                "Czas od początku [s]",
-                "Timestamp ms",
-                "Sequence"
-            }.Concat(columns.Select(column => column.Header));
-
-            await writer.WriteLineAsync(string.Join(';', header.Select(EscapeCsvCell)));
-
-            var rows = samples
-                .GroupBy(sample => new
-                {
-                    sample.TimestampMs,
-                    sample.BlockSequence
-                })
-                .OrderBy(group => group.Key.TimestampMs)
-                .ThenBy(group => group.Key.BlockSequence);
-
-            foreach (var group in rows)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                var valuesBySignal = group
-                    .GroupBy(sample => MakeSignalKey(sample.CanId, sample.Key), StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(
-                        group => group.Key,
-                        group => group.Last(),
-                        StringComparer.OrdinalIgnoreCase);
-
-                var row = new List<string>
-                {
-                    ToDateTime(group.Key.TimestampMs).ToString("yyyy-MM-dd HH:mm:ss.fff", polishCulture),
-                    ToRelativeSeconds(group.Key.TimestampMs, firstTimestamp).ToString("0.000", polishCulture),
-                    group.Key.TimestampMs.ToString(),
-                    group.Key.BlockSequence.ToString()
-                };
-
-                foreach (var column in columns)
-                {
-                    if (!valuesBySignal.TryGetValue(column.Key, out var sample))
-                    {
-                        row.Add(string.Empty);
-                        continue;
-                    }
-
-                    row.Add(column.IsEnumLike
-                        ? sample.DisplayValue ?? sample.Value.ToString("0.############", polishCulture)
-                        : sample.Value.ToString("0.############", polishCulture));
-                }
-
-                await writer.WriteLineAsync(string.Join(';', row.Select(EscapeCsvCell)));
-            }
-        }
-
-        private async Task WriteRawFramesCsvAsync(
-            string filePath,
-            TelemetrySession session,
-            CancellationToken cancellationToken)
-        {
-            var existingRuns = session.Runs
-                .Where(run => File.Exists(run.RawLogPath))
-                .OrderBy(run => run.StartedAtLocal)
-                .ToList();
-
-            if (existingRuns.Count == 0)
-                return;
-
-            await using var writer = await CreateExcelCsvWriterAsync(filePath, cancellationToken);
-
-            await writer.WriteLineAsync("sep=;");
-            await writer.WriteLineAsync("Czas lokalny;Czas od początku [s];Timestamp ms;Run;Sequence;Network;CAN ID;Data hex");
-
-            var polishCulture = CultureInfo.GetCultureInfo("pl-PL");
-            ulong? firstTimestamp = null;
-
-            foreach (var run in existingRuns)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                await using var reader = await RawTelemetryLogReader.OpenAsync(run.RawLogPath, cancellationToken);
-
-                await foreach (var block in reader.ReadAllBlocksAsync(cancellationToken))
-                {
-                    firstTimestamp ??= block.Timestamp;
-
-                    foreach (var record in block.Records)
-                    {
-                        var row = new[]
-                        {
-                            ToDateTime(block.Timestamp).ToString("yyyy-MM-dd HH:mm:ss.fff", polishCulture),
-                            ToRelativeSeconds(block.Timestamp, firstTimestamp.Value).ToString("0.000", polishCulture),
-                            block.Timestamp.ToString(),
-                            run.Source,
-                            block.Sequence.ToString(),
-                            record.Network ? "1" : "0",
-                            $"0x{record.CanId:X3}",
-                            record.Data.ToString("X16")
-                        };
-
-                        await writer.WriteLineAsync(string.Join(';', row.Select(EscapeCsvCell)));
-                    }
-                }
-            }
-        }
-
-        private static async Task<StreamWriter> CreateExcelCsvWriterAsync(
-            string filePath,
-            CancellationToken cancellationToken)
-        {
-            var stream = new FileStream(
-                filePath,
-                FileMode.Create,
-                FileAccess.Write,
-                FileShare.Read,
-                bufferSize: 64 * 1024,
-                options: FileOptions.Asynchronous | FileOptions.SequentialScan);
-
-            var utf8Bom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: true).GetPreamble();
-
-            await stream.WriteAsync(utf8Bom, cancellationToken);
-
-            return new StreamWriter(
-                stream,
-                new UTF8Encoding(encoderShouldEmitUTF8Identifier: false),
-                bufferSize: 64 * 1024,
-                leaveOpen: false);
-        }
-
-        private string BuildUniqueExportHeader(string displayName, SignalSample sample)
-        {
-            var suffix = string.IsNullOrWhiteSpace(sample.Unit) || sample.IsEnumLike
-                ? string.Empty
-                : $" [{sample.Unit}]";
-
-            return $"{displayName}{suffix} (0x{sample.CanId:X3}/{sample.Key})";
-        }
-
-        private static double ToRelativeSeconds(ulong timestampMs, ulong firstTimestampMs)
-        {
-            return timestampMs >= firstTimestampMs
-                ? (timestampMs - firstTimestampMs) / 1000.0
-                : 0.0;
-        }
-
-        private static string MakeSafeFileName(string value)
-        {
-            var invalidChars = Path.GetInvalidFileNameChars();
-            var safe = new string(value.Select(ch => invalidChars.Contains(ch) ? '_' : ch).ToArray());
-
-            safe = Regex.Replace(safe, "\\s+", "_").Trim('_');
-
-            return string.IsNullOrWhiteSpace(safe)
-                ? "session"
-                : safe;
-        }
-
-        private readonly record struct ExportColumn(
-            string Key,
-            string Header,
-            bool IsEnumLike);
-
-        private string GetDisplayName(SignalSample sample)
-        {
-            var key = MakeSignalKey(sample.CanId, sample.Key);
-
-            if (sample.IsEnumLike && _enumStatusesBySignal.TryGetValue(key, out var status))
-                return status.StatusName;
-
-            if (!sample.IsEnumLike && _sensorsBySignal.TryGetValue(key, out var sensor))
-                return sensor.SensorName;
-
-            return sample.Name;
-        }
-
-        private string GetFrameSummary(SignalSample sample)
-        {
-            var key = MakeSignalKey(sample.CanId, sample.Key);
-
-            if (sample.IsEnumLike && _enumStatusesBySignal.TryGetValue(key, out var status))
-                return status.FrameSummary ?? string.Empty;
-
-            if (!sample.IsEnumLike && _sensorsBySignal.TryGetValue(key, out var sensor))
-                return sensor.FrameSummary ?? string.Empty;
-
-            return string.Empty;
-        }
-
-        private string GetEnabledText(SignalSample sample)
-        {
-            var key = MakeSignalKey(sample.CanId, sample.Key);
-
-            if (sample.IsEnumLike && _enumStatusesBySignal.TryGetValue(key, out var status))
-                return status.IsEnabled ? "tak" : "nie";
-
-            if (!sample.IsEnumLike && _sensorsBySignal.TryGetValue(key, out var sensor))
-                return sensor.IsEnabled ? "tak" : "nie";
-
-            return string.Empty;
-        }
-
-        private static string EscapeCsvCell(string? value)
-        {
-            value ??= string.Empty;
-
-            if (value.Contains(';') ||
-                value.Contains('"') ||
-                value.Contains('\n') ||
-                value.Contains('\r'))
-            {
-                return $"\"{value.Replace("\"", "\"\"")}\"";
-            }
-
-            return value;
-        }
 
         private static bool IsEnumLike(CanSignalDefinition signal)
         {

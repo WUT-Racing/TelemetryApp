@@ -49,7 +49,6 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        builder.Services.AddSingleton<SQLiteConnectionFactory>();
         builder.Services.AddSingleton<TelemetrySessionManager>();
         builder.Services.AddSingleton<SignalDisplaySettingsStore>();
         builder.Services.AddSingleton<TelemetryExportSettingsStore>();
@@ -57,7 +56,6 @@ public static class MauiProgram
         builder.Services.AddSingleton<TelemetryPerformanceSettingsStore>();
         builder.Services.AddSingleton<TelemetryPerformanceMonitor>();
         builder.Services.AddSingleton<ClientBoard>();
-        builder.Services.AddTransient<TelemetryService>();
         builder.Services.AddTransient<SessionsPage>();
         builder.Services.AddTransient<SessionViewModel>();
         builder.Services.AddSingleton<AppShell>();
