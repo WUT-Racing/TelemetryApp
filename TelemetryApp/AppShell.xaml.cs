@@ -1,5 +1,4 @@
-﻿using Microsoft.Maui.Controls.Handlers.Compatibility;
-using TelemetryApp.Frontend.Views;
+﻿using TelemetryApp.Frontend.Views;
 
 namespace TelemetryApp;
 
