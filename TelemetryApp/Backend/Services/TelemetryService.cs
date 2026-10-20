@@ -43,16 +43,6 @@ public class TelemetryService
 
     public string[] GetDataTypes()
     {
-        //TODO
         return ["Prędkość", "Obroty", "Temperatura Oleju"];
     }
-/*
-    public async Task<List<SensorReading>> GetSensorReadingsForSessionAsync(int sessionId)
-{
-    // Tu beda pobrane sensory z bazy danych
-    // Grupowanie po SensorId, sortowanie po Timestamp
-    // Dla kazdej grupy utworzyc SensorReading z listami Timestamps i Values
-    // Zwrocic liste SensorReading
-}
-*/
 }
