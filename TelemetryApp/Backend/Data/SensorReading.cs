@@ -17,7 +17,8 @@ namespace TelemetryApp.Frontend.Data
     // Klasa zajmująca się odczytem i formatowaniem sensorów do obsługi aplikacji.
     // Posiada niedokończony kod związany z przypiananiem i odpinaniem sensorów.
     // TODO: Dokończyć logikę przypinania i odpinania sensorów. Więcej detali od Roberta @gruszczrob
-    // TODO: Rozważyć przeniesienie logiki od UI do namespace-u Frontendu.
+    // TODO: Rozważyć przeniesienie logiki od UI do frontendu.
+    // TODO: Rozważyć zmianę namespace-u. Namespace to Frontend ale folder to Backend?
     // </summary>
     public partial class SensorReading : ObservableObject
     {
