@@ -11,6 +11,11 @@ using TelemetryApp.Backend.UserSettings;
 
 namespace TelemetryApp.Backend.Export;
 
+// <summary>
+// Logika zajmująca się eksportem wczytanych danych telemetrycznych do pliku CSV.
+// Obecna implementacja nie jest optymalna i wymaga przemyślenia możliwych do wprowadzenia zmian.
+// Skonsultować z Robertem @gruszczrob
+// </summary>
 public sealed class TelemetryCsvExportService
 {
     private readonly SignalDisplaySettingsStore _displaySettingsStore;

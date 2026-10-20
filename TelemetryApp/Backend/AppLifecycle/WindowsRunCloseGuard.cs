@@ -11,6 +11,10 @@ using WinRT.Interop;
 
 namespace TelemetryApp.Backend.AppLifecycle;
 
+// <summary>
+// Klasa zapobiegająca zamknięciu okna z aktywną sesją. Działa na Windowsie, na MacOS wymaga dalszego testowania - obecnie jest wyłączone.
+// TODO: Poprawić funkcjonalność na MacOS.
+// </summary>
 public static class WindowsRunCloseGuard
 {
 #if WINDOWS

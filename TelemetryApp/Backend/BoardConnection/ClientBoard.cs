@@ -7,6 +7,9 @@ using TelemetryApp.Backend.Simulation;
 
 namespace TelemetryApp.Backend.BoardConnection;
 
+// <summary>
+// Klasa zawierająca logikę do połączenia płytki.
+// </summary>
 public sealed class ClientBoard : IAsyncDisposable
 {
     private readonly TelemetrySessionManager _sessionManager;

@@ -13,6 +13,12 @@ namespace TelemetryApp.Frontend.Data
         High
     }
 
+    // <summary>
+    // Klasa zajmująca się odczytem i formatowaniem sensorów do frontendu.
+    // Posiada niedokończony kod związany z przypiananiem i odpinaniem sensorów.
+    // TODO: Dokończyć logikę przypinania i odpinania sensorów. Więcej detali od Roberta @gruszczrob
+    // TODO: Rozważyć przeniesienie logiki od UI do namespace-u Frontendu.
+    // </summary>
     public partial class SensorReading : ObservableObject
     {
         [ObservableProperty]

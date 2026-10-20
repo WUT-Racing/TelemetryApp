@@ -15,6 +15,11 @@ public sealed class CanEnumItemDefinition
     public string? Description { get; set; }
 }
 
+// <summary>
+// Konwerter zajmujący się odczytaniem danych z Json-a i zamianą na wewnętrzne dane.
+// Enum-y typu prostego i złożonego odnoszą się do ich poszczególnych struktur.
+// Przykład można znaleźć w sygnaly.json
+// </summary>
 public class CanEnumItemConverter : JsonConverter<CanEnumItemDefinition>
 {
     public override CanEnumItemDefinition Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)

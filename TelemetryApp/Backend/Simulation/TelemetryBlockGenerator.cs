@@ -3,6 +3,10 @@ using TelemetryApp.Backend.Protocol;
 
 namespace TelemetryApp.Backend.Simulation;
 
+// <summary>
+// Generator losowych danych telemetrycznych.
+// Nieużywany w normalnej pracy z aplikacją - raczej do celów debug.
+// </summary>
 public sealed class TelemetryBlockGenerator
 {
     private readonly SimulationOptions _options;

@@ -4,6 +4,10 @@ using TelemetryApp.Frontend.Data;
 
 namespace TelemetryApp.Backend.UserSettings;
 
+// <summary>
+// TODO: Zawiera pozostałości kodu przypinania sensorów.
+// TODO: Zobacz TelemtryApp/Backend/Data/SensorReading.cs
+// </summary>
 public sealed class SignalDisplaySettingsStore
 {
     private readonly object _sync = new();

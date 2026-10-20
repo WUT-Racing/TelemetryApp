@@ -5,6 +5,9 @@ using TelemetryApp.Backend.Storage;
 
 namespace TelemetryApp.Backend.Pipeline;
 
+// <summary>
+// TODO: Pipeline wymaga przejrzenia, podejrzewam możliwy wyciek pamięci. Warto przemyśleć refactoring.
+// </summary>
 public sealed class TelemetryPipeline : IAsyncDisposable
 {
     private readonly TelemetryBlockParser _parser = new();

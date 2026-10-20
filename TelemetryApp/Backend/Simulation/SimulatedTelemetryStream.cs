@@ -1,5 +1,9 @@
 namespace TelemetryApp.Backend.Simulation;
 
+// <summary>
+// Symulowany strumień danych telemetrycznych zastepujący faktyczne informacje.
+// Nieużywany w normalnej pracy z aplikacją - raczej do celów debug.
+// </summary>
 public sealed class SimulatedTelemetryStream : Stream
 {
     private readonly TelemetryBlockGenerator _generator;
