@@ -148,7 +148,7 @@
 
         <Style TargetType="Entry">
                 <Setter Property="TextColor"
-                        Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
+                        Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                 <Setter Property="BackgroundColor"
                         Value="Transparent"/>
                 <Setter Property="FontFamily"
@@ -207,7 +207,7 @@
 
         <Style TargetType="Label">
                 <Setter Property="TextColor"
-                        Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}"/>
+                        Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}"/>
                 <Setter Property="BackgroundColor"
                         Value="Transparent"/>
                 <Setter Property="FontFamily"
@@ -533,13 +533,13 @@
                 <Setter Property="Padding"
                         Value="0"/>
                 <Setter Property="BackgroundColor"
-                        Value="{AppThemeBinding Light={StaticResource mainGray}, Dark={StaticResource OffBlack}}"/>
+                        Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource mainGray}}"/>
         </Style>
 
         <Style TargetType="Shell"
                ApplyToDerivedTypes="True">
                 <Setter Property="Shell.BackgroundColor"
-                        Value="{AppThemeBinding Light={StaticResource mainGray}, Dark={StaticResource OffBlack}}"/>
+                        Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}"/>
                 <Setter Property="Shell.ForegroundColor"
                         Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource SecondaryDarkText}}"/>
                 <Setter Property="Shell.TitleColor"
@@ -559,9 +559,9 @@
                 <Setter Property="Shell.TabBarUnselectedColor"
                         Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray200}}"/>
                 <Setter Property="Shell.FlyoutBackgroundColor"
-                        Value="{AppThemeBinding Light={StaticResource mainGray}, Dark={StaticResource OffBlack}}"/>
+                        Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}"/>
                 <Setter Property="Shell.FlyoutBackground"
-                        Value="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource OffBlack}}"/>
+                        Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"/>
         </Style>
 
         <Style TargetType="NavigationPage">
@@ -586,12 +586,12 @@
 
         <Style TargetType="ContentPage">
                 <Setter Property="BackgroundColor"
-                        Value="{StaticResource mainGray}"/>
+                        Value="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource mainGray}}"/>
         </Style>
 
         <Style TargetType="VerticalStackLayout">
                 <Setter Property="BackgroundColor"
-                        Value="{StaticResource mainGray}"/>
+                        Value="Transparent"/>
         </Style>
 
         <Style TargetType="Frame">

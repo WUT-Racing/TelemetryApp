@@ -20,7 +20,7 @@
             ContentTemplate="{DataTemplate views:SessionsPage}"
             Route="SessionsPage"/>
     </FlyoutItem>
-    <FlyoutItem Title="Dashboard">
+    <FlyoutItem Title="Dashboard" Route="Dashboard">
         <ShellContent Title="Dashboard"
                       ContentTemplate="{DataTemplate views:SessionDetailPage}"
                       Route="SessionDetailPage"/>

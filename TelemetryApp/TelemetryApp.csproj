@@ -1,8 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net10.0-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks>
+        <!-- Na Windows budujemy i uruchamiamy tylko target Windows. MacCatalyst jest dostępny tylko na macOS. -->
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">net10.0-windows10.0.19041.0</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('osx'))">net10.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="'$(TargetFrameworks)' == ''">net10.0-windows10.0.19041.0</TargetFrameworks>
 
         <OutputType>Exe</OutputType>
         <RootNamespace>TelemetryApp</RootNamespace>
@@ -18,7 +20,7 @@
 
         <WindowsPackageType>None</WindowsPackageType>
 
-        <RuntimeIdentifier Condition="$(TargetFramework.Contains('-maccatalyst'))">maccatalyst-arm64</RuntimeIdentifier>
+        <!-- RuntimeIdentifier dla MacCatalyst zostawiamy Visual Studio/.NET SDK, żeby nie próbować odpalać MacCatalyst na Windows. -->
         
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
@@ -45,10 +47,14 @@
         
         <PackageReference Include="SkiaSharp" Version="3.119.1" /> 
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.1" />
-        
-        <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-        
+                
         <PackageReference Include="System.IO.Ports" Version="10.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <MauiXaml Update="Frontend\ViewModels\SessionDetailPage\DetachedPlotPage.xaml">
+        <Generator>MSBuild:Compile</Generator>
+      </MauiXaml>
     </ItemGroup>
 
     <PropertyGroup Condition="$(TargetFramework.Contains('-maccatalyst'))">

@@ -5,18 +5,161 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
     Title="Sesje">
-    <VerticalStackLayout Padding="12"
-            Spacing="10"
-            VerticalOptions="Center">
-        <Button Text="Wczytaj sesje"
-                HeightRequest="50"
-                FontSize="18"
-                Command="{Binding LoadSessionFromPickerCommand}"
-                />
-        <Button Text="Utwórz nową sesję"
-                HeightRequest="50"
-                FontSize="18"
-                Command="{Binding CreateNewSessionCommand}"
-                />
-    </VerticalStackLayout>
+
+    <Grid Padding="16" RowDefinitions="Auto, Auto, *" RowSpacing="12">
+        <HorizontalStackLayout Grid.Row="0" Spacing="10">
+            <Button Text="Odśwież"
+                    Command="{Binding RefreshSessionsCommand}" />
+
+            <Button Text="Nowa sesja / połączenie"
+                    Command="{Binding GoToConnectionCommand}" />
+        </HorizontalStackLayout>
+
+        <Label Grid.Row="1"
+               Text="{Binding StatusText}"
+               TextColor="Gray" />
+
+        <CollectionView Grid.Row="2"
+                        ItemsSource="{Binding Sessions}"
+                        SelectionMode="None">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="30"
+                                     Spacing="10"
+                                     HorizontalOptions="Center">
+                    <Label Text="Nie ma jeszcze żadnych sesji."
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="Przejdź do Połączenia, kliknij Start session, a potem uruchom symulator albo serial."
+                           TextColor="Gray"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Margin="0,0,0,10"
+                           Padding="12"
+                           CornerRadius="12"
+                           BorderColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                           BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0F172A}">
+
+                        <Grid RowDefinitions="Auto, Auto"
+                              RowSpacing="10">
+
+                            <Grid Grid.Row="0"
+                                  ColumnDefinitions="Auto, *, Auto"
+                                  RowDefinitions="Auto, Auto, Auto"
+                                  ColumnSpacing="10"
+                                  RowSpacing="4">
+
+                                <Button Grid.Row="0"
+                                        Grid.RowSpan="3"
+                                        Grid.Column="0"
+                                        Text="{Binding ExpandButtonText}"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        FontSize="20"
+                                        Command="{Binding BindingContext.ToggleRunsCommand, Source={x:Reference PageRoot}}"
+                                        CommandParameter="{Binding .}" />
+
+                                <Label Grid.Row="0"
+                                       Grid.Column="1"
+                                       Text="{Binding DisplayName}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"/>
+
+                                <Label Grid.Row="1"
+                                       Grid.Column="1"
+                                       Text="{Binding TimeText}"
+                                       TextColor="Gray"/>
+
+                                <HorizontalStackLayout Grid.Row="2"
+                                                       Grid.Column="1"
+                                                       Spacing="12">
+                                    <Label Text="{Binding SourceText}"
+                                           TextColor="Gray"/>
+
+                                    <Label Text="{Binding RunCountText}"
+                                           TextColor="Gray"/>
+                                </HorizontalStackLayout>
+
+                                <VerticalStackLayout Grid.Row="0"
+                                                     Grid.RowSpan="3"
+                                                     Grid.Column="2"
+                                                     Spacing="6"
+                                                     WidthRequest="170">
+
+                                    <Label Text="{Binding StatusText}"
+                                           HorizontalTextAlignment="End"/>
+
+                                    <Button Text="Eksportuj sesję"
+                                            Command="{Binding BindingContext.ExportSessionCommand, Source={x:Reference PageRoot}}"
+                                            CommandParameter="{Binding .}" />
+
+                                    <Button Text="Folder"
+                                            Command="{Binding BindingContext.OpenSessionFolderCommand, Source={x:Reference PageRoot}}"
+                                            CommandParameter="{Binding .}" />
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <VerticalStackLayout Grid.Row="1"
+                                                 IsVisible="{Binding IsRunsVisible}"
+                                                 Spacing="6"
+                                                 Padding="52,4,0,0"
+                                                 BindableLayout.ItemsSource="{Binding Runs}">
+
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <Frame Padding="10"
+                                               CornerRadius="10"
+                                               BorderColor="{AppThemeBinding Light=#E2E8F0, Dark=#334155}"
+                                               BackgroundColor="{AppThemeBinding Light=#F8FAFC, Dark=#111827}">
+
+                                            <Grid ColumnDefinitions="*, Auto"
+                                                  RowDefinitions="Auto, Auto, Auto"
+                                                  RowSpacing="3"
+                                                  ColumnSpacing="10">
+
+                                                <Label Grid.Row="0"
+                                                       Grid.Column="0"
+                                                       Text="{Binding DisplayName}"
+                                                       FontAttributes="Bold"/>
+
+                                                <Label Grid.Row="1"
+                                                       Grid.Column="0"
+                                                       Text="{Binding TimeText}"
+                                                       TextColor="Gray"/>
+
+                                                <Label Grid.Row="2"
+                                                       Grid.Column="0"
+                                                       Text="{Binding RawLogText}"
+                                                       TextColor="Gray"
+                                                       LineBreakMode="TailTruncation"/>
+
+                                                <VerticalStackLayout Grid.Row="0"
+                                                                     Grid.RowSpan="3"
+                                                                     Grid.Column="1"
+                                                                     Spacing="6"
+                                                                     WidthRequest="150">
+
+                                                    <Label Text="{Binding StatusText}"
+                                                           HorizontalTextAlignment="End"/>
+
+                                                    <Button Text="Eksportuj run"
+                                                            Command="{Binding BindingContext.ExportRunCommand, Source={x:Reference PageRoot}}"
+                                                            CommandParameter="{Binding .}" />
+                                                </VerticalStackLayout>
+                                            </Grid>
+                                        </Frame>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>

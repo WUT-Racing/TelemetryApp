@@ -3,7 +3,14 @@ using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using TelemetryApp.Frontend.Views;
 using TelemetryApp.Frontend.ViewModels;
+using TelemetryApp.Backend.BoardConnection;
+using TelemetryApp.Backend.Sessions;
+using TelemetryApp.Backend.UserSettings;
 using CommunityToolkit.Maui;
+using TelemetryApp.Backend.Export;
+using Microsoft.Maui.LifecycleEvents;
+using TelemetryApp.Backend.AppLifecycle;
+using TelemetryApp.Backend.Performance;
 
 namespace TelemetryApp;
 
@@ -20,6 +27,18 @@ public static class MauiProgram
             .UseSkiaSharp()
             .UseLiveCharts()
             .UseMauiCommunityToolkit()
+            .ConfigureLifecycleEvents(events =>
+            {
+        #if WINDOWS
+                events.AddWindows(windows =>
+                {
+                    windows.OnWindowCreated(window =>
+                    {
+                        WindowsRunCloseGuard.Attach(window);
+                    });
+                });
+        #endif
+            })
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -30,18 +49,23 @@ public static class MauiProgram
         builder.Logging.AddDebug();
 #endif
 
-        builder.Services.AddSingleton<SQLiteConnectionFactory>();
-        builder.Services.AddTransient<TelemetryService>();
+        builder.Services.AddSingleton<TelemetrySessionManager>();
+        builder.Services.AddSingleton<SignalDisplaySettingsStore>();
+        builder.Services.AddSingleton<TelemetryExportSettingsStore>();
+        builder.Services.AddSingleton<TelemetryCsvExportService>();
+        builder.Services.AddSingleton<TelemetryPerformanceSettingsStore>();
+        builder.Services.AddSingleton<TelemetryPerformanceMonitor>();
+        builder.Services.AddSingleton<ClientBoard>();
         builder.Services.AddTransient<SessionsPage>();
         builder.Services.AddTransient<SessionViewModel>();
         builder.Services.AddSingleton<AppShell>();
         builder.Services.AddSingleton<AppShellViewModel>();
         builder.Services.AddTransient<SettingsPage>();
-        builder.Services.AddTransient<SettingsViewModel>();
-        builder.Services.AddTransient<SessionDetailPage>();
-        builder.Services.AddTransient<SessionDetailViewModel>();
-        builder.Services.AddTransient<ConnectionPage>();
-        builder.Services.AddTransient<ConnectionPageViewModel>();
+        builder.Services.AddSingleton<SettingsViewModel>();
+        builder.Services.AddSingleton<SessionDetailPage>();
+        builder.Services.AddSingleton<SessionDetailViewModel>();
+        builder.Services.AddSingleton<ConnectionPage>();
+        builder.Services.AddSingleton<ConnectionPageViewModel>();
 
 
         var mauiApp = builder.Build();

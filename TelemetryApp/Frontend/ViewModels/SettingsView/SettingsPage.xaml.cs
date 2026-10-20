@@ -1,6 +1,7 @@
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using System;
+using TelemetryApp.Frontend.ViewModels;
 namespace TelemetryApp.Frontend.Views;
 
 public partial class SettingsPage : ContentPage

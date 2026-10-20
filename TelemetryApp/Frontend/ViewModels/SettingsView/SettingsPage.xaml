@@ -5,51 +5,357 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     x:Name="PageRoot"
     Title="Ustawienia"
-    BackgroundColor="{StaticResource mainGray}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource mainGray}}">
 
-    
     <Grid RowDefinitions="Auto, *">
-    
-    <HorizontalStackLayout Grid.Row="0" Spacing="10" Padding="10">
-        <Button Text="Ogólne" Command="{Binding SelectTabCommand}" CommandParameter="General" />
-        <Button Text="Dane" Command="{Binding SelectTabCommand}" CommandParameter="Data" />
-        <Button Text="Eksport" Command="{Binding SelectTabCommand}" CommandParameter="Export" />
-    </HorizontalStackLayout>
 
-    <Grid Grid.Row="1" Padding="20">
-        
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Ogólne" FontSize="24" />
-            <Entry Placeholder="Imię użytkownika" />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="General">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+        <ScrollView Grid.Row="0"
+                    Orientation="Horizontal">
+            <HorizontalStackLayout Spacing="10"
+                                   Padding="10">
+                <Button Text="Ogólne"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="General" />
 
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Danych" FontSize="24" />
-            <CheckBox />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Data">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+                <Button Text="Dane"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Data" />
 
-        <VerticalStackLayout IsVisible="False">
-            <Label Text="Ustawienia Eksportu" FontSize="24" />
-            
-            <VerticalStackLayout.Triggers>
-                <DataTrigger TargetType="VerticalStackLayout" Binding="{Binding CurrentTab}" Value="Export">
-                    <Setter Property="IsVisible" Value="True" />
-                </DataTrigger>
-            </VerticalStackLayout.Triggers>
-        </VerticalStackLayout>
+                <Button Text="Eksport"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Export" />
 
+                <Button Text="Wydajność"
+                        Command="{Binding SelectTabCommand}"
+                        CommandParameter="Performance" />
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <Grid Grid.Row="1"
+              Padding="20">
+
+            <!-- OGÓLNE -->
+            <VerticalStackLayout IsVisible="False"
+                                 Spacing="14">
+                <Label Text="Ustawienia ogólne"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+
+                <Label Text="Motyw aplikacji"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <Label Text="Wybierz jeden z dwóch motywów. Ustawienie zostanie zapamiętane po restarcie aplikacji." />
+
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="Jasny"
+                            Command="{Binding UseLightThemeCommand}" />
+
+                    <Button Text="Ciemny"
+                            Command="{Binding UseDarkThemeCommand}" />
+                </HorizontalStackLayout>
+
+                <Label Text="{Binding SelectedTheme, StringFormat='Aktualny motyw: {0}'}"
+                       FontAttributes="Bold" />
+
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="General">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+
+            <!-- DANE -->
+            <VerticalStackLayout IsVisible="False"
+                                 Spacing="14">
+                <Label Text="Ustawienia danych"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+
+                <Label Text="Zarządzanie kierowcami"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <Grid ColumnDefinitions="*,Auto"
+                      ColumnSpacing="10">
+                    <Entry Placeholder="Nazwa kierowcy"
+                           Text="{Binding NewDriverName}" />
+
+                    <Button Grid.Column="1"
+                            Text="Dodaj"
+                            Command="{Binding AddDriverCommand}" />
+                </Grid>
+
+                <CollectionView ItemsSource="{Binding Drivers}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,Auto"
+                                  Padding="0,4">
+                                <Entry Text="{Binding Name, Mode=TwoWay}"
+                                       Placeholder="Nazwa" />
+
+                                <Button Grid.Column="1"
+                                        Text="✕"
+                                        Command="{Binding Source={x:Reference PageRoot}, Path=BindingContext.DeleteDriverCommand}"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="Transparent"
+                                        TextColor="Red"
+                                        FontAttributes="Bold"
+                                        WidthRequest="44"
+                                        HeightRequest="44" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Text="Dane telemetryczne są zapisywane jako raw log .rfdlog w sesjach."
+                       TextColor="Gray"
+                       LineBreakMode="WordWrap" />
+
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="Data">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+
+            <!-- EKSPORT -->
+            <VerticalStackLayout IsVisible="False"
+                                 Spacing="14">
+                <Label Text="Ustawienia eksportu"
+                       FontSize="24"
+                       FontAttributes="Bold" />
+
+                <Label Text="Pliki CSV"
+                       FontSize="18"
+                       FontAttributes="Bold" />
+
+                <Label Text="Wybierz, które pliki mają być tworzone podczas eksportu z widoku Sesje. metadata.json jest tworzony zawsze."
+                       TextColor="Gray"
+                       LineBreakMode="WordWrap" />
+
+                <Grid ColumnDefinitions="Auto,*"
+                      RowDefinitions="Auto,Auto,Auto"
+                      ColumnSpacing="10"
+                      RowSpacing="8">
+
+                    <CheckBox Grid.Row="0"
+                              Grid.Column="0"
+                              IsChecked="{Binding ExportLongCsv}" />
+
+                    <Label Grid.Row="0"
+                           Grid.Column="1"
+                           Text="decoded_signals_long.csv"
+                           VerticalTextAlignment="Center" />
+
+                    <CheckBox Grid.Row="1"
+                              Grid.Column="0"
+                              IsChecked="{Binding ExportWideCsv}" />
+
+                    <Label Grid.Row="1"
+                           Grid.Column="1"
+                           Text="decoded_signals_wide.csv"
+                           VerticalTextAlignment="Center" />
+
+                    <CheckBox Grid.Row="2"
+                              Grid.Column="0"
+                              IsChecked="{Binding ExportRawFramesCsv}" />
+
+                    <Label Grid.Row="2"
+                           Grid.Column="1"
+                           Text="raw_frames.csv"
+                           VerticalTextAlignment="Center" />
+                </Grid>
+
+                <BoxView HeightRequest="1"
+                         BackgroundColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                         Margin="0,8" />
+
+                <Label Text="Eksport wykonywany jest w widoku Sesje."
+                       FontAttributes="Bold" />
+
+                <Label Text="Możesz eksportować całą sesję albo konkretny run. Dla aktywnego runu aplikacja zapyta, czy zakończyć run przed eksportem, czy eksportować częściowo i kontynuować."
+                       TextColor="Gray"
+                       LineBreakMode="WordWrap" />
+
+                <VerticalStackLayout.Triggers>
+                    <DataTrigger TargetType="VerticalStackLayout"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="Export">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </VerticalStackLayout.Triggers>
+            </VerticalStackLayout>
+
+            <!-- WYDAJNOŚĆ -->
+            <ScrollView IsVisible="False">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Ustawienia wydajności"
+                           FontSize="24"
+                           FontAttributes="Bold" />
+
+                    <Label Text="Te ustawienia wpływają tylko na podgląd live w dashboardzie. Eksport i zapis .rfdlog nadal pozostają pełne."
+                           TextColor="Gray"
+                           LineBreakMode="WordWrap" />
+
+                    <Label Text="Profil wydajności"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Picker ItemsSource="{Binding PerformanceProfiles}"
+                            SelectedItem="{Binding SelectedPerformanceProfile, Mode=TwoWay}" />
+
+                    <Grid ColumnDefinitions="280,*"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto"
+                          ColumnSpacing="12"
+                          RowSpacing="8">
+
+                        <Label Grid.Row="0"
+                               Grid.Column="0"
+                               Text="FPS dashboardu"
+                               VerticalTextAlignment="Center" />
+
+                        <Entry Grid.Row="0"
+                               Grid.Column="1"
+                               Text="{Binding DashboardFpsText, Mode=TwoWay}"
+                               Keyboard="Numeric" />
+
+                        <Label Grid.Row="1"
+                               Grid.Column="0"
+                               Text="Minimalny odstęp próbek [ms]"
+                               VerticalTextAlignment="Center" />
+
+                        <Entry Grid.Row="1"
+                               Grid.Column="1"
+                               Text="{Binding MinSampleIntervalMsText, Mode=TwoWay}"
+                               Keyboard="Numeric" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="0"
+                               Text="Historia dashboardu [min]"
+                               VerticalTextAlignment="Center" />
+
+                        <Entry Grid.Row="2"
+                               Grid.Column="1"
+                               Text="{Binding DashboardHistoryMinutesText, Mode=TwoWay}"
+                               Keyboard="Numeric" />
+
+                        <Label Grid.Row="3"
+                               Grid.Column="0"
+                               Text="Maks. próbek na sygnał"
+                               VerticalTextAlignment="Center" />
+
+                        <Entry Grid.Row="3"
+                               Grid.Column="1"
+                               Text="{Binding MaxSamplesPerSignalText, Mode=TwoWay}"
+                               Keyboard="Numeric" />
+
+                        <Label Grid.Row="4"
+                               Grid.Column="0"
+                               Text="Maks. punktów rysowanych na wykres"
+                               VerticalTextAlignment="Center" />
+
+                        <Entry Grid.Row="4"
+                               Grid.Column="1"
+                               Text="{Binding MaxRenderedPointsPerChartText, Mode=TwoWay}"
+                               Keyboard="Numeric" />
+                    </Grid>
+
+                    <Label Text="Wyjaśnienie"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Label Text="FPS ogranicza, jak często odświeża się UI. Minimalny odstęp próbek ogranicza, ile punktów na sekundę jednego sygnału trafia do podglądu. Historia dashboardu i maks. próbek na sygnał decydują, ile danych podglądu trzymamy w RAM. To nie wpływa na .rfdlog ani eksport."
+                           TextColor="Gray"
+                           LineBreakMode="WordWrap" />
+
+                    <Grid ColumnDefinitions="Auto,*"
+                          RowDefinitions="Auto,Auto,Auto"
+                          ColumnSpacing="10"
+                          RowSpacing="8">
+
+                        <CheckBox Grid.Row="0"
+                                  Grid.Column="0"
+                                  IsChecked="{Binding PauseDashboardWhenHidden}" />
+
+                        <Label Grid.Row="0"
+                               Grid.Column="1"
+                               Text="Pauzuj rysowanie dashboardu, gdy strona nie jest widoczna"
+                               VerticalTextAlignment="Center" />
+
+                        <CheckBox Grid.Row="1"
+                                  Grid.Column="0"
+                                  IsChecked="{Binding LimitDetachedChartsSameAsDashboard}" />
+
+                        <Label Grid.Row="1"
+                               Grid.Column="1"
+                               Text="Odpięte wykresy ograniczaj tak samo jak dashboard"
+                               VerticalTextAlignment="Center" />
+
+                        <CheckBox Grid.Row="2"
+                                  Grid.Column="0"
+                                  IsChecked="{Binding DisableLineSmoothnessWhenHeavy}" />
+
+                        <Label Grid.Row="2"
+                               Grid.Column="1"
+                               Text="Wyłącz wygładzanie linii przy ciężkich ustawieniach"
+                               VerticalTextAlignment="Center" />
+                    </Grid>
+
+                    <HorizontalStackLayout Spacing="10">
+                        <Button Text="Zastosuj ustawienia"
+                                Command="{Binding ApplyPerformanceSettingsCommand}" />
+
+                        <Button Text="Odśwież pomiar"
+                                Command="{Binding RefreshPerformanceMeasurementCommand}" />
+
+                        <Button Text="Wyczyść historię dashboardu"
+                                Command="{Binding ClearDashboardHistoryCommand}"
+                                TextColor="Red"
+                                BackgroundColor="Transparent" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="{Binding PerformanceStatusText}"
+                           FontAttributes="Bold"
+                           LineBreakMode="WordWrap" />
+
+                    <BoxView HeightRequest="1"
+                             BackgroundColor="{AppThemeBinding Light=#CBD5E1, Dark=#334155}"
+                             Margin="0,8" />
+
+                    <Label Text="Aktualne użycie"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Label Text="{Binding PerformanceCurrentUsageText}"
+                           LineBreakMode="WordWrap"
+                           TextColor="{AppThemeBinding Light=#334155, Dark=#CBD5E1}" />
+
+                    <Label Text="Estymacja ustawień"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+
+                    <Label Text="{Binding PerformanceEstimateText}"
+                           LineBreakMode="WordWrap"
+                           TextColor="{AppThemeBinding Light=#334155, Dark=#CBD5E1}" />
+
+                    <Label Text="{Binding PerformanceRecommendationText}"
+                           FontAttributes="Bold"
+                           LineBreakMode="WordWrap" />
+                </VerticalStackLayout>
+
+                <ScrollView.Triggers>
+                    <DataTrigger TargetType="ScrollView"
+                                 Binding="{Binding CurrentTab}"
+                                 Value="Performance">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </ScrollView.Triggers>
+            </ScrollView>
+        </Grid>
     </Grid>
-</Grid>
 </ContentPage>
